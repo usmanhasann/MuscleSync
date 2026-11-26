@@ -1,0 +1,4340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0B0D10" />
+  <title>IronSync — Offline Muscle & Form Planner</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <style>
+    :root {
+      --bg: #0B0D10;
+      --surface: #13171F;
+      --surface-2: #1B212C;
+      --surface-3: #222936;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #F3F5F7;
+      --text-muted: #8E98A8;
+      --text-dim: #5F6878;
+      --primary: #FF5C1A;
+      --primary-glow: rgba(255, 92, 26, 0.25);
+      --secondary: #2DD4BF;
+      --secondary-glow: rgba(45, 212, 191, 0.18);
+      --warn: #F59E0B;
+      --warn-bg: rgba(245, 158, 11, 0.12);
+      --ok: #22C55E;
+      --ok-bg: rgba(34, 197, 94, 0.12);
+      --danger: #EF4444;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --mono: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Inter, sans-serif;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.45;
+      overflow-x: hidden;
+      min-height: 100dvh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+
+    /* Top Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(11, 13, 16, 0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-strong);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .offline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--ok-bg);
+      color: var(--ok);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+    }
+
+    .offline-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .desktop-nav {
+      display: none;
+      gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3px;
+      border-radius: 10px;
+    }
+
+    .nav-btn {
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-btn.active {
+      background: var(--surface-3);
+      color: var(--text);
+    }
+
+    .icon-btn {
+      min-height: 36px;
+      padding: 0 11px;
+      border-radius: 9px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .icon-btn:hover, .icon-btn:active {
+      border-color: var(--border-strong);
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    /* Main Container */
+    .app-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 14px calc(88px + env(safe-area-inset-bottom));
+    }
+
+    /* Search + Muscle Selection Bar */
+    .search-row {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 38px 0 38px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      color: var(--text-muted);
+      display: none;
+      place-items: center;
+    }
+
+    .search-clear.visible { display: grid; }
+
+    .search-hint-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .quick-jump {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(255, 92, 26, 0.14);
+      border: 1px solid rgba(255, 92, 26, 0.35);
+      color: #FF8757;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Muscle Chips */
+    .muscle-strip {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .muscle-strip::-webkit-scrollbar { display: none; }
+
+    .m-chip {
+      flex-shrink: 0;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .m-chip.selected {
+      background: rgba(255, 92, 26, 0.16);
+      border-color: var(--primary);
+      color: var(--text);
+    }
+
+    .m-chip .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+    .m-chip.selected .dot { background: var(--primary); }
+
+    /* Controls Strip */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      height: 40px;
+      overflow: hidden;
+    }
+
+    .stepper-label {
+      padding: 0 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-right: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .stepper button {
+      width: 38px;
+      height: 100%;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+    }
+
+    .stepper button:active { background: var(--surface-3); }
+
+    .stepper-val {
+      min-width: 28px;
+      text-align: center;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .select-pill {
+      height: 40px;
+      padding: 0 10px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      outline: none;
+    }
+
+    .toggle-pill {
+      height: 40px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s;
+    }
+
+    .toggle-pill.active {
+      background: rgba(45, 212, 191, 0.12);
+      border-color: rgba(45, 212, 191, 0.45);
+      color: var(--secondary);
+    }
+
+    .sync-btn {
+      height: 40px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #0B0D10;
+      font-size: 13px;
+      font-weight: 750;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .sync-btn:active { transform: scale(0.98); }
+
+    /* Two-column Grid on Desktop, Stack on Mobile */
+    .builder-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (min-width: 900px) {
+      .desktop-nav { display: flex; }
+      .bottom-nav { display: none !important; }
+      .app-shell { padding-bottom: 32px; }
+      .builder-grid {
+        grid-template-columns: 380px 1fr;
+        gap: 18px;
+      }
+      .anatomy-panel {
+        position: sticky;
+        top: 72px;
+      }
+    }
+
+    /* Card Surface */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    /* Anatomical Map */
+    .body-map-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #0E1117;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 6px 8px;
+      margin-bottom: 10px;
+    }
+
+    .body-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .body-side-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .anatomy-svg {
+      width: 100%;
+      max-width: 165px;
+      height: auto;
+      display: block;
+    }
+
+    .anatomy-svg .silhouette {
+      fill: #1A202B;
+      stroke: #2B3444;
+      stroke-width: 1.2;
+    }
+
+    .anatomy-svg .muscle-part {
+      fill: #2A3241;
+      stroke: #0E1117;
+      stroke-width: 0.9;
+      transition: fill 0.18s ease, opacity 0.18s ease;
+      cursor: pointer;
+    }
+
+    .anatomy-svg .muscle-part:hover {
+      fill: #3F4B61;
+    }
+
+    .anatomy-svg .muscle-part.primary {
+      fill: var(--primary);
+      filter: drop-shadow(0 0 5px rgba(255, 92, 26, 0.45));
+    }
+
+    .anatomy-svg .muscle-part.secondary {
+      fill: var(--secondary);
+      opacity: 0.72;
+    }
+
+    .anatomy-svg .muscle-part.glute-warn {
+      fill: var(--warn);
+      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45));
+    }
+
+    .map-legend {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .legend-items {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 3px;
+      margin-right: 4px;
+    }
+
+    /* Self-Awareness Metrics */
+    .awareness-box {
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .awareness-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--surface-3);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--ok);
+      transition: width 0.25s ease;
+    }
+
+    .heads-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .head-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .head-pill.hit {
+      border-color: rgba(255, 92, 26, 0.45);
+      background: rgba(255, 92, 26, 0.14);
+      color: #FF9468;
+    }
+
+    .head-pill.sec {
+      border-color: rgba(45, 212, 191, 0.35);
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--secondary);
+    }
+
+    .head-pill.miss {
+      border-style: dashed;
+      border-color: rgba(245, 158, 11, 0.45);
+      color: var(--warn);
+    }
+
+    .glute-meter {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .glute-meter.warn {
+      background: var(--warn-bg);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #FCD34D;
+    }
+
+    .glute-meter.safe {
+      background: var(--ok-bg);
+      border-color: rgba(34, 197, 94, 0.25);
+      color: #86EFAC;
+    }
+
+    /* Workout Exercise Cards */
+    .workout-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .workout-title {
+      font-size: 17px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+
+    .workout-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ex-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      transition: border-color 0.15s;
+    }
+
+    .ex-card:hover { border-color: var(--border-strong); }
+    .ex-card.pinned { border-color: rgba(45, 212, 191, 0.45); }
+
+    .ex-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .ex-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .ex-main {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .ex-name {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 3px;
+    }
+
+    .ex-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .tag.primary {
+      background: rgba(255, 92, 26, 0.14);
+      border-color: rgba(255, 92, 26, 0.35);
+      color: #FF9468;
+    }
+
+    .tag.glute {
+      background: var(--warn-bg);
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #FCD34D;
+    }
+
+    .tag.video-on {
+      background: rgba(45, 212, 191, 0.14);
+      border-color: rgba(45, 212, 191, 0.35);
+      color: var(--secondary);
+    }
+
+    .ex-angle-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 7px 9px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .ex-angle-line strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .ex-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    .ex-btn-group {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .sm-btn {
+      min-height: 32px;
+      padding: 0 9px;
+      border-radius: 7px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sm-btn:hover, .sm-btn:active {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .sm-btn.active {
+      color: var(--secondary);
+      border-color: rgba(45, 212, 191, 0.4);
+      background: rgba(45, 212, 191, 0.1);
+    }
+
+    .sm-btn.guide {
+      background: rgba(255, 92, 26, 0.14);
+      border-color: rgba(255, 92, 26, 0.35);
+      color: #FF8757;
+    }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Library Grid */
+    .lib-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 720px) {
+      .lib-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Update / Manage View */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 720px) {
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .input, .textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .input:focus, .textarea:focus { border-color: var(--primary); }
+
+    .btn-primary {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #0B0D10;
+      font-weight: 750;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .btn-secondary {
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    /* Bottom Mobile Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 45;
+      background: rgba(15, 18, 24, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .bnav-btn {
+      min-height: 46px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .bnav-btn.active {
+      color: var(--primary);
+      background: rgba(255, 92, 26, 0.1);
+    }
+
+    /* Exercise Detail Sheet / Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    @media (min-width: 720px) {
+      .modal-backdrop { align-items: center; padding: 20px; }
+    }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 720px;
+      max-height: 92dvh;
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px 18px 0 0;
+      padding: 14px 16px calc(22px + env(safe-area-inset-bottom));
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    @media (min-width: 720px) {
+      .modal-sheet {
+        border-radius: 18px;
+        padding: 20px;
+      }
+    }
+
+    .sheet-handle {
+      width: 38px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--border-strong);
+      margin: 0 auto 12px;
+    }
+
+    @media (min-width: 720px) { .sheet-handle { display: none; } }
+
+    .sheet-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sheet-title {
+      font-size: 19px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .visual-stage {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .visual-stage { grid-template-columns: 1.25fr 0.95fr; }
+    }
+
+    .sim-box {
+      background: #0B0E13;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .sim-svg {
+      width: 100%;
+      height: 190px;
+      display: block;
+      background: radial-gradient(circle at 50% 45%, rgba(255, 92, 26, 0.06), transparent 68%);
+      border-radius: 8px;
+    }
+
+    .sim-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sim-slider {
+      flex: 1;
+      accent-color: var(--primary);
+    }
+
+    .video-box {
+      background: #0B0E13;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .video-player {
+      width: 100%;
+      max-height: 260px;
+      border-radius: 8px;
+      background: #000;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 520px) {
+      .specs-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .spec-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 10px;
+    }
+
+    .spec-k {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 3px;
+    }
+
+    .spec-v {
+      font-size: 13px;
+      font-weight: 650;
+      color: var(--text);
+    }
+
+    .cue-list {
+      margin: 0 0 10px;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .avoid-box {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      font-size: 12.5px;
+      color: #FCA5A5;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: calc(68px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #F3F5F7;
+      color: #0B0D10;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 14px;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 80;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Print / PDF Stylesheet */
+    @media print {
+      body { background: #fff !important; color: #111 !important; }
+      .topbar, .search-row, .search-hint-bar, .muscle-strip, .controls-bar,
+      .bottom-nav, .ex-actions, .modal-backdrop, .toast, #view-library, #view-manage {
+        display: none !important;
+      }
+      #view-builder { display: block !important; }
+      .builder-grid { grid-template-columns: 280px 1fr !important; }
+      .card, .ex-card, .ex-angle-line, .spec-item {
+        background: #fff !important;
+        color: #111 !important;
+        border-color: #ccc !important;
+      }
+      .anatomy-svg .silhouette { fill: #eee !important; stroke: #999 !important; }
+      .anatomy-svg .muscle-part { fill: #d4d4d8 !important; }
+      .anatomy-svg .muscle-part.primary { fill: #e11d48 !important; }
+      .anatomy-svg .muscle-part.secondary { fill: #0d9488 !important; }
+      .tag, .head-pill { border-color: #bbb !important; color: #222 !important; background: #f4f4f5 !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF5C1A" stroke-width="2.3" stroke-linecap="round">
+            <path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/>
+          </svg>
+        </div>
+        <span class="brand-title">IronSync</span>
+        <span class="offline-pill" id="offlineStatus"><span class="offline-dot"></span>Offline</span>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <button class="nav-btn active" data-view="builder">Sync Day</button>
+        <button class="nav-btn" data-view="library">Exercises</button>
+        <button class="nav-btn" data-view="manage">Update / Data</button>
+      </nav>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="btnPrintPdf" title="Save today's workout as PDF">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          <span>PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <!-- Global Search + Muscle Picker -->
+    <div class="search-row">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input id="searchInput" class="search-input" type="search" placeholder="Search muscle, head, exercise (e.g. bicep, long head, no glute, cable)..." autocomplete="off" />
+      <button id="searchClear" class="search-clear" aria-label="Clear search">✕</button>
+    </div>
+
+    <div id="searchHints" class="search-hint-bar"></div>
+
+    <!-- VIEW 1: SYNC DAY BUILDER -->
+    <section id="view-builder" class="view active">
+      <div id="muscleStrip" class="muscle-strip" aria-label="Select muscle groups"></div>
+
+      <div class="controls-bar">
+        <div class="stepper" title="Total exercises for today">
+          <span class="stepper-label">Exercises</span>
+          <button id="countDec" aria-label="Decrease exercises">−</button>
+          <span id="countVal" class="stepper-val">4</span>
+          <button id="countInc" aria-label="Increase exercises">+</button>
+        </div>
+
+        <select id="equipSelect" class="select-pill" aria-label="Filter equipment">
+          <option value="all">All Equipment</option>
+          <option value="Dumbbell">Dumbbells</option>
+          <option value="Cable">Cables</option>
+          <option value="Machine">Machines</option>
+          <option value="Barbell">Barbell</option>
+          <option value="Bodyweight">Bodyweight</option>
+        </select>
+
+        <button id="btnLowGlute" class="toggle-pill active" aria-pressed="true" title="Avoid incidental glute-heavy leg exercises unless Glutes is selected">
+          <span>Low-Glute Guard</span>
+          <strong id="lowGluteState">ON</strong>
+        </button>
+
+        <button id="btnSyncNow" class="sync-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
+          </svg>
+          <span>Sync</span>
+        </button>
+      </div>
+
+      <div class="builder-grid">
+        <!-- Left: Visual Anatomical Self-Awareness -->
+        <aside class="card anatomy-panel">
+          <div class="card-header">
+            <span class="card-title">Tap Body to Pick Muscles</span>
+            <span id="selectedCountBadge" class="tag">1 Muscle</span>
+          </div>
+
+          <div id="mainBodyMap" class="body-map-wrap"></div>
+
+          <div class="map-legend">
+            <div class="legend-items">
+              <span><i class="legend-dot" style="background:var(--primary)"></i>Primary</span>
+              <span><i class="legend-dot" style="background:var(--secondary)"></i>Secondary</span>
+              <span><i class="legend-dot" style="background:var(--warn)"></i>Glute Alert</span>
+            </div>
+            <button id="btnClearMuscles" class="sm-btn" style="min-height:26px;font-size:11px;">Reset</button>
+          </div>
+
+          <div class="awareness-box">
+            <div class="awareness-row">
+              <strong id="coverageLabel">Sub-Head Coverage</strong>
+              <span id="coveragePct" style="font-family:var(--mono);font-weight:700;">100%</span>
+            </div>
+            <div class="progress-track">
+              <div id="coverageBar" class="progress-fill" style="width:100%"></div>
+            </div>
+            <div id="headsList" class="heads-grid"></div>
+            <div id="gluteMeter" class="glute-meter safe"></div>
+          </div>
+        </aside>
+
+        <!-- Right: Synced Ordered Workout -->
+        <div>
+          <div class="workout-header">
+            <div>
+              <div id="workoutTitle" class="workout-title">Today's Synced Session</div>
+              <div id="workoutSubtitle" class="workout-sub">Ordered compound-first for full muscle coverage</div>
+            </div>
+            <button id="btnOrderToggle" class="sm-btn" title="Switch ordering mode">Order: Smart</button>
+          </div>
+          <div id="workoutList" class="exercise-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: EXERCISE LIBRARY -->
+    <section id="view-library" class="view">
+      <div class="controls-bar">
+        <select id="libGroupFilter" class="select-pill">
+          <option value="all">All Muscles</option>
+        </select>
+        <select id="libEquipFilter" class="select-pill">
+          <option value="all">All Equipment</option>
+          <option value="Dumbbell">Dumbbells</option>
+          <option value="Cable">Cables</option>
+          <option value="Machine">Machines</option>
+          <option value="Barbell">Barbell</option>
+          <option value="Bodyweight">Bodyweight</option>
+        </select>
+        <button id="libNoGluteBtn" class="toggle-pill">0%–15% Glute Only</button>
+      </div>
+      <div id="libraryGrid" class="lib-grid"></div>
+    </section>
+
+    <!-- VIEW 3: DYNAMIC DATA UPDATE & OFFLINE STORAGE -->
+    <section id="view-manage" class="view">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <span class="card-title">Send Exercise PDF to Gmail / WhatsApp</span>
+          <span class="tag">osmanmuhammadofficial@gmail.com</span>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="shareExerciseSelect">Select Exercise (or Today's Sync)</label>
+            <select id="shareExerciseSelect" class="input"></select>
+          </div>
+          <div class="field full" style="flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;">
+            <button type="button" id="btnSendGmailPdf" class="btn-primary">Save PDF &amp; Open Gmail</button>
+            <button type="button" id="btnSendWhatsApp" class="btn-secondary">Send to WhatsApp</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <span class="card-title">Add Custom Exercise (Saved Offline)</span>
+        </div>
+        <form id="addExerciseForm" class="form-grid">
+          <div class="field">
+            <label for="fName">Exercise Name</label>
+            <input id="fName" class="input" required placeholder="e.g. Cable Bayesian Curl" />
+          </div>
+          <div class="field">
+            <label for="fGroup">Primary Muscle Group</label>
+            <select id="fGroup" class="input"></select>
+          </div>
+          <div class="field">
+            <label for="fHead">Primary Sub-Head</label>
+            <select id="fHead" class="input"></select>
+          </div>
+          <div class="field">
+            <label for="fEquip">Equipment</label>
+            <select id="fEquip" class="input">
+              <option>Dumbbell</option>
+              <option>Cable</option>
+              <option>Machine</option>
+              <option>Barbell</option>
+              <option>Bodyweight</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fSetsReps">Sets × Reps</label>
+            <input id="fSetsReps" class="input" value="3 × 10–12" required />
+          </div>
+          <div class="field">
+            <label for="fGlute">Glute Involvement % (0–100)</label>
+            <input id="fGlute" class="input" type="number" min="0" max="100" value="0" />
+          </div>
+          <div class="field">
+            <label for="fAngle">Exact Angle Setup</label>
+            <input id="fAngle" class="input" placeholder="e.g. 45° Bench • Elbows Pinned" required />
+          </div>
+          <div class="field">
+            <label for="fRom">Range of Motion (ROM)</label>
+            <input id="fRom" class="input" placeholder="e.g. Full stretch to 120° curl" required />
+          </div>
+          <div class="field full">
+            <label for="fCues">Form Cues (one per line)</label>
+            <textarea id="fCues" class="textarea" rows="3" placeholder="Keep elbows behind torso&#10;Control 3s lowering"></textarea>
+          </div>
+          <div class="field full">
+            <label for="fYoutubeUrl">Optional YouTube Video Link (auto-downloads when running server.py)</label>
+            <input id="fYoutubeUrl" class="input" type="url" placeholder="https://www.youtube.com/watch?v=... or Shorts link" />
+          </div>
+          <div class="field full">
+            <label for="fVideo">Or Attach Local Video (.mp4 / .mov from device)</label>
+            <input id="fVideo" class="input" type="file" accept="video/*" />
+          </div>
+          <div class="field full" style="flex-direction:row;gap:10px;align-items:center;">
+            <button type="submit" class="btn-primary">Save Exercise Offline</button>
+            <span id="customCountInfo" style="font-size:12px;color:var(--text-muted);"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Backup / Dynamic JSON Update</span>
+        </div>
+        <p style="margin:0 0 10px;font-size:13px;color:var(--text-muted);">
+          Export all exercises + custom edits as JSON, or paste/import JSON updates anytime without losing your saved offline videos.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          <button id="btnExportJson" class="btn-secondary">Download exercises.json</button>
+          <label class="btn-secondary" style="cursor:pointer;">
+            Import JSON File
+            <input id="importJsonFile" type="file" accept=".json,application/json" hidden />
+          </label>
+          <button id="btnResetDb" class="btn-secondary" style="color:#FCA5A5;">Reset Defaults</button>
+        </div>
+        <textarea id="jsonPasteBox" class="textarea" rows="5" placeholder='Paste JSON array of exercises or full { "exercises": [...] } here to merge...'></textarea>
+        <div style="margin-top:8px;">
+          <button id="btnMergeJson" class="btn-secondary">Merge Pasted JSON</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <button class="bnav-btn active" data-view="builder">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+      <span>Sync Day</span>
+    </button>
+    <button class="bnav-btn" data-view="library">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>
+      <span>Exercises</span>
+    </button>
+    <button class="bnav-btn" data-view="manage">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Update</span>
+    </button>
+  </nav>
+
+  <!-- Exercise Detail / Form / Angle / ROM / Offline Video Modal -->
+  <div id="detailModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <div>
+          <div id="modalTitle" class="sheet-title">Exercise</div>
+          <div id="modalSub" style="font-size:12px;color:var(--text-muted);margin-top:2px;"></div>
+        </div>
+        <button id="modalClose" class="close-btn" aria-label="Close">✕</button>
+      </div>
+
+      <div class="visual-stage">
+        <div class="sim-box">
+          <div class="sim-header">
+            <span id="simAngleLabel">Angle & ROM Guide</span>
+            <span id="simPhaseText" style="color:var(--primary)">ECCENTRIC</span>
+          </div>
+          <svg id="simSvg" class="sim-svg" viewBox="0 0 260 170"></svg>
+          <div class="sim-controls">
+            <button id="simPlayBtn" class="sm-btn" style="min-height:28px;">Pause</button>
+            <button id="simSlowBtn" class="sm-btn" style="min-height:28px;">1×</button>
+            <input id="simScrub" class="sim-slider" type="range" min="0" max="100" value="0" aria-label="Animation progress" />
+          </div>
+        </div>
+
+        <div class="sim-box">
+          <div class="sim-header">
+            <span>Muscle Target Map</span>
+            <span id="modalGluteTag">0% Glute</span>
+          </div>
+          <div id="modalBodyMap" class="body-map-wrap" style="margin:0;padding:6px 4px;"></div>
+        </div>
+      </div>
+
+      <!-- Offline Video Slot -->
+      <div class="video-box">
+        <div class="sim-header" style="margin-bottom:6px;">
+          <span>Offline Reference Video</span>
+          <span id="videoStatusLabel">None attached (using ROM sim)</span>
+        </div>
+        <video id="modalVideo" class="video-player" controls playsinline loop style="display:none;"></video>
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+          <input id="modalYoutubeUrl" class="input" type="url" placeholder="Paste YouTube link to download into this exercise..." style="height:36px;font-size:13px;" />
+          <button type="button" id="modalYoutubeDownload" class="sm-btn guide" style="min-height:36px;white-space:nowrap;">Download</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <label class="sm-btn active" style="cursor:pointer;">
+            <span>+ Attach Local Video (.mp4/.mov)</span>
+            <input id="modalVideoInput" type="file" accept="video/*" hidden />
+          </label>
+          <button id="modalVideoRemove" class="sm-btn" style="display:none;">Remove Video</button>
+        </div>
+      </div>
+
+      <div id="modalSpecs" class="specs-grid"></div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:6px;">Execution Cues</div>
+      <ul id="modalCues" class="cue-list"></ul>
+      <div id="modalAvoid" class="avoid-box"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    /* === EXERCISE_DATABASE_START === */
+    const DEFAULT_DATA = {
+      version: 1,
+      muscleGroups: [
+        {
+          id: "chest",
+          name: "Chest",
+          heads: [
+            { id: "upper_chest", name: "Upper Chest", role: "Clavicular Shelf" },
+            { id: "mid_chest", name: "Mid Chest", role: "Sternal Mass" },
+            { id: "lower_chest", name: "Lower Chest", role: "Lower Sweep" }
+          ]
+        },
+        {
+          id: "back",
+          name: "Back",
+          heads: [
+            { id: "lats_width", name: "Lats", role: "V-Taper Width" },
+            { id: "mid_back", name: "Mid-Back", role: "Thickness" },
+            { id: "traps_upper", name: "Upper Traps", role: "Yoke" },
+            { id: "lower_back", name: "Lower Back", role: "Erectors" }
+          ]
+        },
+        {
+          id: "shoulders",
+          name: "Shoulders",
+          heads: [
+            { id: "front_delt", name: "Front Delt", role: "Anterior" },
+            { id: "side_delt", name: "Side Delt", role: "Width" },
+            { id: "rear_delt", name: "Rear Delt", role: "3D Cap" }
+          ]
+        },
+        {
+          id: "biceps",
+          name: "Biceps",
+          heads: [
+            { id: "bicep_long", name: "Long Head", role: "Outer Peak" },
+            { id: "bicep_short", name: "Short Head", role: "Inner Thick" },
+            { id: "brachialis", name: "Brachialis", role: "Arm Width" }
+          ]
+        },
+        {
+          id: "triceps",
+          name: "Triceps",
+          heads: [
+            { id: "tricep_long", name: "Long Head", role: "Overhead Mass" },
+            { id: "tricep_lateral", name: "Lateral Head", role: "Horseshoe" },
+            { id: "tricep_medial", name: "Medial Head", role: "Lockout" }
+          ]
+        },
+        {
+          id: "quads",
+          name: "Quads",
+          heads: [
+            { id: "quad_rectus", name: "Rectus Femoris", role: "Center Thigh" },
+            { id: "quad_outer", name: "Outer Sweep", role: "Vastus Lat." },
+            { id: "quad_inner", name: "VMO Teardrop", role: "Inner Knee" }
+          ]
+        },
+        {
+          id: "hamstrings",
+          name: "Hamstrings",
+          heads: [
+            { id: "ham_stretch", name: "Upper Ham", role: "Hip Hinge" },
+            { id: "ham_curl", name: "Lower Ham", role: "Knee Curl" }
+          ]
+        },
+        {
+          id: "glutes",
+          name: "Glutes",
+          heads: [
+            { id: "glute_max", name: "Glute Max", role: "Posterior" },
+            { id: "glute_med", name: "Glute Med", role: "Upper Hip" }
+          ]
+        },
+        {
+          id: "calves",
+          name: "Calves",
+          heads: [
+            { id: "gastroc", name: "Gastrocnemius", role: "Upper Calf" },
+            { id: "soleus", name: "Soleus", role: "Lower Calf" }
+          ]
+        },
+        {
+          id: "core",
+          name: "Core & Abs",
+          heads: [
+            { id: "upper_abs", name: "Upper Abs", role: "Spinal Curl" },
+            { id: "lower_abs", name: "Lower Abs", role: "Pelvic Tilt" },
+            { id: "obliques", name: "Obliques", role: "Side Waist" }
+          ]
+        }
+      ],
+      exercises: [
+        {
+          id: "incline-db-curl",
+          name: "Incline Dumbbell Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Dumbbell",
+          tier: 2,
+          primaryHeads: ["bicep_long"],
+          secondaryHeads: ["bicep_short"],
+          gluteLoad: 0,
+          angle: "45° Bench • Arms Hang Behind Torso",
+          rom: "Full elbow extension at bottom to 125° curl without lifting elbows forward",
+          setsReps: "3 × 10–12",
+          rest: "90s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Set bench to 45° and pin shoulder blades back against the pad.",
+            "Keep elbows pointing straight down behind your torso the entire rep.",
+            "Supinate pinky upward at the top and lower for a full 3-second stretch."
+          ],
+          avoid: "Swinging elbows forward shifts tension off the long head onto the front delt.",
+          anim: { type: "incline_curl", angleLabel: "45° Bench", romLabel: "180° → 55°" },
+          tags: ["bicep", "arms", "long head", "peak", "stretch", "dumbbell"]
+        },
+        {
+          id: "preacher-curl",
+          name: "Preacher Curl (EZ-Bar or DB)",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Barbell",
+          tier: 2,
+          primaryHeads: ["bicep_short"],
+          secondaryHeads: ["bicep_long", "brachialis"],
+          gluteLoad: 0,
+          angle: "45° Pad • Arms In Front of Torso",
+          rom: "Near-full stretch (avoid hyperextension) to 110° peak squeeze",
+          setsReps: "3 × 10–12",
+          rest: "90s",
+          tempo: "3-0-1-1",
+          cues: [
+            "Armpits snug over the top edge of the preacher pad.",
+            "Control the bottom 20% slowly—that is where short-head tension peaks.",
+            "Stop slightly before vertical at the top so tension stays on the bicep."
+          ],
+          avoid: "Bouncing out of the bottom or shrugging shoulders up off the pad.",
+          anim: { type: "preacher_curl", angleLabel: "45° Pad", romLabel: "170° → 60°" },
+          tags: ["bicep", "arms", "short head", "inner bicep", "preacher", "thickness"]
+        },
+        {
+          id: "hammer-curl",
+          name: "Cross-Body / Standing Hammer Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Dumbbell",
+          tier: 3,
+          primaryHeads: ["brachialis"],
+          secondaryHeads: ["bicep_long"],
+          gluteLoad: 0,
+          angle: "0° Neutral Wrist (Palms Facing In)",
+          rom: "Dead hang at side to upper-chest level with locked upper arm",
+          setsReps: "3 × 10–14",
+          rest: "75s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Keep thumbs pointing up (neutral grip) to bias the brachialis and brachioradialis.",
+            "Glue elbows to your ribs—zero torso sway.",
+            "Squeeze hard for 1 second at the top to thicken outer arm width."
+          ],
+          avoid: "Rotating wrists palm-up midway turns it back into a standard curl.",
+          anim: { type: "hammer_curl", angleLabel: "0° Neutral", romLabel: "180° → 50°" },
+          tags: ["bicep", "arms", "brachialis", "forearm", "width", "dumbbell"]
+        },
+        {
+          id: "bayesian-cable-curl",
+          name: "Bayesian Cable Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Cable",
+          tier: 3,
+          primaryHeads: ["bicep_long"],
+          secondaryHeads: ["bicep_short"],
+          gluteLoad: 0,
+          angle: "Cable Low • Step Forward 25° Shoulder Extension",
+          rom: "Arm pulled behind hip into deep stretch, curl toward shoulder",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Face away from a low pulley so the cable pulls your arm backward.",
+            "Keep elbow stationary behind your hip line throughout.",
+            "Constant cable tension hits the long head even at full extension."
+          ],
+          avoid: "Letting the cable yank your shoulder into internal rotation at the bottom.",
+          anim: { type: "incline_curl", angleLabel: "25° Behind Hip", romLabel: "180° → 55°" },
+          tags: ["bicep", "arms", "long head", "cable", "constant tension"]
+        },
+        {
+          id: "concentration-curl",
+          name: "Seated Concentration Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Dumbbell",
+          tier: 4,
+          primaryHeads: ["bicep_short"],
+          secondaryHeads: ["brachialis"],
+          gluteLoad: 0,
+          angle: "Elbow Braced Inside Inner Thigh",
+          rom: "Full arm hang to peak supinated squeeze toward opposite shoulder",
+          setsReps: "2–3 × 12–15",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Brace back of triceps firmly against inner thigh to eliminate cheating.",
+            "Twist pinky inward at peak contraction for maximum bicep cramp.",
+            "Control the eccentric all the way down."
+          ],
+          avoid: "Using your leg to push the elbow upward on tough reps.",
+          anim: { type: "preacher_curl", angleLabel: "Braced Thigh", romLabel: "175° → 50°" },
+          tags: ["bicep", "arms", "short head", "peak", "finisher"]
+        },
+        {
+          id: "spider-curl",
+          name: "Chest-Supported Spider Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Dumbbell",
+          tier: 3,
+          primaryHeads: ["bicep_short"],
+          secondaryHeads: ["bicep_long"],
+          gluteLoad: 0,
+          angle: "45° Bench Prone • Arms Hang Vertically",
+          rom: "Full hang perpendicular to floor up to max peak squeeze",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Lie chest-down on a 45° incline bench so arms hang straight down.",
+            "Zero momentum possible—pure peak contraction on the short head.",
+            "Squeeze hard for 1s at the top of every rep."
+          ],
+          avoid: "Pulling elbows backward toward hips during the curl.",
+          anim: { type: "preacher_curl", angleLabel: "45° Prone • Vertical", romLabel: "Hang → Peak" },
+          tags: ["bicep", "arms", "short head", "spider curl", "peak"]
+        },
+        {
+          id: "reverse-ez-curl",
+          name: "Reverse-Grip EZ-Bar Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Barbell",
+          tier: 4,
+          primaryHeads: ["brachialis"],
+          secondaryHeads: ["bicep_long"],
+          gluteLoad: 0,
+          angle: "Overhand Pronated Grip • Wrists Flat",
+          rom: "Full hang to 90–110° elbow flexion keeping wrists neutral",
+          setsReps: "3 × 12–15",
+          rest: "60s",
+          tempo: "2-0-1-1",
+          cues: [
+            "Use a pronated (palms-down) grip to maximize brachioradialis and brachialis.",
+            "Keep knuckles stacked straight—don't curl wrists backward.",
+            "Pushes the biceps up from underneath for thicker arms."
+          ],
+          avoid: "Dropping wrists into extension or using too much weight with back swing.",
+          anim: { type: "hammer_curl", angleLabel: "Pronated Grip", romLabel: "175° → 65°" },
+          tags: ["bicep", "arms", "brachialis", "forearms", "reverse curl"]
+        },
+        {
+          id: "cable-overhead-curl",
+          name: "Overhead Cable Double-Bicep Curl",
+          group: "biceps",
+          groups: ["biceps"],
+          equipment: "Cable",
+          tier: 4,
+          primaryHeads: ["bicep_short"],
+          secondaryHeads: ["bicep_long"],
+          gluteLoad: 0,
+          angle: "Arms Raised 90° Sideways • High Pulleys",
+          rom: "Arms straight out at shoulder level curled toward ears",
+          setsReps: "3 × 12–15",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Raises elbows in front/side plane to isolate the bicep short head peak.",
+            "Keep upper arms parallel to the floor—only bend at the elbow.",
+            "Great finisher for pump without joint stress."
+          ],
+          avoid: "Dropping elbows downward as you fatigue.",
+          anim: { type: "face_pull", angleLabel: "90° T-Pose Curl", romLabel: "Straight → Ears" },
+          tags: ["bicep", "arms", "short head", "cable", "finisher"]
+        },
+        {
+          id: "overhead-cable-tricep-ext",
+          name: "Overhead Cable Tricep Extension",
+          group: "triceps",
+          groups: ["triceps"],
+          equipment: "Cable",
+          tier: 2,
+          primaryHeads: ["tricep_long"],
+          secondaryHeads: ["tricep_medial", "tricep_lateral"],
+          gluteLoad: 0,
+          angle: "Arms Overhead 150–170° • Torso Forward 20°",
+          rom: "Deep elbow bend behind head to full lockout overhead",
+          setsReps: "3 × 10–14",
+          rest: "90s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Raise arms overhead to put the tricep long head on maximum stretch.",
+            "Let forearms fold deep behind your head before pressing out.",
+            "Keep elbows pointing roughly forward—don't flare wide."
+          ],
+          avoid: "Dropping elbows down toward your ribs turns it into a chest/press.",
+          anim: { type: "overhead_ext", angleLabel: "160° Overhead", romLabel: "45° → 180°" },
+          tags: ["tricep", "arms", "long head", "overhead", "cable", "mass"]
+        },
+        {
+          id: "cable-rope-pushdown",
+          name: "Cable Tricep Pushdown (Bar or Rope)",
+          group: "triceps",
+          groups: ["triceps"],
+          equipment: "Cable",
+          tier: 3,
+          primaryHeads: ["tricep_lateral"],
+          secondaryHeads: ["tricep_medial"],
+          gluteLoad: 0,
+          angle: "Elbows Pinned at Sides • Slight 10° Forward Lean",
+          rom: "Forearms high (120° bend) down to full crisp lockout",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "2-0-1-1",
+          cues: [
+            "Pin upper arms tightly to your ribs—only the forearm pivots.",
+            "Lock elbows fully at the bottom and hold for 1 second.",
+            "Use bar for heavier lateral-head overload or rope to spread at bottom."
+          ],
+          avoid: "Letting elbows drift forward and using shoulders/lats to press down.",
+          anim: { type: "pushdown", angleLabel: "Elbows Pinned", romLabel: "50° → 180°" },
+          tags: ["tricep", "arms", "lateral head", "horseshoe", "pushdown", "cable"]
+        },
+        {
+          id: "close-grip-bench",
+          name: "Close-Grip Bench Press",
+          group: "triceps",
+          groups: ["triceps", "chest", "shoulders"],
+          equipment: "Barbell",
+          tier: 1,
+          primaryHeads: ["tricep_medial", "tricep_lateral"],
+          secondaryHeads: ["mid_chest", "front_delt", "tricep_long"],
+          gluteLoad: 0,
+          angle: "Shoulder-Width Grip • Elbows Tucked 20°",
+          rom: "Lower bar to lower sternum, drive straight to lockout",
+          setsReps: "3 × 6–10",
+          rest: "120s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Grip shoulder-width (not touching hands—too narrow hurts wrists).",
+            "Tuck elbows closer to ribs than flat bench so triceps carry the load.",
+            "Pause lightly on lower chest and press explosively."
+          ],
+          avoid: "Hands touching together stresses wrists without extra tricep gain.",
+          anim: { type: "bench_press", angleLabel: "0° Flat • Narrow", romLabel: "Chest → Lockout" },
+          tags: ["tricep", "arms", "medial head", "lateral head", "compound", "barbell"]
+        },
+        {
+          id: "ez-skull-crusher",
+          name: "Incline EZ-Bar Skull Crusher",
+          group: "triceps",
+          groups: ["triceps"],
+          equipment: "Barbell",
+          tier: 2,
+          primaryHeads: ["tricep_long"],
+          secondaryHeads: ["tricep_lateral", "tricep_medial"],
+          gluteLoad: 0,
+          angle: "30° Incline Bench • Arms Angled 15° Back",
+          rom: "Lower bar behind top of head for deep stretch, extend back to start",
+          setsReps: "3 × 10–12",
+          rest: "90s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Angle upper arms slightly back behind vertical so tension never drops at top.",
+            "Lower behind the crown of your head rather than to your forehead.",
+            "Keep elbows narrow and stable."
+          ],
+          avoid: "Vertical arms over chest let gravity disappear at lockout.",
+          anim: { type: "overhead_ext", angleLabel: "30° Bench • 15° Back", romLabel: "50° → 175°" },
+          tags: ["tricep", "arms", "long head", "skull crusher", "barbell"]
+        },
+        {
+          id: "single-arm-reverse-pushdown",
+          name: "Single-Arm Reverse Cable Pushdown",
+          group: "triceps",
+          groups: ["triceps"],
+          equipment: "Cable",
+          tier: 4,
+          primaryHeads: ["tricep_medial"],
+          secondaryHeads: ["tricep_lateral"],
+          gluteLoad: 0,
+          angle: "Underhand Supinated Grip • Elbow Tight",
+          rom: "Full elbow bend above parallel down to complete straight-arm lockout",
+          setsReps: "3 × 12–15",
+          rest: "60s",
+          tempo: "2-0-1-1",
+          cues: [
+            "Use a D-handle palm-up to emphasize the medial head near the elbow.",
+            "Keep wrist straight and elbow pinned against your side.",
+            "Squeeze hard at full lockout for elbow-end tricep density."
+          ],
+          avoid: "Twisting torso or flaring elbow outward.",
+          anim: { type: "pushdown", angleLabel: "Underhand Grip", romLabel: "55° → 180°" },
+          tags: ["tricep", "arms", "medial head", "lockout", "cable"]
+        },
+        {
+          id: "incline-db-press",
+          name: "30° Incline Dumbbell Press",
+          group: "chest",
+          groups: ["chest", "shoulders", "triceps"],
+          equipment: "Dumbbell",
+          tier: 1,
+          primaryHeads: ["upper_chest"],
+          secondaryHeads: ["mid_chest", "front_delt", "tricep_lateral"],
+          gluteLoad: 0,
+          angle: "30° Bench Incline • Elbows 45° Tucked",
+          rom: "Deep stretch beside upper chest to full converge overhead",
+          setsReps: "3–4 × 8–10",
+          rest: "120s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Use 30° incline (45° shifts too much load to front delts).",
+            "Tuck elbows 45° from torso—never flared straight out at 90°.",
+            "Touch dumbbells gently near upper chest level, pause 1s, press up."
+          ],
+          avoid: "Setting bench at 45–60° or flaring elbows out steals upper-chest work.",
+          anim: { type: "incline_press", angleLabel: "30° Incline", romLabel: "Deep Stretch → Top" },
+          tags: ["chest", "upper chest", "clavicular", "dumbbell", "press"]
+        },
+        {
+          id: "flat-bb-bench-press",
+          name: "Flat Barbell / Machine Chest Press",
+          group: "chest",
+          groups: ["chest", "triceps", "shoulders"],
+          equipment: "Barbell",
+          tier: 1,
+          primaryHeads: ["mid_chest"],
+          secondaryHeads: ["upper_chest", "lower_chest", "front_delt", "tricep_medial"],
+          gluteLoad: 0,
+          angle: "0° Flat Bench • Mild Arch • Elbows 45–60°",
+          rom: "Touch mid-lower sternum with control, drive smoothly to lockout",
+          setsReps: "3–4 × 6–8",
+          rest: "150s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Retract and depress shoulder blades into the bench before unracking.",
+            "Lower bar to nipple/lower-sternum line with forearms vertical.",
+            "Drive feet into floor for stability without bouncing bar off ribs."
+          ],
+          avoid: "Flaring elbows 90° toward your ears—hard on shoulders.",
+          anim: { type: "bench_press", angleLabel: "0° Flat • 45° Elbow", romLabel: "Sternum → Lockout" },
+          tags: ["chest", "mid chest", "bench", "compound", "barbell"]
+        },
+        {
+          id: "weighted-chest-dip",
+          name: "Forward-Lean Chest Dip",
+          group: "chest",
+          groups: ["chest", "triceps", "shoulders"],
+          equipment: "Bodyweight",
+          tier: 2,
+          primaryHeads: ["lower_chest"],
+          secondaryHeads: ["mid_chest", "tricep_lateral", "front_delt"],
+          gluteLoad: 0,
+          angle: "30° Torso Forward Lean • Legs Slightly Back",
+          rom: "Shoulders below elbows (90°+ stretch) to near-lockout squeeze",
+          setsReps: "3 × 8–12",
+          rest: "120s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Lean torso forward ~30° to bias lower chest over triceps.",
+            "Descend until upper arm is slightly below parallel.",
+            "Keep shoulders pushed down away from ears at the top."
+          ],
+          avoid: "Staying completely upright turns dips into a tricep exercise.",
+          anim: { type: "incline_press", angleLabel: "30° Forward Lean", romLabel: "Below Parallel → Top" },
+          tags: ["chest", "lower chest", "dips", "bodyweight", "sweep"]
+        },
+        {
+          id: "cable-chest-fly",
+          name: "High-to-Low / Mid Cable Fly",
+          group: "chest",
+          groups: ["chest"],
+          equipment: "Cable",
+          tier: 3,
+          primaryHeads: ["mid_chest", "lower_chest"],
+          secondaryHeads: ["upper_chest"],
+          gluteLoad: 0,
+          angle: "15° Soft Elbow Bend • Arms Sweeping Across Chest",
+          rom: "Wide pec stretch in line with torso to hands meeting at sternum",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Bring your biceps/elbows together, not just your hands.",
+            "Keep a fixed 15° bend in your elbows—don't turn it into a press.",
+            "Set pulleys slightly above shoulders for lower/mid pec sweep."
+          ],
+          avoid: "Letting shoulders roll forward at the end of the squeeze.",
+          anim: { type: "chest_fly", angleLabel: "15° Soft Elbow", romLabel: "Wide Stretch → Center" },
+          tags: ["chest", "mid chest", "lower chest", "fly", "cable"]
+        },
+        {
+          id: "pec-deck-fly",
+          name: "Pec Deck / Machine Chest Fly",
+          group: "chest",
+          groups: ["chest"],
+          equipment: "Machine",
+          tier: 3,
+          primaryHeads: ["mid_chest"],
+          secondaryHeads: ["upper_chest", "front_delt"],
+          gluteLoad: 0,
+          angle: "Seat Height = Handles Align With Mid Chest",
+          rom: "Full stretch just past torso plane to strong 1s squeeze in front",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Adjust seat so arms sit slightly below shoulder height.",
+            "Keep chest proud and shoulder blades pinned to backrest.",
+            "Pause 1 second in the fully contracted position."
+          ],
+          avoid: "Setting seat too low so handles sit at chin level.",
+          anim: { type: "chest_fly", angleLabel: "Mid-Chest Height", romLabel: "Wide Stretch → Touch" },
+          tags: ["chest", "mid chest", "machine", "pec deck", "fly"]
+        },
+        {
+          id: "low-to-high-cable-fly",
+          name: "Low-to-High Cable Fly",
+          group: "chest",
+          groups: ["chest"],
+          equipment: "Cable",
+          tier: 4,
+          primaryHeads: ["upper_chest"],
+          secondaryHeads: ["mid_chest", "front_delt"],
+          gluteLoad: 0,
+          angle: "Pulleys at Hip Level • Scoop Upward 45°",
+          rom: "Arms wide and low to palms meeting at upper-chest / chin level",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Follow the upward-inward fiber direction of the clavicular (upper) chest.",
+            "Scoop arms up to collarbone height with chest proud.",
+            "Squeeze upper chest hard for 1s at the top."
+          ],
+          avoid: "Bending elbows and turning it into a front raise.",
+          anim: { type: "chest_fly", angleLabel: "45° Upward Scoop", romLabel: "Low Wide → Collarbone" },
+          tags: ["chest", "upper chest", "cable", "fly"]
+        },
+        {
+          id: "wide-lat-pulldown",
+          name: "Wide / Neutral-Grip Lat Pulldown",
+          group: "back",
+          groups: ["back", "biceps"],
+          equipment: "Cable",
+          tier: 1,
+          primaryHeads: ["lats_width"],
+          secondaryHeads: ["mid_back", "bicep_short", "rear_delt"],
+          gluteLoad: 0,
+          angle: "10–15° Slight Lean Back • Grip 1.3× Shoulder Width",
+          rom: "Full overhead lat stretch to bar touching upper collarbone",
+          setsReps: "3–4 × 8–12",
+          rest: "105s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Initiate by depressing shoulders down, then drive elbows toward your hips.",
+            "Let arms stretch completely overhead between reps.",
+            "Stay tall to keep the pull vertical for lat width."
+          ],
+          avoid: "Leaning back 45° turns it into a horizontal row.",
+          anim: { type: "lat_pulldown", angleLabel: "15° Lean • Vertical", romLabel: "Full Reach → Collarbone" },
+          tags: ["back", "lats", "width", "v-taper", "pulldown", "cable"]
+        },
+        {
+          id: "chest-supported-row",
+          name: "Chest-Supported Machine / DB Row",
+          group: "back",
+          groups: ["back", "shoulders", "biceps"],
+          equipment: "Machine",
+          tier: 1,
+          primaryHeads: ["mid_back"],
+          secondaryHeads: ["lats_width", "rear_delt", "traps_upper", "brachialis"],
+          gluteLoad: 0,
+          angle: "30–45° Chest Pad • Elbows 45–60° Out",
+          rom: "Full protraction (shoulder blades spread forward) to tight squeeze back",
+          setsReps: "3–4 × 8–12",
+          rest: "105s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Chest stays glued to pad—zero lower-back or glute fatigue.",
+            "Let shoulder blades wrap forward at bottom for a deep mid-back stretch.",
+            "Drive elbows back and squeeze shoulder blades together for 1 second."
+          ],
+          avoid: "Pulling torso off the pad with momentum.",
+          anim: { type: "barbell_row", angleLabel: "45° Pad • 0% Glutes", romLabel: "Protract → Squeeze" },
+          tags: ["back", "mid back", "rhomboids", "thickness", "no glutes", "row"]
+        },
+        {
+          id: "single-arm-cable-lat-row",
+          name: "Single-Arm Iliac Lat Row",
+          group: "back",
+          groups: ["back", "biceps"],
+          equipment: "Cable",
+          tier: 2,
+          primaryHeads: ["lats_width"],
+          secondaryHeads: ["mid_back", "brachialis"],
+          gluteLoad: 0,
+          angle: "Elbow Tight to Ribcage • Pull Toward Hip",
+          rom: "Full forward reach across midline to elbow stopping right at hip",
+          setsReps: "3 × 10–12 / side",
+          rest: "75s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Keep elbow tucked close to your ribs and pull in an arc toward your pocket.",
+            "Stop elbow right at torso plane—pulling further back shifts work to rear delt.",
+            "Allow shoulder blade to glide forward smoothly on every rep."
+          ],
+          avoid: "Pulling elbow way behind your back or shrugging shoulder up.",
+          anim: { type: "barbell_row", angleLabel: "Elbow → Hip Line", romLabel: "Stretch → Hip" },
+          tags: ["back", "lats", "lower lats", "cable", "unilateral"]
+        },
+        {
+          id: "pull-up",
+          name: "Pull-Up / Assisted Pull-Up",
+          group: "back",
+          groups: ["back", "biceps"],
+          equipment: "Bodyweight",
+          tier: 1,
+          primaryHeads: ["lats_width"],
+          secondaryHeads: ["mid_back", "bicep_short", "brachialis"],
+          gluteLoad: 0,
+          angle: "Shoulder-Width+ Overhand Grip • Chest Proud",
+          rom: "Dead hang (ears between biceps) up to collarbone near bar",
+          setsReps: "3 × 6–10",
+          rest: "120s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Pull chest toward the bar rather than craning your chin over it.",
+            "Full dead hang at bottom stretches the lats completely.",
+            "Use assisted machine or band if needed to hit clean 6–10 reps."
+          ],
+          avoid: "Half-reps from 90° elbows miss the best lat-growth stretch.",
+          anim: { type: "lat_pulldown", angleLabel: "Vertical Pull", romLabel: "Dead Hang → Chest" },
+          tags: ["back", "lats", "bodyweight", "pullup", "width"]
+        },
+        {
+          id: "tbar-row-cable-seated",
+          name: "Seated Cable Row (Wide/Neutral)",
+          group: "back",
+          groups: ["back", "biceps"],
+          equipment: "Cable",
+          tier: 2,
+          primaryHeads: ["mid_back"],
+          secondaryHeads: ["lats_width", "rear_delt", "bicep_short"],
+          gluteLoad: 0,
+          angle: "Torso Upright 90° • Slight Knee Bend",
+          rom: "Full forward shoulder stretch to handle touching lower sternum",
+          setsReps: "3 × 10–12",
+          rest: "90s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Zero glute fatigue; sit tall and let shoulder blades protract forward.",
+            "Wide grip targets mid-back & rear delts; narrow grip biases lats.",
+            "Pause 1s with chest proud at the pull."
+          ],
+          avoid: "Rocking torso wildly back and forth.",
+          anim: { type: "barbell_row", angleLabel: "Upright • 0% Glutes", romLabel: "Reach → Sternum" },
+          tags: ["back", "mid back", "cable", "row", "no glutes"]
+        },
+        {
+          id: "barbell-bent-over-row",
+          name: "Pendlay / Barbell Bent-Over Row",
+          group: "back",
+          groups: ["back", "biceps"],
+          equipment: "Barbell",
+          tier: 1,
+          primaryHeads: ["mid_back", "lats_width"],
+          secondaryHeads: ["lower_back", "rear_delt", "brachialis"],
+          gluteLoad: 15,
+          angle: "45° Torso Angle • Overhand Shoulder-Width Grip",
+          rom: "Full arm hang near shins pulled explosively to lower ribs/belly",
+          setsReps: "3–4 × 6–10",
+          rest: "120s",
+          tempo: "2-0-1-1",
+          cues: [
+            "Lock torso at ~45°—don't stand upright with each rep.",
+            "Pull toward belly button for lats; higher toward chest for upper/mid back.",
+            "Keep lower back neutral and braced."
+          ],
+          avoid: "Bouncing upright with legs and hips to heave the bar.",
+          anim: { type: "barbell_row", angleLabel: "45° Torso Hinge", romLabel: "Hang → Lower Ribs" },
+          tags: ["back", "mid back", "lats", "barbell", "row", "thickness"]
+        },
+        {
+          id: "straight-arm-lat-pulldown",
+          name: "Straight-Arm Cable Pullover",
+          group: "back",
+          groups: ["back"],
+          equipment: "Cable",
+          tier: 3,
+          primaryHeads: ["lats_width"],
+          secondaryHeads: ["tricep_long", "upper_abs"],
+          gluteLoad: 0,
+          angle: "35° Hip Hinge • Arms Nearly Straight (15° Bend)",
+          rom: "Arms overhead in line with torso down to thighs",
+          setsReps: "3 × 12–15",
+          rest: "60s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Takes biceps completely out of the equation so you feel your lats.",
+            "Hinge hips slightly back and sweep hands down toward your pockets.",
+            "Pause 1s at your thighs with lats flared."
+          ],
+          avoid: "Bending elbows into a tricep pushdown.",
+          anim: { type: "lat_pulldown", angleLabel: "35° Hinge • Straight Arm", romLabel: "Overhead → Thighs" },
+          tags: ["back", "lats", "isolation", "cable", "pullover"]
+        },
+        {
+          id: "db-shrug",
+          name: "Kelso / Incline Trap Shrug",
+          group: "back",
+          groups: ["back"],
+          equipment: "Dumbbell",
+          tier: 4,
+          primaryHeads: ["traps_upper"],
+          secondaryHeads: ["mid_back"],
+          gluteLoad: 0,
+          angle: "15° Slight Forward Lean • Pull Up & Slightly Back",
+          rom: "Full downward shoulder depression to 2s peak shrug pause",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "2-1-1-2",
+          cues: [
+            "Lean 10–15° forward so trap fibers line up directly with gravity.",
+            "Hold the top squeeze for 2 full seconds instead of bouncing.",
+            "Let dumbbells pull shoulders all the way down between reps."
+          ],
+          avoid: "Rolling shoulders in circles—move cleanly up-and-back.",
+          anim: { type: "hammer_curl", angleLabel: "15° Lean • Shrug", romLabel: "Full Drop → 2s Hold" },
+          tags: ["back", "traps", "upper traps", "yoke", "shrug"]
+        },
+        {
+          id: "back-extension",
+          name: "45° Back Extension (Spinal Bias)",
+          group: "back",
+          groups: ["back"],
+          equipment: "Bodyweight",
+          tier: 3,
+          primaryHeads: ["lower_back"],
+          secondaryHeads: ["glute_max", "ham_stretch"],
+          gluteLoad: 22,
+          angle: "45° Roman Chair • Pad Below Hip Crease",
+          rom: "Controlled torso fold down to parallel—squeeze erectors up",
+          setsReps: "3 × 12–15",
+          rest: "75s",
+          tempo: "3-0-1-1",
+          cues: [
+            "Set pad high enough to stabilize pelvis, fold smoothly at waist.",
+            "Stop at neutral straight line at top—do not hyperextend past flat.",
+            "Hold a light plate against chest once bodyweight is easy."
+          ],
+          avoid: "Jerking upward past straight spine alignment.",
+          anim: { type: "rdl", angleLabel: "45° Bench", romLabel: "Fold → Neutral Spine" },
+          tags: ["back", "lower back", "erectors", "spine"]
+        },
+        {
+          id: "seated-db-shoulder-press",
+          name: "Seated Dumbbell Shoulder Press",
+          group: "shoulders",
+          groups: ["shoulders", "triceps"],
+          equipment: "Dumbbell",
+          tier: 1,
+          primaryHeads: ["front_delt"],
+          secondaryHeads: ["side_delt", "upper_chest", "tricep_lateral"],
+          gluteLoad: 0,
+          angle: "75–80° High Incline • Elbows 30° Forward",
+          rom: "Dumbbells to ear/chin level to full controlled overhead press",
+          setsReps: "3–4 × 8–10",
+          rest: "120s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Set bench one notch below 90° (~80°) for safer shoulder mechanics.",
+            "Keep elbows angled 30° forward of your torso (scapular plane).",
+            "Brace abs so lower back doesn't arch off the pad."
+          ],
+          avoid: "Flaring elbows straight out at 90° pinches the shoulder joint.",
+          anim: { type: "incline_press", angleLabel: "80° Seat • 30° Plane", romLabel: "Ears → Overhead" },
+          tags: ["shoulders", "front delt", "press", "dumbbell", "overhead"]
+        },
+        {
+          id: "cable-lateral-raise",
+          name: "Cable Lateral Raise (Wrist-Height)",
+          group: "shoulders",
+          groups: ["shoulders"],
+          equipment: "Cable",
+          tier: 2,
+          primaryHeads: ["side_delt"],
+          secondaryHeads: ["traps_upper"],
+          gluteLoad: 0,
+          angle: "Pulley at Wrist Height • Arm 30° Forward",
+          rom: "Hand across thigh up to shoulder height—constant bottom tension",
+          setsReps: "4 × 12–15",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Wrist-height pulley gives peak tension right at the bottom stretch.",
+            "Reach outward toward the wall, not upward toward your ears.",
+            "Stop at shoulder height so upper traps don't take over."
+          ],
+          avoid: "Shrugging shoulders up or swinging torso.",
+          anim: { type: "lateral_raise", angleLabel: "Wrist Pulley • 30° Plane", romLabel: "Across Hip → 90°" },
+          tags: ["shoulders", "side delt", "lateral", "width", "v-taper", "cable"]
+        },
+        {
+          id: "db-lateral-raise",
+          name: "Leaning / Seated DB Lateral Raise",
+          group: "shoulders",
+          groups: ["shoulders"],
+          equipment: "Dumbbell",
+          tier: 3,
+          primaryHeads: ["side_delt"],
+          secondaryHeads: ["front_delt"],
+          gluteLoad: 0,
+          angle: "10° Forward Lean • Thumbs Level",
+          rom: "Arms raised in 30° scapular plane to shoulder level",
+          setsReps: "3–4 × 12–18",
+          rest: "60s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Raise dumbbells slightly in front of your hips (30° angle).",
+            "Keep pinkies level with thumbs—don't pour the pitcher aggressively.",
+            "Lead with the elbows and control the lowering for 2 seconds."
+          ],
+          avoid: "Turning thumbs steeply downward causes shoulder impingement.",
+          anim: { type: "lateral_raise", angleLabel: "30° Scapular Plane", romLabel: "0° → 90°" },
+          tags: ["shoulders", "side delt", "width", "dumbbell", "lateral raise"]
+        },
+        {
+          id: "reverse-pec-deck",
+          name: "Reverse Pec Deck / Rear Delt Fly",
+          group: "shoulders",
+          groups: ["shoulders", "back"],
+          equipment: "Machine",
+          tier: 2,
+          primaryHeads: ["rear_delt"],
+          secondaryHeads: ["mid_back"],
+          gluteLoad: 0,
+          angle: "Neutral Grip • Chest Braced on Pad",
+          rom: "Arms sweeping outward in arc just to torso line",
+          setsReps: "3–4 × 12–15",
+          rest: "75s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Push handles outward toward side walls rather than pinching blades.",
+            "Stopping just in line with torso keeps tension purely on rear delts.",
+            "Keep traps relaxed and neck long."
+          ],
+          avoid: "Pinching shoulder blades hard shifts work to rhomboids.",
+          anim: { type: "chest_fly", angleLabel: "Chest Pad • Sweep Out", romLabel: "Front → Torso Line" },
+          tags: ["shoulders", "rear delt", "posterior", "3d delts", "machine"]
+        },
+        {
+          id: "cable-face-pull",
+          name: "Rope Face Pull (External Rotation)",
+          group: "shoulders",
+          groups: ["shoulders", "back"],
+          equipment: "Cable",
+          tier: 3,
+          primaryHeads: ["rear_delt"],
+          secondaryHeads: ["mid_back", "traps_upper"],
+          gluteLoad: 0,
+          angle: "Pulley at Face Height • Split Stance",
+          rom: "Full forward protraction back to double-bicep pose beside ears",
+          setsReps: "3 × 15",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Grip rope with thumbs pointing backward so hands lead past ears.",
+            "Finish in a double-bicep pose—wrists behind elbows.",
+            "Great for shoulder health, posture, and rear-delt cap."
+          ],
+          avoid: "Pulling toward the chest with elbows low turns it into a row.",
+          anim: { type: "face_pull", angleLabel: "Eye-Level Pulley", romLabel: "Full Reach → Ears" },
+          tags: ["shoulders", "rear delt", "face pull", "posture", "cable"]
+        },
+        {
+          id: "leg-extension",
+          name: "Seated Leg Extension (Zero Glute)",
+          group: "quads",
+          groups: ["quads"],
+          equipment: "Machine",
+          tier: 2,
+          primaryHeads: ["quad_rectus", "quad_inner"],
+          secondaryHeads: ["quad_outer"],
+          gluteLoad: 0,
+          angle: "Backrest Reclined 105° • Knee Aligned With Pivot",
+          rom: "Maximum knee bend (105°+) up to crisp full lockout pause",
+          setsReps: "3–4 × 10–15",
+          rest: "90s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Reclining the seat slightly stretches the rectus femoris (middle quad) better.",
+            "Align knee joint directly with machine pivot axis.",
+            "0% glute involvement—pure quad growth and teardrop (VMO) detail."
+          ],
+          avoid: "Lifting hips off the seat or stopping short of lockout.",
+          anim: { type: "leg_ext", angleLabel: "105° Seat • 0% Glute", romLabel: "105° Bend → 180° Lock" },
+          tags: ["legs", "quads", "rectus femoris", "vmo", "teardrop", "no glutes", "zero glutes"]
+        },
+        {
+          id: "hack-squat-narrow",
+          name: "Hack Squat (Feet Low — Quad Focus)",
+          group: "quads",
+          groups: ["quads"],
+          equipment: "Machine",
+          tier: 1,
+          primaryHeads: ["quad_outer", "quad_inner"],
+          secondaryHeads: ["quad_rectus", "glute_max"],
+          gluteLoad: 15,
+          angle: "Feet Low on Platform • Shoulder-Width • Knees Forward",
+          rom: "Hamstrings cover calves (deep knee flexion) back to 95% lockout",
+          setsReps: "3–4 × 8–12",
+          rest: "150s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Placing feet LOWER on the sled maximizes knee bend (Quads) and keeps Glutes minimal (~15%).",
+            "Let knees travel smoothly forward over toes while keeping heels glued down.",
+            "Brace back flat against pad the whole rep."
+          ],
+          avoid: "Putting feet high up on the platform shifts focus straight into glutes!",
+          anim: { type: "hack_squat", angleLabel: "Feet Low • Quad Bias", romLabel: "Deep Knee Bend → Top" },
+          tags: ["legs", "quads", "outer sweep", "vmo", "low glute", "hack squat", "machine"]
+        },
+        {
+          id: "pendulum-sissy-squat",
+          name: "Heels-Elevated Goblet / Smith Squat",
+          group: "quads",
+          groups: ["quads"],
+          equipment: "Dumbbell",
+          tier: 2,
+          primaryHeads: ["quad_outer", "quad_inner"],
+          secondaryHeads: ["quad_rectus", "glute_max"],
+          gluteLoad: 18,
+          angle: "Heels Elevated on Plates • Upright Torso",
+          rom: "Straight-down upright knee travel to full depth without leaning forward",
+          setsReps: "3 × 10–12",
+          rest: "120s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Raise heels 1–2 inches on plates and stay upright to isolate quads over glutes.",
+            "Push knees forward rather than sitting hips far back.",
+            "Great quad-sweep builder if your gym lacks a Hack Squat."
+          ],
+          avoid: "Folding torso forward turns it into a hip/glute squat.",
+          anim: { type: "hack_squat", angleLabel: "Heels Up • Upright", romLabel: "Upright Drop → Top" },
+          tags: ["legs", "quads", "outer sweep", "low glute", "heels elevated"]
+        },
+        {
+          id: "barbell-back-squat",
+          name: "Barbell Back Squat",
+          group: "quads",
+          groups: ["quads", "glutes"],
+          equipment: "Barbell",
+          tier: 1,
+          primaryHeads: ["quad_outer", "glute_max"],
+          secondaryHeads: ["quad_inner", "lower_back"],
+          gluteLoad: 42,
+          angle: "High-Bar Position • Feet Shoulder-Width",
+          rom: "Crease of hip below top of knee to strong upright standing lockout",
+          setsReps: "3–4 × 5–8",
+          rest: "180s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Heads up: ~42% glute involvement. Use Low-Glute Guard if you want pure quad focus!",
+            "Big belly brace before descending; track knees over 2nd/3rd toe.",
+            "Drive evenly through mid-foot."
+          ],
+          avoid: "Hips shooting up faster than chest.",
+          anim: { type: "hack_squat", angleLabel: "High-Bar • 42% Glutes", romLabel: "Below Parallel → Stand" },
+          tags: ["legs", "quads", "glutes", "squat", "barbell"]
+        },
+        {
+          id: "bulgarian-split-squat",
+          name: "Bulgarian Split Squat",
+          group: "quads",
+          groups: ["quads", "glutes"],
+          equipment: "Dumbbell",
+          tier: 2,
+          primaryHeads: ["quad_outer", "glute_max"],
+          secondaryHeads: ["quad_inner", "glute_med"],
+          gluteLoad: 55,
+          angle: "Upright = Quad Bias • 25° Lean = High Glute",
+          rom: "Back knee hovers 1 inch off floor, drive through front foot",
+          setsReps: "3 × 8–10 / leg",
+          rest: "120s",
+          tempo: "3-1-1-0",
+          cues: [
+            "High Glute Alert (~55% if leaning forward). Keep torso upright and stance shorter for quads.",
+            "70–80% of body weight stays on the front leg.",
+            "Pause 1s near the floor for stability."
+          ],
+          avoid: "Long step + leaning forward makes this mostly a glute builder.",
+          anim: { type: "hack_squat", angleLabel: "Split • 55% Glute", romLabel: "Hover → Stand" },
+          tags: ["legs", "quads", "glutes", "split squat"]
+        },
+        {
+          id: "seated-leg-curl",
+          name: "Seated Leg Curl (Zero Glute)",
+          group: "hamstrings",
+          groups: ["hamstrings"],
+          equipment: "Machine",
+          tier: 2,
+          primaryHeads: ["ham_stretch", "ham_curl"],
+          secondaryHeads: ["gastroc"],
+          gluteLoad: 0,
+          angle: "Hips Flexed 90° • Lap Pad Locked Tight",
+          rom: "Full straight-leg stretch at top down to ankle under seat",
+          setsReps: "3–4 × 10–12",
+          rest: "90s",
+          tempo: "3-1-1-1",
+          cues: [
+            "Outperforms lying leg curl because flexed hips put hamstrings on a deeper stretch.",
+            "0% glute involvement—100% isolated hamstring shape.",
+            "Lean slightly forward over the lap pad for an even stronger stretch."
+          ],
+          avoid: "Letting thighs lift off the seat during heavy curls.",
+          anim: { type: "leg_curl", angleLabel: "90° Hip Flex • 0% Glute", romLabel: "Straight → Under Seat" },
+          tags: ["legs", "hamstrings", "no glutes", "zero glutes", "seated curl", "machine"]
+        },
+        {
+          id: "lying-leg-curl",
+          name: "Lying Leg Curl (Zero Glute)",
+          group: "hamstrings",
+          groups: ["hamstrings"],
+          equipment: "Machine",
+          tier: 3,
+          primaryHeads: ["ham_curl"],
+          secondaryHeads: ["gastroc"],
+          gluteLoad: 5,
+          angle: "Hips Pressed Flat Into Bench",
+          rom: "Near-straight legs curled smoothly until pad touches hamstrings",
+          setsReps: "3 × 10–14",
+          rest: "75s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Drive hips down into the pad—do NOT let your butt pop up as you curl.",
+            "Hits the lower/distal hamstring peak strongly.",
+            "Control the lowering phase for 2–3 seconds."
+          ],
+          avoid: "Arching lower back and lifting hips up off the bench.",
+          anim: { type: "leg_curl", angleLabel: "Hips Flat • Peak Curl", romLabel: "170° → 50°" },
+          tags: ["legs", "hamstrings", "distal", "low glute", "machine"]
+        },
+        {
+          id: "romanian-deadlift",
+          name: "Romanian Deadlift (RDL)",
+          group: "hamstrings",
+          groups: ["hamstrings", "glutes", "back"],
+          equipment: "Barbell",
+          tier: 1,
+          primaryHeads: ["ham_stretch"],
+          secondaryHeads: ["glute_max", "lower_back"],
+          gluteLoad: 38,
+          angle: "15° Fixed Soft Knee • Pure Hip Hinge",
+          rom: "Push hips straight back until bar reaches mid-shin, stand to neutral",
+          setsReps: "3 × 6–10",
+          rest: "150s",
+          tempo: "3-1-1-0",
+          cues: [
+            "Note: Hits hamstrings AND ~38% glutes. Stop right at mid-shin to limit glute takeover.",
+            "Keep bar/dumbbells shaving your thighs and shins.",
+            "Stand tall to neutral—don't thrust hips hard forward at the top."
+          ],
+          avoid: "Bending knees more mid-rep turns it into a glute lift.",
+          anim: { type: "rdl", angleLabel: "15° Knee • Hip Hinge", romLabel: "Standing → Mid-Shin" },
+          tags: ["legs", "hamstrings", "rdl", "stretch", "glutes", "hinge"]
+        },
+        {
+          id: "glute-hip-thrust",
+          name: "Barbell / Machine Hip Thrust",
+          group: "glutes",
+          groups: ["glutes"],
+          equipment: "Barbell",
+          tier: 1,
+          primaryHeads: ["glute_max"],
+          secondaryHeads: ["glute_med", "ham_stretch"],
+          gluteLoad: 90,
+          angle: "Shoulder Blades on Bench • Shins Vertical at Top",
+          rom: "Hips drop 45° down, drive up to horizontal tabletop with 1s lock",
+          setsReps: "3 × 8–12",
+          rest: "120s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Dedicated glute builder (~90% glute load).",
+            "Keep chin tucked forward and ribs down—avoid overarching lower back.",
+            "Shins perpendicular (90°) to floor at peak lockout."
+          ],
+          avoid: "Feet too close hits quads; feet too far shifts to hamstrings.",
+          anim: { type: "hip_thrust", angleLabel: "90° Shins at Top", romLabel: "Drop → Tabletop" },
+          tags: ["legs", "glutes", "hip thrust", "posterior"]
+        },
+        {
+          id: "cable-hip-abduction",
+          name: "Cable / Machine Hip Abduction",
+          group: "glutes",
+          groups: ["glutes"],
+          equipment: "Machine",
+          tier: 3,
+          primaryHeads: ["glute_med"],
+          secondaryHeads: ["glute_max"],
+          gluteLoad: 85,
+          angle: "Upright Torso • Drive Knees Outward",
+          rom: "Knees together to maximum lateral hip abduction pause",
+          setsReps: "3 × 12–15",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Targets upper/side glute shelf (gluteus medius).",
+            "Keep pelvis steady and control the return.",
+            "Skip this if you're trying to minimize glute size."
+          ],
+          avoid: "Using momentum or rocking torso back and forth.",
+          anim: { type: "lateral_raise", angleLabel: "Lateral Hip Sweep", romLabel: "Closed → Wide" },
+          tags: ["legs", "glutes", "glute medius", "abduction"]
+        },
+        {
+          id: "standing-calf-raise",
+          name: "Standing / Leg-Press Calf Raise",
+          group: "calves",
+          groups: ["calves"],
+          equipment: "Machine",
+          tier: 3,
+          primaryHeads: ["gastroc"],
+          secondaryHeads: ["soleus"],
+          gluteLoad: 0,
+          angle: "Knees Straight • Balls of Feet on Edge",
+          rom: "Full 2s deep heel-drop stretch up onto big-toe peak",
+          setsReps: "4 × 10–15",
+          rest: "60s",
+          tempo: "2-2-1-1",
+          cues: [
+            "Straight knees load the gastrocnemius (upper diamond calf).",
+            "ALWAYS pause 2 seconds at the bottom stretch—never bounce!",
+            "Drive straight through the ball of your big toe."
+          ],
+          avoid: "Bouncing fast lets Achilles tendon recoil steal the work.",
+          anim: { type: "calf_raise", angleLabel: "Straight Knee • 2s Stretch", romLabel: "Deep Drop → Tiptoe" },
+          tags: ["legs", "calves", "gastroc", "standing", "no glutes"]
+        },
+        {
+          id: "seated-calf-raise",
+          name: "Seated Calf Raise",
+          group: "calves",
+          groups: ["calves"],
+          equipment: "Machine",
+          tier: 4,
+          primaryHeads: ["soleus"],
+          secondaryHeads: ["gastroc"],
+          gluteLoad: 0,
+          angle: "Knees Bent 90° • Pad Above Knees",
+          rom: "Deep ankle dorsiflexion stretch to full heel lift pause",
+          setsReps: "3 × 12–18",
+          rest: "60s",
+          tempo: "2-2-1-1",
+          cues: [
+            "Bending the knee 90° targets the deeper soleus for lower-leg thickness.",
+            "Hold the bottom stretch 2 seconds every single rep.",
+            "Smooth, strict ankle range—zero bouncing."
+          ],
+          avoid: "Fast half-reps that never hit full stretch.",
+          anim: { type: "calf_raise", angleLabel: "90° Bent Knee", romLabel: "Deep Stretch → Peak" },
+          tags: ["legs", "calves", "soleus", "seated", "no glutes"]
+        },
+        {
+          id: "cable-kneeling-crunch",
+          name: "Kneeling Cable Rope Crunch",
+          group: "core",
+          groups: ["core"],
+          equipment: "Cable",
+          tier: 3,
+          primaryHeads: ["upper_abs"],
+          secondaryHeads: ["lower_abs"],
+          gluteLoad: 0,
+          angle: "Hips Locked Stationary • Curl Ribs to Pelvis",
+          rom: "Ribcage extended upright curling spine down into tight C-shape",
+          setsReps: "3 × 12–15",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Freeze your hips—do NOT sit your butt back toward your heels.",
+            "Roll ribs toward your belly button like a spinal curl.",
+            "Exhale completely at the bottom squeeze."
+          ],
+          avoid: "Hinging back and forth at the hips uses hip flexors, not abs.",
+          anim: { type: "crunch", angleLabel: "Hips Locked • Spine Curl", romLabel: "Extended → Curled" },
+          tags: ["abs", "core", "upper abs", "cable", "weighted abs"]
+        },
+        {
+          id: "hanging-leg-raise",
+          name: "Hanging / Captain's Chair Leg Raise",
+          group: "core",
+          groups: ["core"],
+          equipment: "Bodyweight",
+          tier: 3,
+          primaryHeads: ["lower_abs"],
+          secondaryHeads: ["upper_abs", "obliques"],
+          gluteLoad: 0,
+          angle: "Posterior Pelvic Tilt • Curl Tailbone Up",
+          rom: "Dead hang legs raised past 90° by curling pelvis toward chest",
+          setsReps: "3 × 10–15",
+          rest: "75s",
+          tempo: "2-1-1-0",
+          cues: [
+            "Lower abs fire when you curl your pelvis upward past 90°!",
+            "Bend knees slightly if needed so you can curl your tailbone up cleanly.",
+            "Lower slowly without swinging."
+          ],
+          avoid: "Swinging legs with momentum and stopping at 90°.",
+          anim: { type: "crunch", angleLabel: "Pelvis Curl > 90°", romLabel: "Hang → Tailbone Up" },
+          tags: ["abs", "core", "lower abs", "hanging", "bodyweight"]
+        },
+        {
+          id: "cable-woodchopper",
+          name: "Cable Diagonal Woodchopper",
+          group: "core",
+          groups: ["core"],
+          equipment: "Cable",
+          tier: 4,
+          primaryHeads: ["obliques"],
+          secondaryHeads: ["upper_abs"],
+          gluteLoad: 0,
+          angle: "Arms Extended • Rotate Through Ribcage",
+          rom: "Controlled rotation from pulley side across chest to opposite hip",
+          setsReps: "3 × 12 / side",
+          rest: "60s",
+          tempo: "2-1-1-1",
+          cues: [
+            "Keep arms relatively straight and pivot through your mid-torso/obliques.",
+            "Avoid twisting lower back aggressively—brace abs tight.",
+            "Control the return back to the cable stack."
+          ],
+          avoid: "Pulling with arms/shoulders instead of rotating through waist.",
+          anim: { type: "face_pull", angleLabel: "Diagonal Rotation", romLabel: "Side → Opposite Hip" },
+          tags: ["abs", "core", "obliques", "waist", "cable"]
+        }
+      ]
+    };
+    /* === EXERCISE_DATABASE_END === */
+
+    // Storage Keys
+    const STORAGE_STATE = "ironsync_state_v1";
+    const STORAGE_CUSTOM_EX = "ironsync_custom_ex_v1";
+
+    // App State
+    let db = clone(DEFAULT_DATA);
+    let state = {
+      view: "builder",
+      selectedGroups: ["biceps"],
+      targetCount: 3,
+      equipment: "all",
+      lowGluteGuard: true,
+      orderMode: "smart", // "smart" | "grouped"
+      search: "",
+      pinnedIds: [],
+      workoutIds: []
+    };
+
+    let currentModalExId = null;
+    let currentVideoUrl = null;
+    let simAnimFrame = null;
+    let simPlaying = true;
+    let simSpeed = 1;
+    let simProgress = 0;
+    let libNoGlute = false;
+
+    function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => el.classList.remove("show"), 2200);
+    }
+
+    // IndexedDB Offline Video Store
+    const VideoStore = {
+      dbPromise: null,
+      open() {
+        if (this.dbPromise) return this.dbPromise;
+        this.dbPromise = new Promise((resolve, reject) => {
+          if (!("indexedDB" in window)) return reject(new Error("No IndexedDB"));
+          const req = indexedDB.open("ironsync_videos_v1", 1);
+          req.onupgradeneeded = () => {
+            if (!req.result.objectStoreNames.contains("videos")) {
+              req.result.createObjectStore("videos");
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+        return this.dbPromise;
+      },
+      async set(id, blob) {
+        const d = await this.open();
+        return new Promise((resolve, reject) => {
+          const tx = d.transaction("videos", "readwrite");
+          tx.objectStore("videos").put(blob, id);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+      },
+      async get(id) {
+        try {
+          const d = await this.open();
+          return new Promise((resolve) => {
+            const tx = d.transaction("videos", "readonly");
+            const req = tx.objectStore("videos").get(id);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+          });
+        } catch { return null; }
+      },
+      async remove(id) {
+        try {
+          const d = await this.open();
+          return new Promise((resolve) => {
+            const tx = d.transaction("videos", "readwrite");
+            tx.objectStore("videos").delete(id);
+            tx.oncomplete = () => resolve();
+          });
+        } catch {}
+      },
+      async listKeys() {
+        try {
+          const d = await this.open();
+          return new Promise((resolve) => {
+            const tx = d.transaction("videos", "readonly");
+            const req = tx.objectStore("videos").getAllKeys();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
+          });
+        } catch { return []; }
+      }
+    };
+
+    let cachedVideoKeys = new Set();
+    let serverVideos = {};
+
+    async function refreshVideoKeys() {
+      const keys = await VideoStore.listKeys();
+      const merged = new Set(keys);
+      if (location.protocol.startsWith("http")) {
+        try {
+          const res = await fetch("./api/videos", { cache: "no-store" });
+          if (res.ok) {
+            const payload = await res.json();
+            serverVideos = payload.videos || {};
+            Object.keys(serverVideos).forEach((k) => merged.add(k));
+          }
+        } catch {}
+      }
+      cachedVideoKeys = merged;
+    }
+
+    async function downloadYoutubeForExercise(exerciseId, url) {
+      if (!location.protocol.startsWith("http")) {
+        throw new Error("Run python3 server.py and open http://localhost:8765 to auto-download YouTube videos, or attach a local .mp4 file.");
+      }
+      const res = await fetch("./api/download-video", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ exerciseId, url })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Download failed");
+      }
+      await refreshVideoKeys();
+      return data.path;
+    }
+
+    // Persistence
+    function loadSavedData() {
+      try {
+        const rawCustom = localStorage.getItem(STORAGE_CUSTOM_EX);
+        if (rawCustom) {
+          const parsed = JSON.parse(rawCustom);
+          if (Array.isArray(parsed)) {
+            mergeExercisesIntoDb(parsed);
+          }
+        }
+        const rawState = localStorage.getItem(STORAGE_STATE);
+        if (rawState) {
+          const s = JSON.parse(rawState);
+          state = { ...state, ...s };
+          if (!Array.isArray(state.selectedGroups) || state.selectedGroups.length === 0) {
+            state.selectedGroups = ["biceps"];
+          }
+        }
+      } catch (e) {
+        console.warn("Storage unavailable:", e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_STATE, JSON.stringify(state));
+      } catch {}
+    }
+
+    function saveCustomExercises(list) {
+      try {
+        localStorage.setItem(STORAGE_CUSTOM_EX, JSON.stringify(list));
+      } catch {}
+    }
+
+    function getCustomExercises() {
+      try {
+        const raw = localStorage.getItem(STORAGE_CUSTOM_EX);
+        return raw ? JSON.parse(raw) : [];
+      } catch { return []; }
+    }
+
+    function mergeExercisesIntoDb(incomingList) {
+      const map = new Map(db.exercises.map((e) => [e.id, e]));
+      for (const item of incomingList) {
+        if (item && item.id && item.name) {
+          map.set(item.id, item);
+        }
+      }
+      db.exercises = Array.from(map.values());
+    }
+
+    // Anatomical Helpers
+    function getGroupObj(groupId) {
+      return db.muscleGroups.find((g) => g.id === groupId);
+    }
+
+    function getHeadInfo(headId) {
+      for (const g of db.muscleGroups) {
+        const h = g.heads.find((x) => x.id === headId);
+        if (h) return { ...h, groupId: g.id, groupName: g.name };
+      }
+      return { id: headId, name: headId, role: "", groupId: "", groupName: "" };
+    }
+
+    function getExerciseById(id) {
+      return db.exercises.find((e) => e.id === id);
+    }
+
+    // Smart Sync Algorithm: selects `targetCount` exercises in sync to hit ALL sub-heads
+    function computeSyncedWorkout() {
+      const groups = state.selectedGroups;
+      if (!groups.length) {
+        state.workoutIds = [];
+        return;
+      }
+
+      const targetHeads = new Set();
+      groups.forEach((gid) => {
+        const g = getGroupObj(gid);
+        if (g) g.heads.forEach((h) => targetHeads.add(h.id));
+      });
+
+      const glutesWanted = groups.includes("glutes");
+      const equipFilter = state.equipment;
+
+      // Candidate pool
+      let pool = db.exercises.filter((ex) => {
+        const hitsSelectedGroup = groups.includes(ex.group) || (ex.groups || []).some((g) => groups.includes(g));
+        if (!hitsSelectedGroup) return false;
+        if (equipFilter !== "all" && ex.equipment !== equipFilter) return false;
+        if (state.lowGluteGuard && !glutesWanted && ex.gluteLoad >= 30) return false;
+        return true;
+      });
+
+      // Fallback if Low-Glute or Equipment filter was too strict
+      if (pool.length === 0) {
+        pool = db.exercises.filter((ex) => groups.includes(ex.group) || (ex.groups || []).some((g) => groups.includes(g)));
+      }
+
+      const chosen = [];
+      const chosenIds = new Set();
+
+      // 1. Respect Pinned exercises that belong to selected groups
+      state.pinnedIds.forEach((pid) => {
+        const ex = getExerciseById(pid);
+        if (ex && pool.some((p) => p.id === pid) && chosen.length < state.targetCount) {
+          chosen.push(ex);
+          chosenIds.add(pid);
+        }
+      });
+
+      const coveredPrimary = new Set();
+      const coveredSecondary = new Set();
+      const groupPickCount = new Map(groups.map((g) => [g, 0]));
+
+      const recordCoverage = (ex) => {
+        (ex.primaryHeads || []).forEach((h) => { if (targetHeads.has(h)) coveredPrimary.add(h); });
+        (ex.secondaryHeads || []).forEach((h) => { if (targetHeads.has(h)) coveredSecondary.add(h); });
+        if (groupPickCount.has(ex.group)) {
+          groupPickCount.set(ex.group, groupPickCount.get(ex.group) + 1);
+        }
+      };
+
+      chosen.forEach(recordCoverage);
+
+      // 2. Greedy Set-Cover + Multi-Muscle Balance + Biomechanical Variety
+      while (chosen.length < state.targetCount) {
+        let bestEx = null;
+        let bestScore = -Infinity;
+
+        for (const cand of pool) {
+          if (chosenIds.has(cand.id)) continue;
+
+          let score = 0;
+
+          // Huge reward for covering an uncovered primary sub-head
+          for (const h of cand.primaryHeads || []) {
+            if (targetHeads.has(h)) {
+              if (!coveredPrimary.has(h)) score += 40;
+              else score += 4;
+            }
+          }
+
+          // Moderate reward for covering uncovered secondary sub-head
+          for (const h of cand.secondaryHeads || []) {
+            if (targetHeads.has(h) && !coveredPrimary.has(h) && !coveredSecondary.has(h)) {
+              score += 12;
+            }
+          }
+
+          // Multi-muscle fairness: boost underrepresented selected muscle groups
+          if (groups.includes(cand.group)) {
+            const countForGroup = groupPickCount.get(cand.group) || 0;
+            score += Math.max(0, 18 - countForGroup * 10);
+          } else {
+            // Secondary cross-group exercise slightly lower priority than dedicated primary group
+            score -= 6;
+          }
+
+          // Prefer variety of equipment & movement angle
+          const sameEquipCount = chosen.filter((c) => c.equipment === cand.equipment).length;
+          score -= sameEquipCount * 2.5;
+
+          // Penalize glute load if user doesn't want glutes
+          if (!glutesWanted) {
+            score -= (cand.gluteLoad || 0) * (state.lowGluteGuard ? 0.6 : 0.25);
+          }
+
+          // Slight tie-breaker for foundational compounds earlier
+          score += (5 - (cand.tier || 3)) * 1.5;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestEx = cand;
+          }
+        }
+
+        if (!bestEx) break;
+        chosen.push(bestEx);
+        chosenIds.add(bestEx.id);
+        recordCoverage(bestEx);
+      }
+
+      state.workoutIds = sortWorkoutExercises(chosen).map((e) => e.id);
+      saveState();
+    }
+
+    function sortWorkoutExercises(list) {
+      const copy = [...list];
+      if (state.orderMode === "grouped") {
+        const gIndex = (gid) => {
+          const i = state.selectedGroups.indexOf(gid);
+          return i === -1 ? 99 : i;
+        };
+        copy.sort((a, b) => (gIndex(a.group) - gIndex(b.group)) || ((a.tier || 3) - (b.tier || 3)));
+      } else {
+        // Smart physiological order: compounds (tier 1) -> stretch (2) -> cable/iso (3) -> finishers (4)
+        copy.sort((a, b) => ((a.tier || 3) - (b.tier || 3)) || a.group.localeCompare(b.group));
+      }
+      return copy;
+    }
+
+    // Build Reusable Anatomical SVG (Front + Back)
+    function createBodySvgMarkup(primarySet, secondarySet, gluteAlertActive, interactive) {
+      const cls = (headId) => {
+        if ((headId === "glute_max" || headId === "glute_med") && gluteAlertActive && (primarySet.has(headId) || secondarySet.has(headId))) {
+          return "muscle-part glute-warn";
+        }
+        if (primarySet.has(headId)) return "muscle-part primary";
+        if (secondarySet.has(headId)) return "muscle-part secondary";
+        return "muscle-part";
+      };
+      const clickAttr = (groupId, headId) => interactive
+        ? `data-group="${groupId}" data-head="${headId}" tabindex="0" role="button" aria-label="Toggle ${groupId}"`
+        : `data-head="${headId}"`;
+
+      return `
+        <div class="body-side">
+          <span class="body-side-label">Front</span>
+          <svg class="anatomy-svg" viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+            <!-- Base Head & Silhouette -->
+            <circle cx="100" cy="28" r="17" class="silhouette"/>
+            <path d="M88 44 L112 44 L118 62 L82 62 Z" class="silhouette"/>
+            <path d="M56 68 L144 68 L138 175 L126 205 L74 205 L62 175 Z" class="silhouette"/>
+            <!-- Arms silhouette -->
+            <path d="M56 72 L40 124 L30 182 L44 185 L56 132 L64 88 Z" class="silhouette"/>
+            <path d="M144 72 L160 124 L170 182 L156 185 L144 132 L136 88 Z" class="silhouette"/>
+            <!-- Legs silhouette -->
+            <path d="M74 205 L64 282 L68 358 L84 360 L92 282 L98 220 Z" class="silhouette"/>
+            <path d="M126 205 L136 282 L132 358 L116 360 L108 282 L102 220 Z" class="silhouette"/>
+
+            <!-- Upper Traps -->
+            <path ${clickAttr("back", "traps_upper")} class="${cls("traps_upper")}" d="M84 52 L66 66 L86 68 Z M116 52 L134 66 L114 68 Z"/>
+            <!-- Front Delts -->
+            <path ${clickAttr("shoulders", "front_delt")} class="${cls("front_delt")}" d="M54 68 Q46 78 48 92 L62 88 L64 70 Z M146 68 Q154 78 152 92 L138 88 L136 70 Z"/>
+            <!-- Side Delts -->
+            <path ${clickAttr("shoulders", "side_delt")} class="${cls("side_delt")}" d="M46 72 Q39 84 42 98 L49 94 Q48 80 54 70 Z M154 72 Q161 84 158 98 L151 94 Q152 80 146 70 Z"/>
+
+            <!-- Chest: Upper, Mid, Lower -->
+            <path ${clickAttr("chest", "upper_chest")} class="${cls("upper_chest")}" d="M66 72 L98 74 L98 86 L65 84 Z M134 72 L102 74 L102 86 L135 84 Z"/>
+            <path ${clickAttr("chest", "mid_chest")} class="${cls("mid_chest")}" d="M65 86 L98 87 L98 103 L67 101 Z M135 86 L102 87 L102 103 L133 101 Z"/>
+            <path ${clickAttr("chest", "lower_chest")} class="${cls("lower_chest")}" d="M67 103 L98 104 L95 113 Q78 115 68 108 Z M133 103 L102 104 L105 113 Q122 115 132 108 Z"/>
+
+            <!-- Biceps: Long (outer), Short (inner), Brachialis (lower/forearm) -->
+            <path ${clickAttr("biceps", "bicep_long")} class="${cls("bicep_long")}" d="M44 96 Q38 114 41 130 L48 129 Q47 112 51 96 Z M156 96 Q162 114 159 130 L152 129 Q153 112 149 96 Z"/>
+            <path ${clickAttr("biceps", "bicep_short")} class="${cls("bicep_short")}" d="M52 95 Q48 112 49 128 L57 126 Q59 110 59 95 Z M148 95 Q152 112 151 128 L143 126 Q141 110 141 95 Z"/>
+            <path ${clickAttr("biceps", "brachialis")} class="${cls("brachialis")}" d="M39 132 L49 132 L43 172 L32 170 Z M161 132 L151 132 L157 172 L168 170 Z"/>
+
+            <!-- Core: Upper Abs, Lower Abs, Obliques -->
+            <path ${clickAttr("core", "upper_abs")} class="${cls("upper_abs")}" d="M87 117 L99 117 L99 144 L86 144 Z M101 117 L113 117 L114 144 L101 144 Z"/>
+            <path ${clickAttr("core", "lower_abs")} class="${cls("lower_abs")}" d="M87 146 L99 146 L98 182 L89 178 Z M101 146 L113 146 L111 178 L102 182 Z"/>
+            <path ${clickAttr("core", "obliques")} class="${cls("obliques")}" d="M70 120 L84 122 L84 176 L74 170 Z M130 120 L116 122 L116 176 L126 170 Z"/>
+
+            <!-- Quads: Outer Sweep, Rectus Femoris, VMO Teardrop -->
+            <path ${clickAttr("quads", "quad_outer")} class="${cls("quad_outer")}" d="M72 204 Q61 240 66 276 L76 274 Q74 240 80 206 Z M128 204 Q139 240 134 276 L124 274 Q126 240 120 206 Z"/>
+            <path ${clickAttr("quads", "quad_rectus")} class="${cls("quad_rectus")}" d="M81 206 L92 208 L88 274 L78 274 Z M119 206 L108 208 L112 274 L122 274 Z"/>
+            <path ${clickAttr("quads", "quad_inner")} class="${cls("quad_inner")}" d="M93 224 L97 254 L90 276 L86 270 Z M107 224 L103 254 L110 276 L114 270 Z"/>
+
+            <!-- Front Calves Peek -->
+            <path ${clickAttr("calves", "gastroc")} class="${cls("gastroc")}" d="M83 292 L90 304 L86 334 L80 326 Z M117 292 L110 304 L114 334 L120 326 Z"/>
+          </svg>
+        </div>
+
+        <div class="body-side">
+          <span class="body-side-label">Back</span>
+          <svg class="anatomy-svg" viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="28" r="17" class="silhouette"/>
+            <path d="M88 44 L112 44 L118 62 L82 62 Z" class="silhouette"/>
+            <path d="M56 68 L144 68 L138 175 L126 205 L74 205 L62 175 Z" class="silhouette"/>
+            <path d="M56 72 L40 124 L30 182 L44 185 L56 132 L64 88 Z" class="silhouette"/>
+            <path d="M144 72 L160 124 L170 182 L156 185 L144 132 L136 88 Z" class="silhouette"/>
+            <path d="M74 205 L64 282 L68 358 L84 360 L92 282 L98 220 Z" class="silhouette"/>
+            <path d="M126 205 L136 282 L132 358 L116 360 L108 282 L102 220 Z" class="silhouette"/>
+
+            <!-- Upper Traps -->
+            <path ${clickAttr("back", "traps_upper")} class="${cls("traps_upper")}" d="M84 50 L116 50 L132 70 L100 84 L68 70 Z"/>
+            <!-- Rear Delts & Side Delts -->
+            <path ${clickAttr("shoulders", "rear_delt")} class="${cls("rear_delt")}" d="M54 70 L66 74 L63 94 L49 92 Z M146 70 L134 74 L137 94 L151 92 Z"/>
+            <path ${clickAttr("shoulders", "side_delt")} class="${cls("side_delt")}" d="M46 72 Q40 84 42 96 L48 92 Z M154 72 Q160 84 158 96 L152 92 Z"/>
+
+            <!-- Mid Back & Rhomboids -->
+            <path ${clickAttr("back", "mid_back")} class="${cls("mid_back")}" d="M74 80 L100 86 L126 80 L118 124 L100 132 L82 124 Z"/>
+            <!-- Lats Width -->
+            <path ${clickAttr("back", "lats_width")} class="${cls("lats_width")}" d="M64 94 L82 124 L86 158 L70 144 Z M136 94 L118 124 L114 158 L130 144 Z"/>
+            <!-- Lower Back -->
+            <path ${clickAttr("back", "lower_back")} class="${cls("lower_back")}" d="M87 136 L113 136 L115 178 L85 178 Z"/>
+
+            <!-- Triceps: Long (inner), Lateral (outer), Medial (lower) -->
+            <path ${clickAttr("triceps", "tricep_long")} class="${cls("tricep_long")}" d="M51 96 L59 95 L56 124 L49 124 Z M149 96 L141 95 L144 124 L151 124 Z"/>
+            <path ${clickAttr("triceps", "tricep_lateral")} class="${cls("tricep_lateral")}" d="M43 96 L50 96 L48 123 L40 122 Z M157 96 L150 96 L152 123 L160 122 Z"/>
+            <path ${clickAttr("triceps", "tricep_medial")} class="${cls("tricep_medial")}" d="M42 124 L56 124 L52 136 L41 135 Z M158 124 L144 124 L148 136 L159 135 Z"/>
+
+            <!-- Glutes: Medius & Max -->
+            <path ${clickAttr("glutes", "glute_med")} class="${cls("glute_med")}" d="M74 180 L95 182 L94 192 L72 192 Z M126 180 L105 182 L106 192 L128 192 Z"/>
+            <path ${clickAttr("glutes", "glute_max")} class="${cls("glute_max")}" d="M71 193 L98 193 L97 224 Q78 228 70 212 Z M129 193 L102 193 L103 224 Q122 228 130 212 Z"/>
+
+            <!-- Hamstrings: Upper (stretch) & Lower (curl) -->
+            <path ${clickAttr("hamstrings", "ham_stretch")} class="${cls("ham_stretch")}" d="M72 226 L96 226 L94 254 L70 254 Z M128 226 L104 226 L106 254 L130 254 Z"/>
+            <path ${clickAttr("hamstrings", "ham_curl")} class="${cls("ham_curl")}" d="M70 255 L94 255 L90 282 L71 282 Z M130 255 L106 255 L110 282 L129 282 Z"/>
+
+            <!-- Calves: Gastroc & Soleus -->
+            <path ${clickAttr("calves", "gastroc")} class="${cls("gastroc")}" d="M70 292 L88 292 L86 322 L68 320 Z M130 292 L112 292 L114 322 L132 320 Z"/>
+            <path ${clickAttr("calves", "soleus")} class="${cls("soleus")}" d="M70 323 L85 324 L82 350 L72 350 Z M130 323 L115 324 L118 350 L128 350 Z"/>
+          </svg>
+        </div>
+      `;
+    }
+
+    // Render Controls & Views
+    function renderMuscleStrip() {
+      const strip = document.getElementById("muscleStrip");
+      strip.innerHTML = db.muscleGroups.map((g) => {
+        const sel = state.selectedGroups.includes(g.id);
+        return `<button class="m-chip ${sel ? "selected" : ""}" data-group="${g.id}">
+          <span class="dot"></span>
+          <span>${g.name}</span>
+        </button>`;
+      }).join("");
+
+      strip.querySelectorAll(".m-chip").forEach((btn) => {
+        btn.addEventListener("click", () => toggleMuscleGroup(btn.dataset.group));
+      });
+    }
+
+    function toggleMuscleGroup(gid) {
+      if (!gid) return;
+      const idx = state.selectedGroups.indexOf(gid);
+      if (idx >= 0) {
+        if (state.selectedGroups.length > 1) {
+          state.selectedGroups.splice(idx, 1);
+        } else {
+          showToast("Keep at least 1 muscle group selected");
+          return;
+        }
+      } else {
+        state.selectedGroups.push(gid);
+      }
+      computeSyncedWorkout();
+      renderAll();
+    }
+
+    function renderBuilder() {
+      document.getElementById("countVal").textContent = state.targetCount;
+      document.getElementById("equipSelect").value = state.equipment;
+      const lgBtn = document.getElementById("btnLowGlute");
+      lgBtn.classList.toggle("active", state.lowGluteGuard);
+      lgBtn.setAttribute("aria-pressed", String(state.lowGluteGuard));
+      document.getElementById("lowGluteState").textContent = state.lowGluteGuard ? "ON" : "OFF";
+      document.getElementById("btnOrderToggle").textContent = state.orderMode === "smart" ? "Order: Smart" : "Order: By Muscle";
+
+      const workoutExs = state.workoutIds.map(getExerciseById).filter(Boolean);
+      const primarySet = new Set();
+      const secondarySet = new Set();
+      let maxGlute = 0;
+      let gluteSum = 0;
+
+      workoutExs.forEach((ex) => {
+        (ex.primaryHeads || []).forEach((h) => primarySet.add(h));
+        (ex.secondaryHeads || []).forEach((h) => { if (!primarySet.has(h)) secondarySet.add(h); });
+        const gl = ex.gluteLoad || 0;
+        if (gl > maxGlute) maxGlute = gl;
+        gluteSum += gl;
+      });
+
+      const glutesSelected = state.selectedGroups.includes("glutes");
+      const gluteAlert = !glutesSelected && maxGlute >= 25;
+
+      // Render Interactive Body Map
+      const mapEl = document.getElementById("mainBodyMap");
+      mapEl.innerHTML = createBodySvgMarkup(primarySet, secondarySet, gluteAlert, true);
+      mapEl.querySelectorAll(".muscle-part[data-group]").forEach((p) => {
+        p.addEventListener("click", () => toggleMuscleGroup(p.dataset.group));
+      });
+
+      // Badge & Title
+      const groupNames = state.selectedGroups.map((id) => getGroupObj(id)?.name || id);
+      document.getElementById("selectedCountBadge").textContent = `${groupNames.length} Muscle${groupNames.length > 1 ? "s" : ""}`;
+      document.getElementById("workoutTitle").textContent = `${groupNames.join(" + ")} Sync`;
+      document.getElementById("workoutSubtitle").textContent =
+        `${workoutExs.length} exercises • ${state.orderMode === "smart" ? "Compound → Stretch → Isolation order" : "Grouped by muscle"}`;
+
+      // Sub-Head Coverage Self-Awareness
+      const allTargetHeads = [];
+      state.selectedGroups.forEach((gid) => {
+        const g = getGroupObj(gid);
+        if (g) g.heads.forEach((h) => allTargetHeads.push(h));
+      });
+
+      let hitCount = 0;
+      const headsHtml = allTargetHeads.map((h) => {
+        const isPri = primarySet.has(h.id);
+        const isSec = !isPri && secondarySet.has(h.id);
+        if (isPri || isSec) hitCount++;
+        const statusCls = isPri ? "hit" : isSec ? "sec" : "miss";
+        const icon = isPri ? "✓" : isSec ? "~" : "!";
+        return `<button class="head-pill ${statusCls}" data-fix-head="${h.id}" title="${h.role}">
+          <span>${icon}</span><span>${h.name}</span>
+        </button>`;
+      }).join("");
+
+      const pct = allTargetHeads.length ? Math.round((hitCount / allTargetHeads.length) * 100) : 100;
+      document.getElementById("coverageLabel").textContent = `Sub-Head Sync (${hitCount}/${allTargetHeads.length})`;
+      document.getElementById("coveragePct").textContent = `${pct}%`;
+      const bar = document.getElementById("coverageBar");
+      bar.style.width = `${pct}%`;
+      bar.style.background = pct === 100 ? "var(--ok)" : pct >= 65 ? "var(--secondary)" : "var(--warn)";
+
+      const headsEl = document.getElementById("headsList");
+      headsEl.innerHTML = headsHtml;
+      headsEl.querySelectorAll(".head-pill.miss").forEach((btn) => {
+        btn.addEventListener("click", () => fixMissingHead(btn.dataset.fixHead));
+      });
+
+      // Glute Exposure Self-Awareness Meter
+      const avgGlute = workoutExs.length ? Math.round(gluteSum / workoutExs.length) : 0;
+      const meter = document.getElementById("gluteMeter");
+      if (glutesSelected) {
+        meter.className = "glute-meter safe";
+        meter.innerHTML = `<span>Glutes intentionally targeted</span><strong>${maxGlute}% peak</strong>`;
+      } else if (maxGlute >= 25) {
+        const offender = workoutExs.find((e) => (e.gluteLoad || 0) === maxGlute);
+        meter.className = "glute-meter warn";
+        meter.innerHTML = `<span>Glute Alert: <strong>${offender?.name}</strong> hits ${maxGlute}% glutes</span>
+          <button class="sm-btn" id="btnSwapOffender" style="min-height:26px;font-size:11px;color:#FCD34D;">Swap</button>`;
+        meter.querySelector("#btnSwapOffender")?.addEventListener("click", () => swapExercise(offender.id, true));
+      } else {
+        meter.className = "glute-meter safe";
+        meter.innerHTML = `<span>Glute Balance: Minimal incidental glute load</span><strong>${avgGlute}% avg</strong>`;
+      }
+
+      // Render Workout Cards
+      const listEl = document.getElementById("workoutList");
+      if (!workoutExs.length) {
+        listEl.innerHTML = `<div class="empty-state">Select a muscle group above or tap on the body diagram to sync today's workout.</div>`;
+        return;
+      }
+
+      const q = state.search.trim().toLowerCase();
+      listEl.innerHTML = workoutExs.map((ex, i) => {
+        const isPinned = state.pinnedIds.includes(ex.id);
+        const priNames = (ex.primaryHeads || []).map((id) => getHeadInfo(id).name).join(" + ");
+        const secNames = (ex.secondaryHeads || []).map((id) => getHeadInfo(id).name).join(", ");
+        const hasVid = cachedVideoKeys.has(ex.id);
+        const matchesSearch = !q || matchesExerciseQuery(ex, q);
+
+        return `
+          <article class="ex-card ${isPinned ? "pinned" : ""}" style="${matchesSearch ? "" : "opacity:0.45"}">
+            <div class="ex-top">
+              <div class="ex-num">${String(i + 1).padStart(2, "0")}</div>
+              <div class="ex-main" data-open="${ex.id}">
+                <div class="ex-name">${escapeHtml(ex.name)}</div>
+                <div class="ex-meta">
+                  <span class="tag primary">${escapeHtml(priNames || ex.group)}</span>
+                  <span class="tag">${escapeHtml(ex.equipment)}</span>
+                  <span class="tag">${escapeHtml(ex.setsReps)} • ${escapeHtml(ex.rest)}</span>
+                  ${ex.gluteLoad > 0 ? `<span class="tag glute">${ex.gluteLoad}% Glute</span>` : ""}
+                  ${hasVid ? `<span class="tag video-on">Video Saved</span>` : ""}
+                </div>
+              </div>
+            </div>
+
+            <div class="ex-angle-line" data-open="${ex.id}">
+              <span><strong>Angle:</strong> ${escapeHtml(ex.angle)}</span>
+              ${secNames ? `<span><strong>Also hits:</strong> ${escapeHtml(secNames)}</span>` : ""}
+            </div>
+
+            <div class="ex-actions">
+              <div class="ex-btn-group">
+                <button class="sm-btn guide" data-open="${ex.id}">Form & Angle</button>
+                <button class="sm-btn ${isPinned ? "active" : ""}" data-pin="${ex.id}">${isPinned ? "Pinned" : "Pin"}</button>
+                <button class="sm-btn" data-swap="${ex.id}">Swap</button>
+              </div>
+              <div class="ex-btn-group">
+                <button class="sm-btn" data-move="-1" data-id="${ex.id}" aria-label="Move up">↑</button>
+                <button class="sm-btn" data-move="1" data-id="${ex.id}" aria-label="Move down">↓</button>
+                <button class="sm-btn" data-remove="${ex.id}" aria-label="Remove">✕</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      // Bind card events
+      listEl.querySelectorAll("[data-open]").forEach((el) => {
+        el.addEventListener("click", () => openExerciseModal(el.dataset.open));
+      });
+      listEl.querySelectorAll("[data-pin]").forEach((el) => {
+        el.addEventListener("click", () => togglePin(el.dataset.pin));
+      });
+      listEl.querySelectorAll("[data-swap]").forEach((el) => {
+        el.addEventListener("click", () => swapExercise(el.dataset.swap, false));
+      });
+      listEl.querySelectorAll("[data-move]").forEach((el) => {
+        el.addEventListener("click", () => moveExercise(el.dataset.id, Number(el.dataset.move)));
+      });
+      listEl.querySelectorAll("[data-remove]").forEach((el) => {
+        el.addEventListener("click", () => removeExercise(el.dataset.remove));
+      });
+    }
+
+    function fixMissingHead(headId) {
+      const candidate = db.exercises.find((ex) =>
+        (ex.primaryHeads || []).includes(headId) &&
+        !state.workoutIds.includes(ex.id) &&
+        (!state.lowGluteGuard || state.selectedGroups.includes("glutes") || (ex.gluteLoad || 0) < 30)
+      );
+      if (!candidate) {
+        showToast("No extra exercise found for this head under current filters");
+        return;
+      }
+      state.workoutIds.push(candidate.id);
+      state.targetCount = state.workoutIds.length;
+      saveState();
+      renderBuilder();
+      showToast(`Added ${candidate.name} to cover ${getHeadInfo(headId).name}`);
+    }
+
+    function togglePin(id) {
+      const idx = state.pinnedIds.indexOf(id);
+      if (idx >= 0) state.pinnedIds.splice(idx, 1);
+      else state.pinnedIds.push(id);
+      saveState();
+      renderBuilder();
+    }
+
+    function swapExercise(id, preferLowGlute) {
+      const cur = getExerciseById(id);
+      if (!cur) return;
+      const alternatives = db.exercises.filter((ex) =>
+        ex.id !== id &&
+        !state.workoutIds.includes(ex.id) &&
+        (ex.group === cur.group || (ex.primaryHeads || []).some((h) => (cur.primaryHeads || []).includes(h))) &&
+        (state.equipment === "all" || ex.equipment === state.equipment) &&
+        (!preferLowGlute || (ex.gluteLoad || 0) <= 15)
+      );
+
+      // Prefer one hitting the same primary head first
+      alternatives.sort((a, b) => {
+        const aMatch = (a.primaryHeads || []).some((h) => (cur.primaryHeads || []).includes(h)) ? 1 : 0;
+        const bMatch = (b.primaryHeads || []).some((h) => (cur.primaryHeads || []).includes(h)) ? 1 : 0;
+        return (bMatch - aMatch) || ((a.gluteLoad || 0) - (b.gluteLoad || 0));
+      });
+
+      if (!alternatives.length) {
+        showToast("No alternate exercise available with current filters");
+        return;
+      }
+      const next = alternatives[0];
+      const idx = state.workoutIds.indexOf(id);
+      if (idx >= 0) state.workoutIds[idx] = next.id;
+      state.pinnedIds = state.pinnedIds.filter((p) => p !== id);
+      saveState();
+      renderBuilder();
+      showToast(`Swapped → ${next.name}`);
+    }
+
+    function moveExercise(id, dir) {
+      const idx = state.workoutIds.indexOf(id);
+      const nextIdx = idx + dir;
+      if (idx < 0 || nextIdx < 0 || nextIdx >= state.workoutIds.length) return;
+      [state.workoutIds[idx], state.workoutIds[nextIdx]] = [state.workoutIds[nextIdx], state.workoutIds[idx]];
+      saveState();
+      renderBuilder();
+    }
+
+    function removeExercise(id) {
+      state.workoutIds = state.workoutIds.filter((x) => x !== id);
+      state.pinnedIds = state.pinnedIds.filter((x) => x !== id);
+      saveState();
+      renderBuilder();
+    }
+
+    // Library View
+    function matchesExerciseQuery(ex, q) {
+      if (!q) return true;
+      const headsText = [...(ex.primaryHeads || []), ...(ex.secondaryHeads || [])].map((h) => getHeadInfo(h).name).join(" ");
+      const hay = `${ex.name} ${ex.group} ${(ex.groups || []).join(" ")} ${ex.equipment} ${headsText} ${(ex.tags || []).join(" ")} ${ex.angle}`.toLowerCase();
+      if (q.includes("no glute") || q.includes("low glute")) {
+        return (ex.gluteLoad || 0) <= 15 && hay.includes(q.replace(/no glutes?|low glutes?/g, "").trim());
+      }
+      return hay.includes(q);
+    }
+
+    function renderLibrary() {
+      const groupSel = document.getElementById("libGroupFilter").value;
+      const equipSel = document.getElementById("libEquipFilter").value;
+      const q = state.search.trim().toLowerCase();
+
+      const filtered = db.exercises.filter((ex) => {
+        if (groupSel !== "all" && ex.group !== groupSel && !(ex.groups || []).includes(groupSel)) return false;
+        if (equipSel !== "all" && ex.equipment !== equipSel) return false;
+        if (libNoGlute && (ex.gluteLoad || 0) > 15) return false;
+        return matchesExerciseQuery(ex, q);
+      });
+
+      const grid = document.getElementById("libraryGrid");
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">No matching exercises. Try clearing search or filters.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((ex) => {
+        const inWorkout = state.workoutIds.includes(ex.id);
+        const priNames = (ex.primaryHeads || []).map((h) => getHeadInfo(h).name).join(" + ");
+        const hasVid = cachedVideoKeys.has(ex.id);
+        return `
+          <article class="ex-card">
+            <div class="ex-top">
+              <div class="ex-main" data-open="${ex.id}">
+                <div class="ex-name">${escapeHtml(ex.name)}</div>
+                <div class="ex-meta">
+                  <span class="tag primary">${escapeHtml(priNames)}</span>
+                  <span class="tag">${escapeHtml(ex.equipment)}</span>
+                  <span class="tag">${escapeHtml(ex.setsReps)}</span>
+                  ${ex.gluteLoad > 0 ? `<span class="tag glute">${ex.gluteLoad}% Glute</span>` : `<span class="tag">0% Glute</span>`}
+                  ${hasVid ? `<span class="tag video-on">Video</span>` : ""}
+                </div>
+              </div>
+            </div>
+            <div class="ex-angle-line" data-open="${ex.id}">
+              <span><strong>Angle:</strong> ${escapeHtml(ex.angle)}</span>
+            </div>
+            <div class="ex-actions">
+              <button class="sm-btn guide" data-open="${ex.id}">Angle & Muscle Map</button>
+              <button class="sm-btn ${inWorkout ? "active" : ""}" data-add="${ex.id}">
+                ${inWorkout ? "✓ In Today" : "+ Add to Today"}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      grid.querySelectorAll("[data-open]").forEach((el) => {
+        el.addEventListener("click", () => openExerciseModal(el.dataset.open));
+      });
+      grid.querySelectorAll("[data-add]").forEach((el) => {
+        el.addEventListener("click", () => {
+          const id = el.dataset.add;
+          if (!state.workoutIds.includes(id)) {
+            state.workoutIds.push(id);
+            if (!state.pinnedIds.includes(id)) state.pinnedIds.push(id);
+            state.targetCount = state.workoutIds.length;
+            saveState();
+            renderAll();
+            showToast("Added to Today's Sync");
+          } else {
+            switchView("builder");
+          }
+        });
+      });
+    }
+
+    // Search Quick-Jump Hints (e.g., searching "bicep" offers 1-tap "Sync Biceps Day")
+    function renderSearchHints() {
+      const q = state.search.trim().toLowerCase();
+      const box = document.getElementById("searchHints");
+      document.getElementById("searchClear").classList.toggle("visible", q.length > 0);
+      if (!q) { box.innerHTML = ""; return; }
+
+      const matchedGroups = db.muscleGroups.filter((g) =>
+        g.name.toLowerCase().includes(q) ||
+        g.id.includes(q) ||
+        (q.includes("arm") && (g.id === "biceps" || g.id === "triceps")) ||
+        (q.includes("leg") && (g.id === "quads" || g.id === "hamstrings" || g.id === "calves"))
+      );
+
+      let html = matchedGroups.slice(0, 3).map((g) =>
+        `<button class="quick-jump" data-jump-group="${g.id}">Sync ${g.name} Day →</button>`
+      ).join("");
+
+      if (q.includes("arm")) {
+        html += `<button class="quick-jump" data-jump-arms="1">Sync Biceps + Triceps (Arms) →</button>`;
+      }
+      box.innerHTML = html;
+
+      box.querySelectorAll("[data-jump-group]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.selectedGroups = [btn.dataset.jumpGroup];
+          state.pinnedIds = [];
+          computeSyncedWorkout();
+          switchView("builder");
+          renderAll();
+        });
+      });
+      box.querySelectorAll("[data-jump-arms]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.selectedGroups = ["biceps", "triceps"];
+          state.targetCount = Math.max(4, state.targetCount);
+          state.pinnedIds = [];
+          computeSyncedWorkout();
+          switchView("builder");
+          renderAll();
+        });
+      });
+    }
+
+    // Modal: Form, Muscle Map, Animated Angle/ROM Rig & Offline Video
+    async function openExerciseModal(id) {
+      const ex = getExerciseById(id);
+      if (!ex) return;
+      currentModalExId = id;
+
+      document.getElementById("modalTitle").textContent = ex.name;
+      const priNames = (ex.primaryHeads || []).map((h) => getHeadInfo(h).name).join(" + ");
+      const secNames = (ex.secondaryHeads || []).map((h) => getHeadInfo(h).name).join(", ");
+      document.getElementById("modalSub").textContent = `${ex.equipment} • Primary: ${priNames}${secNames ? ` • Secondary: ${secNames}` : ""}`;
+
+      const glTag = document.getElementById("modalGluteTag");
+      glTag.textContent = `${ex.gluteLoad || 0}% Glute`;
+      glTag.style.color = (ex.gluteLoad || 0) >= 25 ? "var(--warn)" : "var(--ok)";
+
+      const priSet = new Set(ex.primaryHeads || []);
+      const secSet = new Set(ex.secondaryHeads || []);
+      document.getElementById("modalBodyMap").innerHTML = createBodySvgMarkup(priSet, secSet, (ex.gluteLoad || 0) >= 25, false);
+
+      document.getElementById("simAngleLabel").textContent = ex.anim?.angleLabel || ex.angle;
+
+      document.getElementById("modalSpecs").innerHTML = `
+        <div class="spec-item"><div class="spec-k">Sets × Reps</div><div class="spec-v">${escapeHtml(ex.setsReps)}</div></div>
+        <div class="spec-item"><div class="spec-k">Rest • Tempo</div><div class="spec-v">${escapeHtml(ex.rest)} • ${escapeHtml(ex.tempo || "3-1-1-0")}</div></div>
+        <div class="spec-item"><div class="spec-k">Glute Load</div><div class="spec-v">${ex.gluteLoad || 0}%</div></div>
+        <div class="spec-item" style="grid-column:span 2 / span 2;"><div class="spec-k">Exact Angle Setup</div><div class="spec-v">${escapeHtml(ex.angle)}</div></div>
+        <div class="spec-item"><div class="spec-k">Range of Motion</div><div class="spec-v">${escapeHtml(ex.rom)}</div></div>
+      `;
+
+      document.getElementById("modalCues").innerHTML = (ex.cues || []).map((c) => `<li>${escapeHtml(c)}</li>`).join("");
+      document.getElementById("modalAvoid").innerHTML = `<strong>Avoid:</strong> ${escapeHtml(ex.avoid || "Using momentum instead of strict joint path.")}`;
+
+      // Load Offline Video from IndexedDB if present
+      const videoEl = document.getElementById("modalVideo");
+      const statusEl = document.getElementById("videoStatusLabel");
+      const rmBtn = document.getElementById("modalVideoRemove");
+      if (currentVideoUrl) { URL.revokeObjectURL(currentVideoUrl); currentVideoUrl = null; }
+      videoEl.style.display = "none";
+      videoEl.removeAttribute("src");
+      rmBtn.style.display = "none";
+      statusEl.textContent = "Using built-in offline ROM simulator";
+
+      document.getElementById("modalYoutubeUrl").value = "";
+      const blob = await VideoStore.get(id);
+      const localPath = serverVideos[id] || ex.video;
+      if (blob) {
+        currentVideoUrl = URL.createObjectURL(blob);
+        videoEl.src = currentVideoUrl;
+        videoEl.style.display = "block";
+        rmBtn.style.display = "inline-flex";
+        statusEl.textContent = "Playing saved device video";
+      } else if (localPath) {
+        videoEl.src = `${localPath}?t=${Date.now()}`;
+        videoEl.onloadeddata = () => {
+          videoEl.style.display = "block";
+          rmBtn.style.display = "inline-flex";
+          statusEl.textContent = "Playing project video (" + localPath + ")";
+        };
+      }
+
+      document.getElementById("detailModal").classList.add("open");
+      startSimAnimation(ex);
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("open");
+      stopSimAnimation();
+      const videoEl = document.getElementById("modalVideo");
+      videoEl.pause();
+      if (currentVideoUrl) { URL.revokeObjectURL(currentVideoUrl); currentVideoUrl = null; }
+      currentModalExId = null;
+    }
+
+    // Articulated Biomechanical SVG Motion Simulator (100% Offline)
+    function startSimAnimation(ex) {
+      stopSimAnimation();
+      simPlaying = true;
+      simProgress = 0;
+      document.getElementById("simPlayBtn").textContent = "Pause";
+      let lastTs = performance.now();
+
+      const tick = (now) => {
+        const dt = Math.min(0.05, (now - lastTs) / 1000);
+        lastTs = now;
+        if (simPlaying) {
+          simProgress = (simProgress + dt * 0.36 * simSpeed) % 1;
+          document.getElementById("simScrub").value = Math.round(simProgress * 100);
+        }
+        renderSimFrame(ex, simProgress);
+        if (document.getElementById("detailModal").classList.contains("open")) {
+          simAnimFrame = requestAnimationFrame(tick);
+        }
+      };
+      simAnimFrame = requestAnimationFrame(tick);
+    }
+
+    function stopSimAnimation() {
+      if (simAnimFrame) cancelAnimationFrame(simAnimFrame);
+      simAnimFrame = null;
+    }
+
+    function renderSimFrame(ex, tNorm) {
+      // Smooth wave: 0..0.45 eccentric/extend, 0.45..0.55 pause, 0.55..0.95 concentric, 0.95..1.0 peak pause
+      let phase = 0;
+      let phaseLabel = "STRETCH";
+      if (tNorm < 0.45) {
+        phase = 1 - (tNorm / 0.45);
+        phaseLabel = "ECCENTRIC (3s)";
+      } else if (tNorm < 0.58) {
+        phase = 0;
+        phaseLabel = "STRETCH PAUSE";
+      } else if (tNorm < 0.9) {
+        phase = (tNorm - 0.58) / 0.32;
+        phaseLabel = "DRIVE / SQUEEZE";
+      } else {
+        phase = 1;
+        phaseLabel = "PEAK HOLD";
+      }
+      // Smoothstep
+      const p = phase * phase * (3 - 2 * phase);
+      document.getElementById("simPhaseText").textContent = phaseLabel;
+
+      const svg = document.getElementById("simSvg");
+      const type = ex.anim?.type || "hammer_curl";
+      const romLabel = ex.anim?.romLabel || "";
+
+      const lerp = (a, b, k) => a + (b - a) * k;
+      const degToPt = (cx, cy, r, deg) => {
+        const rad = (deg * Math.PI) / 180;
+        return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+      };
+
+      let prop = `<line x1="20" y1="150" x2="240" y2="150" stroke="#262E3C" stroke-width="2"/>`;
+      let joints = [];
+      let bones = [];
+      let focusPt = [130, 85];
+      let angleArc = "";
+      let ghost = "";
+
+      const addBone = (x1, y1, x2, y2, col = "#E2E8F0", w = 6) => {
+        bones.push(`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`);
+      };
+      const addJoint = (x, y, r = 4.5, col = "#FF5C1A") => {
+        joints.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${col}" stroke="#0B0E13" stroke-width="1.5"/>`);
+      };
+
+      if (type === "incline_curl") {
+        // 45° incline bench facing right
+        prop += `<line x1="72" y1="148" x2="112" y2="90" stroke="#364152" stroke-width="8" stroke-linecap="round"/>
+                 <line x1="72" y1="148" x2="54" y2="148" stroke="#364152" stroke-width="6" stroke-linecap="round"/>`;
+        const hip = [86, 134], sh = [112, 92], head = [122, 74];
+        const elbow = [104, 126]; // behind torso!
+        const wristAng = lerp(85, -35, p);
+        const wrist = degToPt(elbow[0], elbow[1], 34, wristAng);
+        const wStart = degToPt(elbow[0], elbow[1], 34, 85);
+        const wEnd = degToPt(elbow[0], elbow[1], 34, -35);
+        ghost = `<line x1="${elbow[0]}" y1="${elbow[1]}" x2="${wStart[0]}" y2="${wStart[1]}" stroke="#2DD4BF" stroke-dasharray="3 3" opacity="0.45"/>
+                 <line x1="${elbow[0]}" y1="${elbow[1]}" x2="${wEnd[0]}" y2="${wEnd[1]}" stroke="#FF5C1A" stroke-dasharray="3 3" opacity="0.5"/>`;
+        addBone(hip[0], hip[1], 56, 146, "#64748B", 6);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elbow[0], elbow[1], "#CBD5E1", 6);
+        addBone(elbow[0], elbow[1], wrist[0], wrist[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="${head[0]}" cy="${head[1]}" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${wrist[0]}" cy="${wrist[1]}" r="6.5" fill="#FF5C1A"/>`);
+        addJoint(sh[0], sh[1]); addJoint(elbow[0], elbow[1], 5, "#2DD4BF");
+        focusPt = [(sh[0] + elbow[0]) / 2, (sh[1] + elbow[1]) / 2];
+      } else if (type === "preacher_curl") {
+        // 45° preacher pad in front
+        prop += `<line x1="125" y1="148" x2="145" y2="86" stroke="#364152" stroke-width="7" stroke-linecap="round"/>
+                 <line x1="120" y1="84" x2="152" y2="108" stroke="#475569" stroke-width="8" stroke-linecap="round"/>`;
+        const hip = [94, 134], sh = [118, 86], elbow = [146, 108];
+        const wristAng = lerp(48, -62, p);
+        const wrist = degToPt(elbow[0], elbow[1], 36, wristAng);
+        ghost = `<path d="M ${degToPt(elbow[0], elbow[1], 32, 48).join(" ")} A 32 32 0 0 0 ${degToPt(elbow[0], elbow[1], 32, -62).join(" ")}" fill="none" stroke="#2DD4BF" stroke-dasharray="3 3" opacity="0.5"/>`;
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elbow[0], elbow[1], "#CBD5E1", 6);
+        addBone(elbow[0], elbow[1], wrist[0], wrist[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="118" cy="68" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${wrist[0]}" cy="${wrist[1]}" r="6.5" fill="#FF5C1A"/>`);
+        addJoint(elbow[0], elbow[1], 5, "#2DD4BF");
+        focusPt = [(sh[0] + elbow[0]) / 2, (sh[1] + elbow[1]) / 2];
+      } else if (type === "overhead_ext") {
+        const hip = [120, 146], sh = [126, 86], elbow = [132, 50];
+        const wristAng = lerp(145, -85, p);
+        const wrist = degToPt(elbow[0], elbow[1], 34, wristAng);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elbow[0], elbow[1], "#CBD5E1", 6);
+        addBone(elbow[0], elbow[1], wrist[0], wrist[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="136" cy="70" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${wrist[0]}" cy="${wrist[1]}" r="6.5" fill="#FF5C1A"/>`);
+        addJoint(elbow[0], elbow[1], 5, "#2DD4BF");
+        focusPt = [124, 68];
+      } else if (type === "pushdown") {
+        prop += `<line x1="175" y1="14" x2="175" y2="150" stroke="#334155" stroke-width="4"/>`;
+        const hip = [108, 146], sh = [114, 72], elbow = [118, 102];
+        const wristAng = lerp(-35, 85, p);
+        const wrist = degToPt(elbow[0], elbow[1], 34, wristAng);
+        prop += `<line x1="175" y1="22" x2="${wrist[0]}" y2="${wrist[1]}" stroke="#2DD4BF" stroke-width="1.8" stroke-dasharray="3 2"/>`;
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elbow[0], elbow[1], "#CBD5E1", 6);
+        addBone(elbow[0], elbow[1], wrist[0], wrist[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="118" cy="54" r="9" fill="#94A3B8"/>`);
+        addJoint(elbow[0], elbow[1], 5, "#2DD4BF");
+        joints.push(`<circle cx="${wrist[0]}" cy="${wrist[1]}" r="5.5" fill="#FF5C1A"/>`);
+        focusPt = [112, 86];
+      } else if (type === "bench_press" || type === "incline_press") {
+        const incl = type === "incline_press" ? 1 : 0;
+        prop += incl
+          ? `<line x1="76" y1="130" x2="146" y2="94" stroke="#364152" stroke-width="8" stroke-linecap="round"/>`
+          : `<line x1="68" y1="126" x2="176" y2="126" stroke="#364152" stroke-width="8" stroke-linecap="round"/>`;
+        const hip = [86, 122], sh = incl ? [136, 92] : [144, 118];
+        const handY = lerp(sh[1] - 6, sh[1] - 54, p);
+        const handX = sh[0] - (incl ? 6 : 2);
+        const elbow = [sh[0] - 18, lerp(sh[1] + 18, sh[1] - 26, p)];
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elbow[0], elbow[1], "#CBD5E1", 6);
+        addBone(elbow[0], elbow[1], handX, handY, "#F8FAFC", 6);
+        joints.push(`<circle cx="${sh[0] + 14}" cy="${sh[1] - 10}" r="8.5" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${handX}" cy="${handY}" r="7" fill="#FF5C1A"/>`);
+        addJoint(sh[0], sh[1]); addJoint(elbow[0], elbow[1], 4.5, "#2DD4BF");
+        focusPt = [sh[0] - 8, sh[1] - 6];
+      } else if (type === "chest_fly") {
+        // Top-down / front arc fly
+        const torso = [130, 88];
+        const angL = lerp(175, 98, p);
+        const angR = lerp(5, 82, p);
+        const handL = degToPt(110, 88, 56, angL);
+        const handR = degToPt(150, 88, 56, angR);
+        ghost = `<path d="M 55 88 A 58 58 0 0 0 116 144" fill="none" stroke="#2DD4BF" stroke-dasharray="3 3" opacity="0.45"/>
+                 <path d="M 205 88 A 58 58 0 0 1 144 144" fill="none" stroke="#2DD4BF" stroke-dasharray="3 3" opacity="0.45"/>`;
+        joints.push(`<rect x="108" y="72" width="44" height="32" rx="10" fill="#334155"/>`);
+        joints.push(`<circle cx="130" cy="56" r="10" fill="#94A3B8"/>`);
+        addBone(110, 88, handL[0], handL[1], "#F8FAFC", 6);
+        addBone(150, 88, handR[0], handR[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="${handL[0]}" cy="${handL[1]}" r="6" fill="#FF5C1A"/>`);
+        joints.push(`<circle cx="${handR[0]}" cy="${handR[1]}" r="6" fill="#FF5C1A"/>`);
+        focusPt = [130, 86];
+      } else if (type === "lat_pulldown") {
+        prop += `<line x1="130" y1="14" x2="130" y2="30" stroke="#2DD4BF" stroke-width="2" stroke-dasharray="3 2"/>`;
+        const hip = [126, 138], sh = [122, 92];
+        const barY = lerp(34, 86, p);
+        const elY = lerp(60, 108, p);
+        const elX = lerp(96, 102, p);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elX, elY, "#CBD5E1", 6);
+        addBone(elX, elY, 130, barY, "#F8FAFC", 6);
+        prop += `<line x1="100" y1="${barY}" x2="160" y2="${barY}" stroke="#FF5C1A" stroke-width="4" stroke-linecap="round"/>`;
+        joints.push(`<circle cx="122" cy="74" r="9" fill="#94A3B8"/>`);
+        addJoint(elX, elY, 4.5, "#2DD4BF");
+        focusPt = [118, 106];
+      } else if (type === "barbell_row") {
+        const hip = [96, 114], sh = [142, 82];
+        const elX = lerp(136, 108, p);
+        const elY = lerp(112, 74, p);
+        const hand = [lerp(144, 122, p), lerp(136, 104, p)];
+        addBone(88, 148, hip[0], hip[1], "#64748B", 7);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elX, elY, "#CBD5E1", 6);
+        addBone(elX, elY, hand[0], hand[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="154" cy="70" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${hand[0]}" cy="${hand[1]}" r="7" fill="#FF5C1A"/>`);
+        addJoint(elX, elY, 4.5, "#2DD4BF");
+        focusPt = [120, 92];
+      } else if (type === "lateral_raise") {
+        // Front view side raise
+        joints.push(`<rect x="114" y="54" width="32" height="58" rx="8" fill="#334155"/>`);
+        joints.push(`<circle cx="130" cy="36" r="10" fill="#94A3B8"/>`);
+        const angL = lerp(100, 178, p);
+        const angR = lerp(80, 2, p);
+        const handL = degToPt(114, 62, 52, angL);
+        const handR = degToPt(146, 62, 52, angR);
+        addBone(114, 62, handL[0], handL[1], "#F8FAFC", 6);
+        addBone(146, 62, handR[0], handR[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="${handL[0]}" cy="${handL[1]}" r="6" fill="#FF5C1A"/>`);
+        joints.push(`<circle cx="${handR[0]}" cy="${handR[1]}" r="6" fill="#FF5C1A"/>`);
+        focusPt = [146, 62];
+      } else if (type === "face_pull") {
+        prop += `<line x1="210" y1="68" x2="210" y2="150" stroke="#334155" stroke-width="4"/>`;
+        const hip = [100, 146], sh = [106, 72];
+        const elX = lerp(142, 92, p), elY = lerp(70, 62, p);
+        const handX = lerp(182, 108, p), handY = lerp(68, 44, p);
+        prop += `<line x1="210" y1="68" x2="${handX}" y2="${handY}" stroke="#2DD4BF" stroke-width="1.8" stroke-dasharray="3 2"/>`;
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elX, elY, "#CBD5E1", 6);
+        addBone(elX, elY, handX, handY, "#F8FAFC", 6);
+        joints.push(`<circle cx="108" cy="54" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${handX}" cy="${handY}" r="5.5" fill="#FF5C1A"/>`);
+        focusPt = [sh[0], sh[1]];
+      } else if (type === "leg_ext") {
+        prop += `<path d="M 76 74 L 94 114 L 136 114" fill="none" stroke="#364152" stroke-width="8" stroke-linecap="round"/>`;
+        const hip = [98, 106], knee = [140, 106], sh = [86, 66];
+        const ankleAng = lerp(98, 2, p);
+        const ankle = degToPt(knee[0], knee[1], 44, ankleAng);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(hip[0], hip[1], knee[0], knee[1], "#CBD5E1", 7);
+        addBone(knee[0], knee[1], ankle[0], ankle[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="82" cy="48" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${ankle[0]}" cy="${ankle[1]}" r="6" fill="#FF5C1A"/>`);
+        addJoint(knee[0], knee[1], 5, "#2DD4BF");
+        focusPt = [120, 102];
+      } else if (type === "hack_squat") {
+        const ankle = [140, 146];
+        const knee = [lerp(154, 142, p), lerp(110, 104, p)];
+        const hip = [lerp(100, 128, p), lerp(118, 72, p)];
+        const sh = [hip[0] + 10, hip[1] - 38];
+        addBone(ankle[0], ankle[1], knee[0], knee[1], "#CBD5E1", 6);
+        addBone(knee[0], knee[1], hip[0], hip[1], "#F8FAFC", 7);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        joints.push(`<circle cx="${sh[0]}" cy="${sh[1] - 14}" r="8.5" fill="#94A3B8"/>`);
+        addJoint(knee[0], knee[1], 5, "#2DD4BF");
+        focusPt = [(knee[0] + hip[0]) / 2, (knee[1] + hip[1]) / 2];
+      } else if (type === "leg_curl") {
+        prop += `<path d="M 74 72 L 94 108 L 136 108" fill="none" stroke="#364152" stroke-width="8" stroke-linecap="round"/>`;
+        const hip = [98, 102], knee = [140, 102], sh = [86, 62];
+        const ankleAng = lerp(8, 105, p);
+        const ankle = degToPt(knee[0], knee[1], 44, ankleAng);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(hip[0], hip[1], knee[0], knee[1], "#CBD5E1", 7);
+        addBone(knee[0], knee[1], ankle[0], ankle[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="82" cy="44" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${ankle[0]}" cy="${ankle[1]}" r="6" fill="#FF5C1A"/>`);
+        addJoint(knee[0], knee[1], 5, "#2DD4BF");
+        focusPt = [120, 108];
+      } else if (type === "rdl") {
+        const ankle = [126, 146], knee = [128, 114];
+        const hip = [lerp(106, 126, p), lerp(82, 82, p)];
+        const torsoAng = lerp(6, -86, p);
+        const sh = degToPt(hip[0], hip[1], 42, torsoAng);
+        const bar = [sh[0] + 6, lerp(124, 96, p)];
+        addBone(ankle[0], ankle[1], knee[0], knee[1], "#CBD5E1", 6);
+        addBone(knee[0], knee[1], hip[0], hip[1], "#CBD5E1", 7);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], bar[0], bar[1], "#F8FAFC", 5);
+        joints.push(`<circle cx="${sh[0] + 10}" cy="${sh[1] - 10}" r="8" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${bar[0]}" cy="${bar[1]}" r="7" fill="#FF5C1A"/>`);
+        focusPt = [118, 100];
+      } else if (type === "calf_raise") {
+        prop += `<rect x="116" y="136" width="28" height="14" fill="#364152" rx="3"/>`;
+        const toe = [136, 136];
+        const heel = [112, lerp(148, 118, p)];
+        const knee = [126, lerp(98, 86, p)];
+        const hip = [126, lerp(56, 44, p)];
+        addBone(toe[0], toe[1], heel[0], heel[1], "#F8FAFC", 6);
+        addBone(heel[0], heel[1], knee[0], knee[1], "#F8FAFC", 7);
+        addBone(knee[0], knee[1], hip[0], hip[1], "#94A3B8", 7);
+        focusPt = [118, 118];
+      } else if (type === "crunch") {
+        const hip = [116, 136], knee = [148, 146];
+        const sh = [lerp(82, 108, p), lerp(88, 106, p)];
+        addBone(knee[0], knee[1], hip[0], hip[1], "#64748B", 7);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#F8FAFC", 8);
+        joints.push(`<circle cx="${sh[0] + 6}" cy="${sh[1] - 14}" r="8.5" fill="#94A3B8"/>`);
+        focusPt = [108, 118];
+      } else if (type === "hip_thrust") {
+        prop += `<rect x="66" y="102" width="28" height="48" fill="#364152" rx="4"/>`;
+        const foot = [166, 146], knee = [156, 102];
+        const hip = [118, lerp(136, 102, p)], sh = [86, 98];
+        addBone(foot[0], foot[1], knee[0], knee[1], "#CBD5E1", 6);
+        addBone(knee[0], knee[1], hip[0], hip[1], "#F8FAFC", 7);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        joints.push(`<circle cx="72" cy="86" r="8.5" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${hip[0]}" cy="${hip[1]}" r="7" fill="#FF5C1A"/>`);
+        focusPt = [hip[0], hip[1]];
+      } else {
+        // Hammer curl default
+        const hip = [114, 146], sh = [116, 78], elbow = [116, 112];
+        const wristAng = lerp(85, -35, p);
+        const wrist = degToPt(elbow[0], elbow[1], 34, wristAng);
+        addBone(hip[0], hip[1], sh[0], sh[1], "#94A3B8", 7);
+        addBone(sh[0], sh[1], elbow[0], elbow[1], "#CBD5E1", 6);
+        addBone(elbow[0], elbow[1], wrist[0], wrist[1], "#F8FAFC", 6);
+        joints.push(`<circle cx="118" cy="60" r="9" fill="#94A3B8"/>`);
+        joints.push(`<circle cx="${wrist[0]}" cy="${wrist[1]}" r="6.5" fill="#FF5C1A"/>`);
+        addJoint(elbow[0], elbow[1], 5, "#2DD4BF");
+        focusPt = [116, 96];
+      }
+
+      const pulse = `<circle cx="${focusPt[0].toFixed(1)}" cy="${focusPt[1].toFixed(1)}" r="${(7 + p * 4).toFixed(1)}" fill="rgba(255,92,26,0.22)" stroke="#FF5C1A" stroke-width="1.2"/>`;
+      const label = `<text x="12" y="20" fill="#8E98A8" font-family="monospace" font-size="10">ROM: ${escapeHtml(romLabel)}</text>`;
+
+      svg.innerHTML = prop + ghost + bones.join("") + pulse + joints.join("") + angleArc + label;
+    }
+
+    // Navigation
+    function switchView(viewName) {
+      state.view = viewName;
+      document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === `view-${viewName}`));
+      document.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === viewName));
+      saveState();
+      if (viewName === "library") renderLibrary();
+      if (viewName === "builder") renderBuilder();
+    }
+
+    // Dynamic Update Form & JSON Tools
+    function setupManageView() {
+      const fGroup = document.getElementById("fGroup");
+      const fHead = document.getElementById("fHead");
+      const libGroup = document.getElementById("libGroupFilter");
+
+      fGroup.innerHTML = db.muscleGroups.map((g) => `<option value="${g.id}">${g.name}</option>`).join("");
+      libGroup.innerHTML = `<option value="all">All Muscles</option>` + db.muscleGroups.map((g) => `<option value="${g.id}">${g.name}</option>`).join("");
+
+      const syncHeadOptions = () => {
+        const g = getGroupObj(fGroup.value);
+        fHead.innerHTML = (g ? g.heads : []).map((h) => `<option value="${h.id}">${h.name} (${h.role})</option>`).join("");
+      };
+      fGroup.addEventListener("change", syncHeadOptions);
+      syncHeadOptions();
+
+      const updateCustomInfo = () => {
+        const custom = getCustomExercises();
+        document.getElementById("customCountInfo").textContent = `${db.exercises.length} total (${custom.length} custom)`;
+      };
+      updateCustomInfo();
+
+      document.getElementById("addExerciseForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("fName").value.trim();
+        const group = fGroup.value;
+        const head = fHead.value;
+        const equipment = document.getElementById("fEquip").value;
+        const setsReps = document.getElementById("fSetsReps").value.trim() || "3 × 10–12";
+        const gluteLoad = Math.max(0, Math.min(100, Number(document.getElementById("fGlute").value) || 0));
+        const angle = document.getElementById("fAngle").value.trim();
+        const rom = document.getElementById("fRom").value.trim();
+        const cuesRaw = document.getElementById("fCues").value.trim();
+        const cues = cuesRaw ? cuesRaw.split("\n").map((s) => s.trim()).filter(Boolean) : ["Control the eccentric phase and keep target muscle under tension."];
+        const ytUrl = document.getElementById("fYoutubeUrl").value.trim();
+        const videoFile = document.getElementById("fVideo").files[0];
+
+        const id = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Date.now().toString(36).slice(-3);
+        const newEx = {
+          id,
+          name,
+          group,
+          groups: [group],
+          equipment,
+          tier: 2,
+          primaryHeads: [head],
+          secondaryHeads: [],
+          gluteLoad,
+          angle,
+          rom,
+          setsReps,
+          rest: "90s",
+          tempo: "3-1-1-0",
+          cues,
+          avoid: "Avoid swinging or sacrificing range of motion for extra weight.",
+          anim: { type: group === "quads" ? "hack_squat" : group === "chest" ? "incline_press" : group === "back" ? "barbell_row" : "hammer_curl", angleLabel: angle, romLabel: rom },
+          tags: [group, equipment.toLowerCase(), head]
+        };
+
+        const customList = getCustomExercises();
+        customList.push(newEx);
+        saveCustomExercises(customList);
+        mergeExercisesIntoDb([newEx]);
+
+        if (ytUrl) {
+          showToast("Downloading YouTube video into project...");
+          try {
+            const path = await downloadYoutubeForExercise(id, ytUrl);
+            newEx.video = path;
+            saveCustomExercises(customList);
+          } catch (err) {
+            showToast(err.message);
+          }
+        }
+        if (videoFile) {
+          await VideoStore.set(id, videoFile);
+          await refreshVideoKeys();
+        }
+
+        e.target.reset();
+        syncHeadOptions();
+        updateCustomInfo();
+        renderAll();
+        showToast(`Saved "${name}" offline!`);
+      });
+
+      document.getElementById("btnExportJson").addEventListener("click", () => {
+        const payload = JSON.stringify({ version: db.version, muscleGroups: db.muscleGroups, exercises: db.exercises }, null, 2);
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "exercises.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      const applyJsonImport = (rawText) => {
+        try {
+          const parsed = JSON.parse(rawText);
+          const arr = Array.isArray(parsed) ? parsed : parsed.exercises;
+          if (!Array.isArray(arr)) throw new Error("Invalid format");
+          const existingCustom = getCustomExercises();
+          const map = new Map(existingCustom.map((x) => [x.id, x]));
+          arr.forEach((x) => { if (x && x.id && x.name) map.set(x.id, x); });
+          saveCustomExercises(Array.from(map.values()));
+          mergeExercisesIntoDb(arr);
+          updateCustomInfo();
+          computeSyncedWorkout();
+          renderAll();
+          showToast(`Merged ${arr.length} exercises!`);
+        } catch {
+          showToast("Invalid JSON format");
+        }
+      };
+
+      document.getElementById("importJsonFile").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        file.text().then(applyJsonImport);
+      });
+
+      document.getElementById("btnMergeJson").addEventListener("click", () => {
+        const txt = document.getElementById("jsonPasteBox").value.trim();
+        if (txt) applyJsonImport(txt);
+      });
+
+      document.getElementById("btnResetDb").addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_CUSTOM_EX);
+        db = clone(DEFAULT_DATA);
+        computeSyncedWorkout();
+        updateCustomInfo();
+        renderAll();
+        showToast("Restored default exercise database");
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function renderAll() {
+      renderMuscleStrip();
+      renderBuilder();
+      if (state.view === "library") renderLibrary();
+    }
+
+    // Event Wiring & Boot
+    async function init() {
+      loadSavedData();
+      await refreshVideoKeys();
+
+      if (!state.workoutIds.length) {
+        computeSyncedWorkout();
+      }
+
+      // Navigation
+      document.querySelectorAll("[data-view]").forEach((btn) => {
+        btn.addEventListener("click", () => switchView(btn.dataset.view));
+      });
+
+      // Controls
+      document.getElementById("countDec").addEventListener("click", () => {
+        if (state.targetCount > 1) {
+          state.targetCount--;
+          computeSyncedWorkout();
+          renderBuilder();
+        }
+      });
+      document.getElementById("countInc").addEventListener("click", () => {
+        if (state.targetCount < 10) {
+          state.targetCount++;
+          computeSyncedWorkout();
+          renderBuilder();
+        }
+      });
+      document.getElementById("equipSelect").addEventListener("change", (e) => {
+        state.equipment = e.target.value;
+        computeSyncedWorkout();
+        renderBuilder();
+      });
+      document.getElementById("btnLowGlute").addEventListener("click", () => {
+        state.lowGluteGuard = !state.lowGluteGuard;
+        computeSyncedWorkout();
+        renderBuilder();
+      });
+      document.getElementById("btnSyncNow").addEventListener("click", () => {
+        computeSyncedWorkout();
+        renderBuilder();
+        showToast("Synced for full sub-head coverage");
+      });
+      document.getElementById("btnClearMuscles").addEventListener("click", () => {
+        state.selectedGroups = ["biceps"];
+        state.pinnedIds = [];
+        computeSyncedWorkout();
+        renderAll();
+      });
+      document.getElementById("btnOrderToggle").addEventListener("click", () => {
+        state.orderMode = state.orderMode === "smart" ? "grouped" : "smart";
+        const exs = state.workoutIds.map(getExerciseById).filter(Boolean);
+        state.workoutIds = sortWorkoutExercises(exs).map((e) => e.id);
+        saveState();
+        renderBuilder();
+      });
+
+      // Search
+      const searchEl = document.getElementById("searchInput");
+      searchEl.value = state.search;
+      searchEl.addEventListener("input", (e) => {
+        state.search = e.target.value;
+        renderSearchHints();
+        renderBuilder();
+        if (state.view === "library") renderLibrary();
+      });
+      document.getElementById("searchClear").addEventListener("click", () => {
+        state.search = "";
+        searchEl.value = "";
+        renderSearchHints();
+        renderBuilder();
+        if (state.view === "library") renderLibrary();
+      });
+
+      // Library Filters
+      document.getElementById("libGroupFilter").addEventListener("change", renderLibrary);
+      document.getElementById("libEquipFilter").addEventListener("change", renderLibrary);
+      document.getElementById("libNoGluteBtn").addEventListener("click", (e) => {
+        libNoGlute = !libNoGlute;
+        e.currentTarget.classList.toggle("active", libNoGlute);
+        renderLibrary();
+      });
+
+      // Modal Controls
+      document.getElementById("modalClose").addEventListener("click", closeModal);
+      document.getElementById("detailModal").addEventListener("click", (e) => {
+        if (e.target.id === "detailModal") closeModal();
+      });
+      document.getElementById("simPlayBtn").addEventListener("click", (e) => {
+        simPlaying = !simPlaying;
+        e.currentTarget.textContent = simPlaying ? "Pause" : "Play";
+      });
+      document.getElementById("simSlowBtn").addEventListener("click", (e) => {
+        simSpeed = simSpeed === 1 ? 0.5 : 1;
+        e.currentTarget.textContent = simSpeed === 1 ? "1×" : "0.5×";
+        e.currentTarget.classList.toggle("active", simSpeed < 1);
+      });
+      document.getElementById("simScrub").addEventListener("input", (e) => {
+        simPlaying = false;
+        document.getElementById("simPlayBtn").textContent = "Play";
+        simProgress = Number(e.target.value) / 100;
+        const ex = getExerciseById(currentModalExId);
+        if (ex) renderSimFrame(ex, simProgress);
+      });
+
+      document.getElementById("modalYoutubeDownload").addEventListener("click", async () => {
+        const url = document.getElementById("modalYoutubeUrl").value.trim();
+        if (!url || !currentModalExId) {
+          showToast("Paste a YouTube link first");
+          return;
+        }
+        const btn = document.getElementById("modalYoutubeDownload");
+        const statusEl = document.getElementById("videoStatusLabel");
+        btn.disabled = true;
+        btn.textContent = "Downloading...";
+        statusEl.textContent = "Downloading video into ./videos/...";
+        try {
+          const path = await downloadYoutubeForExercise(currentModalExId, url);
+          const ex = getExerciseById(currentModalExId);
+          if (ex) ex.video = path;
+          openExerciseModal(currentModalExId);
+          renderAll();
+          showToast("Downloaded & linked to exercise!");
+        } catch (err) {
+          statusEl.textContent = err.message;
+          showToast(err.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Download";
+        }
+      });
+
+      document.getElementById("modalVideoInput").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file || !currentModalExId) return;
+        await VideoStore.set(currentModalExId, file);
+        await refreshVideoKeys();
+        openExerciseModal(currentModalExId);
+        renderAll();
+        showToast("Video saved offline on device!");
+      });
+
+      document.getElementById("modalVideoRemove").addEventListener("click", async () => {
+        if (!currentModalExId) return;
+        await VideoStore.remove(currentModalExId);
+        if (location.protocol.startsWith("http") && serverVideos[currentModalExId]) {
+          try {
+            await fetch("./api/delete-video", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ exerciseId: currentModalExId })
+            });
+          } catch {}
+        }
+        const ex = getExerciseById(currentModalExId);
+        if (ex) delete ex.video;
+        await refreshVideoKeys();
+        openExerciseModal(currentModalExId);
+        renderAll();
+        showToast("Removed offline video");
+      });
+
+      document.getElementById("btnPrintPdf").addEventListener("click", () => {
+        switchView("builder");
+        setTimeout(() => window.print(), 100);
+      });
+
+      const shareSel = document.getElementById("shareExerciseSelect");
+      const populateShareSelect = () => {
+        shareSel.innerHTML = `<option value="__TODAY__">Today's Synced Workout (${state.workoutIds.length} exercises)</option>` +
+          db.exercises.map((ex) => `<option value="${ex.id}">${escapeHtml(ex.name)} (${escapeHtml(ex.group)})</option>`).join("");
+      };
+      populateShareSelect();
+
+      const buildShareText = (val) => {
+        if (val === "__TODAY__") {
+          const exs = state.workoutIds.map(getExerciseById).filter(Boolean);
+          const lines = exs.map((e, i) => `${i + 1}. ${e.name} (${e.setsReps}) — ${e.angle}`);
+          return {
+            subject: `IronSync Workout: ${state.selectedGroups.join(" + ")}`,
+            body: `Today's Synced Workout:\n\n${lines.join("\n")}\n\n(Attach the saved PDF from print dialog)`
+          };
+        }
+        const ex = getExerciseById(val);
+        if (!ex) return { subject: "IronSync Exercise", body: "" };
+        const pri = (ex.primaryHeads || []).map((h) => getHeadInfo(h).name).join(", ");
+        const cues = (ex.cues || []).map((c) => `- ${c}`).join("\n");
+        return {
+          subject: `IronSync Exercise: ${ex.name}`,
+          body: `${ex.name} (${ex.equipment})\nPrimary: ${pri}\nSets/Reps: ${ex.setsReps} | Rest: ${ex.rest}\nAngle: ${ex.angle}\nROM: ${ex.rom}\nGlute Load: ${ex.gluteLoad || 0}%\n\nCues:\n${cues}\n\n(Attach the saved PDF from print dialog)`
+        };
+      };
+
+      document.getElementById("btnSendGmailPdf").addEventListener("click", () => {
+        const val = shareSel.value;
+        const { subject, body } = buildShareText(val);
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent("osmanmuhammadofficial@gmail.com")}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        if (val === "__TODAY__") {
+          switchView("builder");
+        } else {
+          openExerciseModal(val);
+        }
+        setTimeout(() => {
+          window.print();
+          window.open(gmailUrl, "_blank", "noopener");
+        }, 150);
+      });
+
+      document.getElementById("btnSendWhatsApp").addEventListener("click", () => {
+        const { body } = buildShareText(shareSel.value);
+        window.open(`https://wa.me/?text=${encodeURIComponent(body)}`, "_blank", "noopener");
+      });
+
+      setupManageView();
+      renderSearchHints();
+      switchView(state.view || "builder");
+
+      // Offline indicator + Service Worker
+      const updateNetStatus = () => {
+        const pill = document.getElementById("offlineStatus");
+        pill.innerHTML = `<span class="offline-dot"></span>${navigator.onLine ? "Offline Ready" : "Offline Active"}`;
+      };
+      window.addEventListener("online", updateNetStatus);
+      window.addEventListener("offline", updateNetStatus);
+      updateNetStatus();
+
+      if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

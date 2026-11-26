@@ -1,0 +1,28 @@
+# IronSync — Offline Muscle & Form Planner
+
+A minimal, zero-landing-page, offline-first gym planner built for iPhone 14, Android, and desktop.
+
+## Files
+- [index.html](file:///Users/sam/Downloads/gym%20go/index.html) — Self-contained offline app (works even if opened directly as a single file).
+- [exercises.json](file:///Users/sam/Downloads/gym%20go/exercises.json) — Clean JSON copy of the exercise database.
+- [manifest.json](file:///Users/sam/Downloads/gym%20go/manifest.json) & [sw.js](file:///Users/sam/Downloads/gym%20go/sw.js) — PWA support for Home Screen installation and permanent offline caching.
+- [icon.svg](file:///Users/sam/Downloads/gym%20go/icon.svg) — App icon.
+
+## How to Use Offline on iPhone 14 or Android
+1. **Option A — Home Screen App (Best Experience on iPhone 14 / Android):**
+   - Host the folder on GitHub Pages / Netlify, or open once on your local Wi-Fi (`python3 -m http.server 8080` on Mac and visit `http://<your-mac-ip>:8080` on your phone).
+   - On **iPhone 14 (Safari)**: Tap **Share → Add to Home Screen**.
+   - On **Android (Chrome)**: Tap **Menu (⋮) → Install App / Add to Home Screen**.
+   - Once opened once, the Service Worker caches everything so it launches **100% offline** in the gym forever.
+2. **Option B — Single File:**
+   - Send `index.html` to your phone and open it directly in a browser/HTML viewer — all muscle maps, smart sync logic, and animated angle/ROM guides are embedded directly inside `index.html`.
+3. **Option C — Export PDF Handout:**
+   - Tap **PDF** in the top bar anytime to save/print Today's Synced Session as a clean PDF.
+
+## Adding Offline Videos (YouTube Auto-Download or Manual)
+- **Auto-Download from YouTube into Project (`videos/`):**
+  Run `python3 server.py` inside this folder and open `http://localhost:8765`.
+  Tap any exercise → paste a YouTube link → click **Download**. It saves the `.mp4` directly into `videos/<exercise-id>.mp4` and plays right inside that exercise (also works when adding custom exercises in the **Update** tab, or via CLI: `python3 server.py --download "<url>" --id <exercise-id>`).
+- **Manual / Offline Phone Video:**
+  Tap any exercise → **+ Attach Local Video (.mp4/.mov)** to save a video from your phone directly into offline browser storage (`IndexedDB`).
+- Use the **Update** tab to add new exercises on the fly or merge/export `exercises.json`.

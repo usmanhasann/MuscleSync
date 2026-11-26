@@ -1,0 +1,2213 @@
+{
+  "version": 1,
+  "muscleGroups": [
+    {
+      "id": "chest",
+      "name": "Chest",
+      "heads": [
+        {
+          "id": "upper_chest",
+          "name": "Upper Chest",
+          "role": "Clavicular Shelf"
+        },
+        {
+          "id": "mid_chest",
+          "name": "Mid Chest",
+          "role": "Sternal Mass"
+        },
+        {
+          "id": "lower_chest",
+          "name": "Lower Chest",
+          "role": "Lower Sweep"
+        }
+      ]
+    },
+    {
+      "id": "back",
+      "name": "Back",
+      "heads": [
+        {
+          "id": "lats_width",
+          "name": "Lats",
+          "role": "V-Taper Width"
+        },
+        {
+          "id": "mid_back",
+          "name": "Mid-Back & Rhomboids",
+          "role": "Back Thickness"
+        },
+        {
+          "id": "traps_upper",
+          "name": "Upper Traps",
+          "role": "Yoke & Neck"
+        },
+        {
+          "id": "lower_back",
+          "name": "Lower Back",
+          "role": "Spinal Erectors"
+        }
+      ]
+    },
+    {
+      "id": "shoulders",
+      "name": "Shoulders",
+      "heads": [
+        {
+          "id": "front_delt",
+          "name": "Front Delt",
+          "role": "Anterior Press"
+        },
+        {
+          "id": "side_delt",
+          "name": "Side Delt",
+          "role": "Shoulder Width"
+        },
+        {
+          "id": "rear_delt",
+          "name": "Rear Delt",
+          "role": "3D Cap & Posture"
+        }
+      ]
+    },
+    {
+      "id": "biceps",
+      "name": "Biceps",
+      "heads": [
+        {
+          "id": "bicep_long",
+          "name": "Long Head",
+          "role": "Outer Peak"
+        },
+        {
+          "id": "bicep_short",
+          "name": "Short Head",
+          "role": "Inner Thickness"
+        },
+        {
+          "id": "brachialis",
+          "name": "Brachialis & Forearm",
+          "role": "Arm Width & Density"
+        }
+      ]
+    },
+    {
+      "id": "triceps",
+      "name": "Triceps",
+      "heads": [
+        {
+          "id": "tricep_long",
+          "name": "Long Head",
+          "role": "Overhead Mass"
+        },
+        {
+          "id": "tricep_lateral",
+          "name": "Lateral Head",
+          "role": "Outer Horseshoe"
+        },
+        {
+          "id": "tricep_medial",
+          "name": "Medial Head",
+          "role": "Lockout & Stability"
+        }
+      ]
+    },
+    {
+      "id": "quads",
+      "name": "Quads",
+      "heads": [
+        {
+          "id": "quad_rectus",
+          "name": "Rectus Femoris",
+          "role": "Center Thigh"
+        },
+        {
+          "id": "quad_outer",
+          "name": "Vastus Lateralis",
+          "role": "Outer Quad Sweep"
+        },
+        {
+          "id": "quad_inner",
+          "name": "VMO (Teardrop)",
+          "role": "Inner Knee Sweep"
+        }
+      ]
+    },
+    {
+      "id": "hamstrings",
+      "name": "Hamstrings",
+      "heads": [
+        {
+          "id": "ham_stretch",
+          "name": "Proximal Hamstring",
+          "role": "Hip-Hinge Stretch"
+        },
+        {
+          "id": "ham_curl",
+          "name": "Distal Hamstring",
+          "role": "Knee-Flexion Peak"
+        }
+      ]
+    },
+    {
+      "id": "glutes",
+      "name": "Glutes",
+      "heads": [
+        {
+          "id": "glute_max",
+          "name": "Glute Max",
+          "role": "Posterior Drive"
+        },
+        {
+          "id": "glute_med",
+          "name": "Glute Medius",
+          "role": "Upper Hip Shelf"
+        }
+      ]
+    },
+    {
+      "id": "calves",
+      "name": "Calves",
+      "heads": [
+        {
+          "id": "gastroc",
+          "name": "Gastrocnemius",
+          "role": "Upper Calf Diamond"
+        },
+        {
+          "id": "soleus",
+          "name": "Soleus",
+          "role": "Lower Calf Width"
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "name": "Core & Abs",
+      "heads": [
+        {
+          "id": "upper_abs",
+          "name": "Upper Abs",
+          "role": "Spinal Flexion"
+        },
+        {
+          "id": "lower_abs",
+          "name": "Lower Abs",
+          "role": "Pelvic Tilt"
+        },
+        {
+          "id": "obliques",
+          "name": "Obliques",
+          "role": "Side Waist & Taper"
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "id": "incline-db-curl",
+      "name": "Incline Dumbbell Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 2,
+      "primaryHeads": [
+        "bicep_long"
+      ],
+      "secondaryHeads": [
+        "bicep_short"
+      ],
+      "gluteLoad": 0,
+      "angle": "45° Bench • Arms Hang Behind Torso",
+      "rom": "Full elbow extension at bottom to 125° curl without lifting elbows forward",
+      "setsReps": "3 × 10–12",
+      "rest": "90s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Set bench to 45° and pin shoulder blades back against the pad.",
+        "Keep elbows pointing straight down behind your torso the entire rep.",
+        "Supinate pinky upward at the top and lower for a full 3-second stretch."
+      ],
+      "avoid": "Swinging elbows forward shifts tension off the long head onto the front delt.",
+      "anim": {
+        "type": "incline_curl",
+        "angleLabel": "45° Bench",
+        "romLabel": "180° → 55°"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "long head",
+        "peak",
+        "stretch",
+        "dumbbell"
+      ]
+    },
+    {
+      "id": "preacher-curl",
+      "name": "Preacher Curl (EZ-Bar or DB)",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Barbell",
+      "tier": 2,
+      "primaryHeads": [
+        "bicep_short"
+      ],
+      "secondaryHeads": [
+        "bicep_long",
+        "brachialis"
+      ],
+      "gluteLoad": 0,
+      "angle": "45° Pad • Arms In Front of Torso",
+      "rom": "Near-full stretch (avoid hyperextension) to 110° peak squeeze",
+      "setsReps": "3 × 10–12",
+      "rest": "90s",
+      "tempo": "3-0-1-1",
+      "cues": [
+        "Armpits snug over the top edge of the preacher pad.",
+        "Control the bottom 20% slowly—that is where short-head tension peaks.",
+        "Stop slightly before vertical at the top so tension stays on the bicep."
+      ],
+      "avoid": "Bouncing out of the bottom or shrugging shoulders up off the pad.",
+      "anim": {
+        "type": "preacher_curl",
+        "angleLabel": "45° Pad",
+        "romLabel": "170° → 60°"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "short head",
+        "inner bicep",
+        "preacher",
+        "thickness"
+      ]
+    },
+    {
+      "id": "hammer-curl",
+      "name": "Cross-Body / Standing Hammer Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 3,
+      "primaryHeads": [
+        "brachialis"
+      ],
+      "secondaryHeads": [
+        "bicep_long"
+      ],
+      "gluteLoad": 0,
+      "angle": "0° Neutral Wrist (Palms Facing In)",
+      "rom": "Dead hang at side to upper-chest level with locked upper arm",
+      "setsReps": "3 × 10–14",
+      "rest": "75s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Keep thumbs pointing up (neutral grip) to bias the brachialis and brachioradialis.",
+        "Glue elbows to your ribs—zero torso sway.",
+        "Squeeze hard for 1 second at the top to thicken outer arm width."
+      ],
+      "avoid": "Rotating wrists palm-up midway turns it back into a standard curl.",
+      "anim": {
+        "type": "hammer_curl",
+        "angleLabel": "0° Neutral",
+        "romLabel": "180° → 50°"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "brachialis",
+        "forearm",
+        "width",
+        "dumbbell"
+      ]
+    },
+    {
+      "id": "bayesian-cable-curl",
+      "name": "Bayesian Cable Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Cable",
+      "tier": 3,
+      "primaryHeads": [
+        "bicep_long"
+      ],
+      "secondaryHeads": [
+        "bicep_short"
+      ],
+      "gluteLoad": 0,
+      "angle": "Cable Low • Step Forward 25° Shoulder Extension",
+      "rom": "Arm pulled behind hip into deep stretch, curl toward shoulder",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Face away from a low pulley so the cable pulls your arm backward.",
+        "Keep elbow stationary behind your hip line throughout.",
+        "Constant cable tension hits the long head even at full extension."
+      ],
+      "avoid": "Letting the cable yank your shoulder into internal rotation at the bottom.",
+      "anim": {
+        "type": "incline_curl",
+        "angleLabel": "25° Behind Hip",
+        "romLabel": "180° → 55°"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "long head",
+        "cable",
+        "constant tension"
+      ]
+    },
+    {
+      "id": "concentration-curl",
+      "name": "Seated Concentration Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 4,
+      "primaryHeads": [
+        "bicep_short"
+      ],
+      "secondaryHeads": [
+        "brachialis"
+      ],
+      "gluteLoad": 0,
+      "angle": "Elbow Braced Inside Inner Thigh",
+      "rom": "Full arm hang to peak supinated squeeze toward opposite shoulder",
+      "setsReps": "2–3 × 12–15",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Brace back of triceps firmly against inner thigh to eliminate cheating.",
+        "Twist pinky inward at peak contraction for maximum bicep cramp.",
+        "Control the eccentric all the way down."
+      ],
+      "avoid": "Using your leg to push the elbow upward on tough reps.",
+      "anim": {
+        "type": "preacher_curl",
+        "angleLabel": "Braced Thigh",
+        "romLabel": "175° → 50°"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "short head",
+        "peak",
+        "finisher"
+      ]
+    },
+    {
+      "id": "reverse-ez-curl",
+      "name": "Reverse-Grip EZ-Bar Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Barbell",
+      "tier": 4,
+      "primaryHeads": [
+        "brachialis"
+      ],
+      "secondaryHeads": [
+        "bicep_long"
+      ],
+      "gluteLoad": 0,
+      "angle": "Overhand Pronated Grip • Wrists Flat",
+      "rom": "Full hang to 90–110° elbow flexion keeping wrists neutral",
+      "setsReps": "3 × 12–15",
+      "rest": "60s",
+      "tempo": "2-0-1-1",
+      "cues": [
+        "Use a pronated (palms-down) grip to maximize brachioradialis and brachialis.",
+        "Keep knuckles stacked straight—don't curl wrists backward.",
+        "Pushes the biceps up from underneath for thicker arms."
+      ],
+      "avoid": "Dropping wrists into extension or using too much weight with back swing.",
+      "anim": {
+        "type": "hammer_curl",
+        "angleLabel": "Pronated Grip",
+        "romLabel": "175° → 65°"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "brachialis",
+        "forearms",
+        "reverse curl"
+      ]
+    },
+    {
+      "id": "overhead-cable-tricep-ext",
+      "name": "Overhead Cable Tricep Extension",
+      "group": "triceps",
+      "groups": [
+        "triceps"
+      ],
+      "equipment": "Cable",
+      "tier": 2,
+      "primaryHeads": [
+        "tricep_long"
+      ],
+      "secondaryHeads": [
+        "tricep_medial",
+        "tricep_lateral"
+      ],
+      "gluteLoad": 0,
+      "angle": "Arms Overhead 150–170° • Torso Forward 20°",
+      "rom": "Deep elbow bend behind head to full lockout overhead",
+      "setsReps": "3 × 10–14",
+      "rest": "90s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Raise arms overhead to put the tricep long head on maximum stretch.",
+        "Let forearms fold deep behind your head before pressing out.",
+        "Keep elbows pointing roughly forward—don't flare wide."
+      ],
+      "avoid": "Dropping elbows down toward your ribs turns it into a chest/press.",
+      "anim": {
+        "type": "overhead_ext",
+        "angleLabel": "160° Overhead",
+        "romLabel": "45° → 180°"
+      },
+      "tags": [
+        "tricep",
+        "arms",
+        "long head",
+        "overhead",
+        "cable",
+        "mass"
+      ]
+    },
+    {
+      "id": "cable-rope-pushdown",
+      "name": "Cable Tricep Pushdown (Bar or Rope)",
+      "group": "triceps",
+      "groups": [
+        "triceps"
+      ],
+      "equipment": "Cable",
+      "tier": 3,
+      "primaryHeads": [
+        "tricep_lateral"
+      ],
+      "secondaryHeads": [
+        "tricep_medial"
+      ],
+      "gluteLoad": 0,
+      "angle": "Elbows Pinned at Sides • Slight 10° Forward Lean",
+      "rom": "Forearms parallel/high (120° bend) down to full crisp lockout",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "2-0-1-1",
+      "cues": [
+        "Pin upper arms tightly to your ribs—only the forearm pivots.",
+        "Lock elbows fully at the bottom and hold for 1 second.",
+        "With a straight/V-bar you can overload lateral head; with rope spread slightly at bottom."
+      ],
+      "avoid": "Letting elbows drift forward and using shoulders/lats to press down.",
+      "anim": {
+        "type": "pushdown",
+        "angleLabel": "Elbows Pinned",
+        "romLabel": "50° → 180°"
+      },
+      "tags": [
+        "tricep",
+        "arms",
+        "lateral head",
+        "horseshoe",
+        "pushdown",
+        "cable"
+      ]
+    },
+    {
+      "id": "close-grip-bench",
+      "name": "Close-Grip Bench Press",
+      "group": "triceps",
+      "groups": [
+        "triceps",
+        "chest",
+        "shoulders"
+      ],
+      "equipment": "Barbell",
+      "tier": 1,
+      "primaryHeads": [
+        "tricep_medial",
+        "tricep_lateral"
+      ],
+      "secondaryHeads": [
+        "mid_chest",
+        "front_delt",
+        "tricep_long"
+      ],
+      "gluteLoad": 0,
+      "angle": "Shoulder-Width Grip • Elbows Tucked 20°",
+      "rom": "Lower bar to lower sternum/xiphoid, drive straight to lockout",
+      "setsReps": "3 × 6–10",
+      "rest": "120s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Grip shoulder-width (not touching hands—too narrow hurts wrists).",
+        "Tuck elbows closer to ribs than flat bench so triceps carry the load.",
+        "Pause lightly on lower chest and press explosively."
+      ],
+      "avoid": "Hands touching together—it stresses wrists without extra tricep gain.",
+      "anim": {
+        "type": "bench_press",
+        "angleLabel": "0° Flat • Narrow",
+        "romLabel": "Chest → Lockout"
+      },
+      "tags": [
+        "tricep",
+        "arms",
+        "medial head",
+        "lateral head",
+        "compound",
+        "barbell"
+      ]
+    },
+    {
+      "id": "ez-skull-crusher",
+      "name": "Incline EZ-Bar Skull Crusher",
+      "group": "triceps",
+      "groups": [
+        "triceps"
+      ],
+      "equipment": "Barbell",
+      "tier": 2,
+      "primaryHeads": [
+        "tricep_long"
+      ],
+      "secondaryHeads": [
+        "tricep_lateral",
+        "tricep_medial"
+      ],
+      "gluteLoad": 0,
+      "angle": "30° Incline Bench • Arms Angled 15° Back",
+      "rom": "Lower bar behind top of head for deep stretch, extend back to start",
+      "setsReps": "3 × 10–12",
+      "rest": "90s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Angle upper arms slightly back behind vertical so tension never drops at the top.",
+        "Lower behind the crown of your head rather than to your forehead.",
+        "Keep elbows narrow and stable."
+      ],
+      "avoid": "Vertical arms over the chest let gravity disappear at lockout.",
+      "anim": {
+        "type": "overhead_ext",
+        "angleLabel": "30° Bench • 15° Back",
+        "romLabel": "50° → 175°"
+      },
+      "tags": [
+        "tricep",
+        "arms",
+        "long head",
+        "skull crusher",
+        "barbell"
+      ]
+    },
+    {
+      "id": "single-arm-reverse-pushdown",
+      "name": "Single-Arm Reverse Cable Pushdown",
+      "group": "triceps",
+      "groups": [
+        "triceps"
+      ],
+      "equipment": "Cable",
+      "tier": 4,
+      "primaryHeads": [
+        "tricep_medial"
+      ],
+      "secondaryHeads": [
+        "tricep_lateral"
+      ],
+      "gluteLoad": 0,
+      "angle": "Underhand Supinated Grip • Elbow Tight",
+      "rom": "Full elbow bend above parallel down to complete straight-arm lockout",
+      "setsReps": "3 × 12–15",
+      "rest": "60s",
+      "tempo": "2-0-1-1",
+      "cues": [
+        "Use a D-handle with palm facing up to emphasize the medial head near the elbow.",
+        "Keep wrist straight and elbow pinned against your side.",
+        "Squeeze hard at full lockout for elbow-end tricep density."
+      ],
+      "avoid": "Twisting torso or flaring elbow outward.",
+      "anim": {
+        "type": "pushdown",
+        "angleLabel": "Underhand Grip",
+        "romLabel": "55° → 180°"
+      },
+      "tags": [
+        "tricep",
+        "arms",
+        "medial head",
+        "lockout",
+        "cable"
+      ]
+    },
+    {
+      "id": "incline-db-press",
+      "name": "30° Incline Dumbbell Press",
+      "group": "chest",
+      "groups": [
+        "chest",
+        "shoulders",
+        "triceps"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 1,
+      "primaryHeads": [
+        "upper_chest"
+      ],
+      "secondaryHeads": [
+        "mid_chest",
+        "front_delt",
+        "tricep_lateral"
+      ],
+      "gluteLoad": 0,
+      "angle": "30° Bench Incline • Elbows 45° Tucked",
+      "rom": "Deep stretch beside upper chest to full converge overhead",
+      "setsReps": "3–4 × 8–10",
+      "rest": "120s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Use 30° incline (45° shifts too much load to front delts).",
+        "Tuck elbows 45° from torso—never flared straight out at 90°.",
+        "Touch dumbbells gently near upper chest level, pause 1s, press up and slightly inward."
+      ],
+      "avoid": "Setting bench at 45–60° or flaring elbows out, which steals upper-chest work with shoulders.",
+      "anim": {
+        "type": "incline_press",
+        "angleLabel": "30° Incline",
+        "romLabel": "Deep Stretch → Top"
+      },
+      "tags": [
+        "chest",
+        "upper chest",
+        "clavicular",
+        "dumbbell",
+        "press"
+      ]
+    },
+    {
+      "id": "flat-bb-bench-press",
+      "name": "Flat Barbell / Machine Chest Press",
+      "group": "chest",
+      "groups": [
+        "chest",
+        "triceps",
+        "shoulders"
+      ],
+      "equipment": "Barbell",
+      "tier": 1,
+      "primaryHeads": [
+        "mid_chest"
+      ],
+      "secondaryHeads": [
+        "upper_chest",
+        "lower_chest",
+        "front_delt",
+        "tricep_medial"
+      ],
+      "gluteLoad": 0,
+      "angle": "0° Flat Bench • Mild Arch • Elbows 45–60°",
+      "rom": "Touch mid-lower sternum with control, drive smoothly to lockout",
+      "setsReps": "3–4 × 6–8",
+      "rest": "150s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Retract and depress shoulder blades into the bench before unracking.",
+        "Lower bar to nipple/lower-sternum line with forearms vertical.",
+        "Drive feet into floor for stability without bouncing bar off ribs."
+      ],
+      "avoid": "Flaring elbows 90° toward your ears—hard on shoulders and weakens pec drive.",
+      "anim": {
+        "type": "bench_press",
+        "angleLabel": "0° Flat • 45° Elbow",
+        "romLabel": "Sternum → Lockout"
+      },
+      "tags": [
+        "chest",
+        "mid chest",
+        "bench",
+        "compound",
+        "barbell"
+      ]
+    },
+    {
+      "id": "weighted-chest-dip",
+      "name": "Forward-Lean Chest Dip",
+      "group": "chest",
+      "groups": [
+        "chest",
+        "triceps",
+        "shoulders"
+      ],
+      "equipment": "Bodyweight",
+      "tier": 2,
+      "primaryHeads": [
+        "lower_chest"
+      ],
+      "secondaryHeads": [
+        "mid_chest",
+        "tricep_lateral",
+        "front_delt"
+      ],
+      "gluteLoad": 0,
+      "angle": "30° Torso Forward Lean • Legs Slightly Back",
+      "rom": "Shoulders below elbows (90°+ stretch) to near-lockout squeeze",
+      "setsReps": "3 × 8–12",
+      "rest": "120s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Lean torso forward ~30° and flare elbows slightly to bias lower chest over triceps.",
+        "Descend until bicep touches forearm or upper arm is slightly below parallel.",
+        "Keep shoulders pushed down away from ears at the top."
+      ],
+      "avoid": "Staying completely upright turns dips into a tricep exercise instead of lower chest.",
+      "anim": {
+        "type": "incline_press",
+        "angleLabel": "30° Forward Lean",
+        "romLabel": "Below Parallel → Top"
+      },
+      "tags": [
+        "chest",
+        "lower chest",
+        "dips",
+        "bodyweight",
+        "sweep"
+      ]
+    },
+    {
+      "id": "cable-chest-fly",
+      "name": "Seated / Standing Cable Fly (High-to-Low & Mid)",
+      "group": "chest",
+      "groups": [
+        "chest"
+      ],
+      "equipment": "Cable",
+      "tier": 3,
+      "primaryHeads": [
+        "mid_chest",
+        "lower_chest"
+      ],
+      "secondaryHeads": [
+        "upper_chest"
+      ],
+      "gluteLoad": 0,
+      "angle": "15° Soft Elbow Bend • Arms Sweeping Across Chest",
+      "rom": "Wide pec stretch in line with torso to hands meeting in front of sternum",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Think about bringing your biceps/elbows together, not your hands.",
+        "Keep a fixed 15° bend in your elbows—don't turn it into a press.",
+        "Set pulleys slightly above shoulders for lower/mid sweep, or low-to-high for upper chest."
+      ],
+      "avoid": "Letting shoulders roll forward at the end of the squeeze.",
+      "anim": {
+        "type": "chest_fly",
+        "angleLabel": "15° Soft Elbow",
+        "romLabel": "Wide Stretch → Center"
+      },
+      "tags": [
+        "chest",
+        "mid chest",
+        "lower chest",
+        "fly",
+        "cable",
+        "isolation"
+      ]
+    },
+    {
+      "id": "pec-deck-fly",
+      "name": "Pec Deck / Machine Chest Fly",
+      "group": "chest",
+      "groups": [
+        "chest"
+      ],
+      "equipment": "Machine",
+      "tier": 3,
+      "primaryHeads": [
+        "mid_chest"
+      ],
+      "secondaryHeads": [
+        "upper_chest",
+        "front_delt"
+      ],
+      "gluteLoad": 0,
+      "angle": "Seat Height = Handles Align With Mid Chest",
+      "rom": "Full stretch just past torso plane to strong 1s squeeze in front",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Adjust seat so arms are slightly below shoulder height.",
+        "Keep chest proud and shoulder blades pinned to backrest.",
+        "Pause 1 second in the fully contracted position."
+      ],
+      "avoid": "Setting seat too low so handles sit at chin level (overworks front delts).",
+      "anim": {
+        "type": "chest_fly",
+        "angleLabel": "Mid-Chest Height",
+        "romLabel": "Wide Stretch → Touch"
+      },
+      "tags": [
+        "chest",
+        "mid chest",
+        "machine",
+        "pec deck",
+        "fly"
+      ]
+    },
+    {
+      "id": "low-to-high-cable-fly",
+      "name": "Low-to-High Cable Fly",
+      "group": "chest",
+      "groups": [
+        "chest"
+      ],
+      "equipment": "Cable",
+      "tier": 4,
+      "primaryHeads": [
+        "upper_chest"
+      ],
+      "secondaryHeads": [
+        "mid_chest",
+        "front_delt"
+      ],
+      "gluteLoad": 0,
+      "angle": "Pulleys at Hip Level • Scoop Upward 45°",
+      "rom": "Arms wide and low to palms meeting at upper-chest / chin level",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Follow the upward-inward fiber direction of the clavicular (upper) chest.",
+        "Keep palms facing forward/up and scoop arms up to collarbone height.",
+        "Squeeze upper chest hard for 1s at the top."
+      ],
+      "avoid": "Bending elbows and turning it into a front raise.",
+      "anim": {
+        "type": "chest_fly",
+        "angleLabel": "45° Upward Scoop",
+        "romLabel": "Low Wide → Collarbone"
+      },
+      "tags": [
+        "chest",
+        "upper chest",
+        "cable",
+        "fly",
+        "finisher"
+      ]
+    },
+    {
+      "id": "wide-lat-pulldown",
+      "name": "Wide / Neutral-Grip Lat Pulldown",
+      "group": "back",
+      "groups": [
+        "back",
+        "biceps"
+      ],
+      "equipment": "Cable",
+      "tier": 1,
+      "primaryHeads": [
+        "lats_width"
+      ],
+      "secondaryHeads": [
+        "mid_back",
+        "bicep_short",
+        "rear_delt"
+      ],
+      "gluteLoad": 0,
+      "angle": "10–15° Slight Lean Back • Grip 1.3× Shoulder Width",
+      "rom": "Full overhead lat stretch (ribs lifted) to bar touching upper collarbone",
+      "setsReps": "3–4 × 8–12",
+      "rest": "105s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Initiate by depressing shoulders down, then drive elbows toward your hips.",
+        "Let arms stretch completely overhead between reps so lats lengthen.",
+        "Avoid leaning back 45°—stay tall to keep pull vertical for lat width."
+      ],
+      "avoid": "Pulling with biceps and leaning way back turns it into a row.",
+      "anim": {
+        "type": "lat_pulldown",
+        "angleLabel": "15° Lean • Vertical",
+        "romLabel": "Full Reach → Collarbone"
+      },
+      "tags": [
+        "back",
+        "lats",
+        "width",
+        "v-taper",
+        "pulldown",
+        "cable"
+      ]
+    },
+    {
+      "id": "chest-supported-row",
+      "name": "Chest-Supported Machine / DB Row",
+      "group": "back",
+      "groups": [
+        "back",
+        "shoulders",
+        "biceps"
+      ],
+      "equipment": "Machine",
+      "tier": 1,
+      "primaryHeads": [
+        "mid_back"
+      ],
+      "secondaryHeads": [
+        "lats_width",
+        "rear_delt",
+        "traps_upper",
+        "brachialis"
+      ],
+      "gluteLoad": 0,
+      "angle": "30–45° Chest Pad • Elbows 45–60° Out",
+      "rom": "Full protraction (shoulder blades spread forward) to tight squeeze back",
+      "setsReps": "3–4 × 8–12",
+      "rest": "105s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Chest stays glued to pad—zero lower-back or glute fatigue!",
+        "Let shoulder blades wrap forward at the bottom for a deep mid-back stretch.",
+        "Drive elbows back and squeeze shoulder blades together for 1 second."
+      ],
+      "avoid": "Pulling torso off the pad with momentum.",
+      "anim": {
+        "type": "barbell_row",
+        "angleLabel": "45° Pad • Zero Spine Load",
+        "romLabel": "Protract → Squeeze"
+      },
+      "tags": [
+        "back",
+        "mid back",
+        "rhomboids",
+        "thickness",
+        "no glutes",
+        "row"
+      ],
+      "video": "./videos/chest-supported-row.f134.mp4"
+    },
+    {
+      "id": "single-arm-cable-lat-row",
+      "name": "Single-Arm Iliac Lat Row / Pulldown",
+      "group": "back",
+      "groups": [
+        "back",
+        "biceps"
+      ],
+      "equipment": "Cable",
+      "tier": 2,
+      "primaryHeads": [
+        "lats_width"
+      ],
+      "secondaryHeads": [
+        "mid_back",
+        "brachialis"
+      ],
+      "gluteLoad": 0,
+      "angle": "Elbow Tight to Ribcage • Pull Toward Hip",
+      "rom": "Full forward reach across midline to elbow stopping right at hip",
+      "setsReps": "3 × 10–12 / side",
+      "rest": "75s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Keep elbow tucked close to your ribs and pull in an arc toward your pocket.",
+        "Stop elbow right at torso plane—pulling further back shifts work to rear delt.",
+        "Allow shoulder blade to glide forward smoothly on every rep."
+      ],
+      "avoid": "Pulling elbow way behind your back or shrugging shoulder up.",
+      "anim": {
+        "type": "barbell_row",
+        "angleLabel": "Elbow → Hip Line",
+        "romLabel": "Stretch → Hip"
+      },
+      "tags": [
+        "back",
+        "lats",
+        "lower lats",
+        "cable",
+        "unilateral"
+      ]
+    },
+    {
+      "id": "pull-up",
+      "name": "Pull-Up / Assisted Pull-Up",
+      "group": "back",
+      "groups": [
+        "back",
+        "biceps"
+      ],
+      "equipment": "Bodyweight",
+      "tier": 1,
+      "primaryHeads": [
+        "lats_width"
+      ],
+      "secondaryHeads": [
+        "mid_back",
+        "bicep_short",
+        "brachialis"
+      ],
+      "gluteLoad": 0,
+      "angle": "Shoulder-Width+ Overhand Grip • Chest Proud",
+      "rom": "Dead hang (ears between biceps) up to collarbone near bar",
+      "setsReps": "3 × 6–10",
+      "rest": "120s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Pull chest toward the bar rather than craning your chin over it.",
+        "Full dead hang at bottom stretches the lats completely.",
+        "Use assisted machine or band if needed to hit clean 6–10 reps."
+      ],
+      "avoid": "Half-reps from 90° elbows miss the best lat-growth stretch.",
+      "anim": {
+        "type": "lat_pulldown",
+        "angleLabel": "Vertical Pull",
+        "romLabel": "Dead Hang → Chest"
+      },
+      "tags": [
+        "back",
+        "lats",
+        "bodyweight",
+        "pullup",
+        "width"
+      ]
+    },
+    {
+      "id": "straight-arm-lat-pulldown",
+      "name": "Straight-Arm Cable Pullover",
+      "group": "back",
+      "groups": [
+        "back"
+      ],
+      "equipment": "Cable",
+      "tier": 3,
+      "primaryHeads": [
+        "lats_width"
+      ],
+      "secondaryHeads": [
+        "tricep_long",
+        "upper_abs"
+      ],
+      "gluteLoad": 0,
+      "angle": "35° Hip Hinge • Arms Nearly Straight (15° Bend)",
+      "rom": "Arms overhead in line with torso down to thighs—zero bicep involvement",
+      "setsReps": "3 × 12–15",
+      "rest": "60s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Takes biceps completely out of the equation so you truly feel your lats.",
+        "Hinge hips slightly back and sweep hands down toward your pockets.",
+        "Pause 1s at your thighs with lats flared."
+      ],
+      "avoid": "Bending elbows into a tricep pushdown.",
+      "anim": {
+        "type": "lat_pulldown",
+        "angleLabel": "35° Hinge • Straight Arm",
+        "romLabel": "Overhead → Thighs"
+      },
+      "tags": [
+        "back",
+        "lats",
+        "isolation",
+        "cable",
+        "pullover"
+      ]
+    },
+    {
+      "id": "db-shrug",
+      "name": "Kelso / Incline Trap Shrug",
+      "group": "back",
+      "groups": [
+        "back"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 4,
+      "primaryHeads": [
+        "traps_upper"
+      ],
+      "secondaryHeads": [
+        "mid_back"
+      ],
+      "gluteLoad": 0,
+      "angle": "15° Slight Forward Lean • Pull Up & Slightly Back",
+      "rom": "Full downward shoulder depression to peak ear-ward shrug pause",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "2-1-1-2",
+      "cues": [
+        "Lean 10–15° forward so trap fibers line up directly with gravity.",
+        "Hold the top squeeze for 2 full seconds instead of bouncing.",
+        "Let dumbbells pull shoulders all the way down between reps."
+      ],
+      "avoid": "Rolling shoulders in circles—move cleanly up-and-back along fiber angle.",
+      "anim": {
+        "type": "hammer_curl",
+        "angleLabel": "15° Lean • Shrug",
+        "romLabel": "Full Drop → 2s Hold"
+      },
+      "tags": [
+        "back",
+        "traps",
+        "upper traps",
+        "yoke",
+        "shrug"
+      ]
+    },
+    {
+      "id": "back-extension",
+      "name": "45° Back Extension (Spinal Bias)",
+      "group": "back",
+      "groups": [
+        "back"
+      ],
+      "equipment": "Bodyweight",
+      "tier": 3,
+      "primaryHeads": [
+        "lower_back"
+      ],
+      "secondaryHeads": [
+        "glute_max",
+        "ham_stretch"
+      ],
+      "gluteLoad": 22,
+      "angle": "45° Roman Chair • Pad Below Hip Crease",
+      "rom": "Controlled torso fold down to parallel with floor—squeeze erectors up",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "3-0-1-1",
+      "cues": [
+        "Set pad high enough to stabilize pelvis, fold smoothly at waist/hips.",
+        "Stop at neutral straight line at top—do not hyperextend past flat.",
+        "Hold a light plate against chest once bodyweight is easy."
+      ],
+      "avoid": "Jerking upward past straight spine alignment.",
+      "anim": {
+        "type": "rdl",
+        "angleLabel": "45° Bench",
+        "romLabel": "Fold → Neutral Spine"
+      },
+      "tags": [
+        "back",
+        "lower back",
+        "erectors",
+        "spine"
+      ],
+      "video": "./videos/back-extension.f134.mp4"
+    },
+    {
+      "id": "seated-db-shoulder-press",
+      "name": "Seated Dumbbell Shoulder Press",
+      "group": "shoulders",
+      "groups": [
+        "shoulders",
+        "triceps"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 1,
+      "primaryHeads": [
+        "front_delt"
+      ],
+      "secondaryHeads": [
+        "side_delt",
+        "upper_chest",
+        "tricep_lateral"
+      ],
+      "gluteLoad": 0,
+      "angle": "75–80° High Incline • Elbows 30° Forward (Scapular Plane)",
+      "rom": "Dumbbells to ear/chin level to full controlled overhead press",
+      "setsReps": "3–4 × 8–10",
+      "rest": "120s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Set bench one notch below 90° (around 75–80°) for safer shoulder mechanics.",
+        "Keep elbows angled 30° forward of your torso, never flared straight back.",
+        "Brace abs so lower back doesn't arch off the pad."
+      ],
+      "avoid": "Flaring elbows straight out at 90°—pinches the shoulder joint.",
+      "anim": {
+        "type": "incline_press",
+        "angleLabel": "80° Seat • 30° Scapular",
+        "romLabel": "Ears → Overhead"
+      },
+      "tags": [
+        "shoulders",
+        "front delt",
+        "press",
+        "dumbbell",
+        "overhead"
+      ]
+    },
+    {
+      "id": "cable-lateral-raise",
+      "name": "Cable Lateral Raise (Wrist-Height)",
+      "group": "shoulders",
+      "groups": [
+        "shoulders"
+      ],
+      "equipment": "Cable",
+      "tier": 2,
+      "primaryHeads": [
+        "side_delt"
+      ],
+      "secondaryHeads": [
+        "traps_upper"
+      ],
+      "gluteLoad": 0,
+      "angle": "Pulley at Wrist Height • Arm 30° Forward",
+      "rom": "Hand across thigh up to shoulder height—constant tension from start",
+      "setsReps": "4 × 12–15",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Setting the pulley at wrist height gives peak tension at the bottom where side delts grow most!",
+        "Reach outward toward the wall, not upward toward your ears.",
+        "Stop at shoulder height so upper traps don't take over."
+      ],
+      "avoid": "Shrugging shoulders up or swinging torso to heave heavy weight.",
+      "anim": {
+        "type": "lateral_raise",
+        "angleLabel": "Wrist Pulley • 30° Plane",
+        "romLabel": "Across Hip → 90°"
+      },
+      "tags": [
+        "shoulders",
+        "side delt",
+        "lateral",
+        "width",
+        "v-taper",
+        "cable"
+      ]
+    },
+    {
+      "id": "db-lateral-raise",
+      "name": "Leaning / Seated Dumbbell Lateral Raise",
+      "group": "shoulders",
+      "groups": [
+        "shoulders"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 3,
+      "primaryHeads": [
+        "side_delt"
+      ],
+      "secondaryHeads": [
+        "front_delt"
+      ],
+      "gluteLoad": 0,
+      "angle": "10° Forward Lean • Thumbs Level",
+      "rom": "Arms beside hips raised slightly forward (30° scapular plane) to shoulder level",
+      "setsReps": "3–4 × 12–18",
+      "rest": "60s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Raise dumbbells slightly in front of your hips (30° angle), not dead-sideways.",
+        "Keep pinkies level with thumbs—don't pour the pitcher aggressively.",
+        "Lead with the elbows and control the lowering for 2 seconds."
+      ],
+      "avoid": "Turning thumbs steeply downward causes shoulder impingement.",
+      "anim": {
+        "type": "lateral_raise",
+        "angleLabel": "30° Scapular Plane",
+        "romLabel": "0° → 90°"
+      },
+      "tags": [
+        "shoulders",
+        "side delt",
+        "width",
+        "dumbbell",
+        "lateral raise"
+      ]
+    },
+    {
+      "id": "reverse-pec-deck",
+      "name": "Reverse Pec Deck / Rear Delt Fly",
+      "group": "shoulders",
+      "groups": [
+        "shoulders",
+        "back"
+      ],
+      "equipment": "Machine",
+      "tier": 2,
+      "primaryHeads": [
+        "rear_delt"
+      ],
+      "secondaryHeads": [
+        "mid_back"
+      ],
+      "gluteLoad": 0,
+      "angle": "Neutral/Palms-In Grip • Chest Braced on Pad",
+      "rom": "Arms sweeping outward in 30–45° arc just to torso line (not pinching traps)",
+      "setsReps": "3–4 × 12–15",
+      "rest": "75s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Push handles outward toward the side walls rather than squeezing shoulder blades together.",
+        "Stopping just in line with your torso keeps tension purely on rear delts.",
+        "Keep traps relaxed and neck long."
+      ],
+      "avoid": "Pinching shoulder blades hard shifts work from rear delts to rhomboids/mid-traps.",
+      "anim": {
+        "type": "chest_fly",
+        "angleLabel": "Chest Pad • Sweep Out",
+        "romLabel": "Front → Torso Line"
+      },
+      "tags": [
+        "shoulders",
+        "rear delt",
+        "posterior",
+        "3d delts",
+        "machine"
+      ]
+    },
+    {
+      "id": "cable-face-pull",
+      "name": "Rope Face Pull (External Rotation)",
+      "group": "shoulders",
+      "groups": [
+        "shoulders",
+        "back"
+      ],
+      "equipment": "Cable",
+      "tier": 3,
+      "primaryHeads": [
+        "rear_delt"
+      ],
+      "secondaryHeads": [
+        "mid_back",
+        "traps_upper"
+      ],
+      "gluteLoad": 0,
+      "angle": "Pulley at Face Height • Split Stance",
+      "rom": "Full forward protraction back to double-bicep pose beside ears",
+      "setsReps": "3 × 15",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Grip rope with thumbs pointing backward so hands lead past ears.",
+        "Finish in a double-bicep pose—wrists behind elbows.",
+        "Great for shoulder health, posture, and rear-delt cap."
+      ],
+      "avoid": "Pulling toward the chest with elbows low turns it into a row.",
+      "anim": {
+        "type": "face_pull",
+        "angleLabel": "Eye-Level Pulley",
+        "romLabel": "Full Reach → Ears"
+      },
+      "tags": [
+        "shoulders",
+        "rear delt",
+        "face pull",
+        "posture",
+        "cable"
+      ]
+    },
+    {
+      "id": "leg-extension",
+      "name": "Seated Leg Extension (Zero Glute)",
+      "group": "quads",
+      "groups": [
+        "quads"
+      ],
+      "equipment": "Machine",
+      "tier": 2,
+      "primaryHeads": [
+        "quad_rectus",
+        "quad_inner"
+      ],
+      "secondaryHeads": [
+        "quad_outer"
+      ],
+      "gluteLoad": 0,
+      "angle": "Backrest Reclined 100–110° • Knee Aligned With Pivot",
+      "rom": "Maximum knee bend (100°+) up to crisp full lockout pause",
+      "setsReps": "3–4 × 10–15",
+      "rest": "90s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Reclining the seat slightly stretches the rectus femoris (middle quad) much better!",
+        "Align your knee joint directly with the machine's red/yellow pivot axis.",
+        "0% glute involvement—pure quad growth and teardrop (VMO) detail."
+      ],
+      "avoid": "Lifting hips off the seat on heavy reps or stopping short of lockout.",
+      "anim": {
+        "type": "leg_ext",
+        "angleLabel": "105° Seat • 0% Glute",
+        "romLabel": "105° Bend → 180° Lock"
+      },
+      "tags": [
+        "legs",
+        "quads",
+        "rectus femoris",
+        "vmo",
+        "teardrop",
+        "no glutes",
+        "zero glutes"
+      ]
+    },
+    {
+      "id": "hack-squat-narrow",
+      "name": "Hack Squat (Feet Low & Narrow — Quad Focus)",
+      "group": "quads",
+      "groups": [
+        "quads"
+      ],
+      "equipment": "Machine",
+      "tier": 1,
+      "primaryHeads": [
+        "quad_outer",
+        "quad_inner"
+      ],
+      "secondaryHeads": [
+        "quad_rectus",
+        "glute_max"
+      ],
+      "gluteLoad": 15,
+      "angle": "Feet Low on Platform • Shoulder-Width • Knees Forward",
+      "rom": "Hamstrings cover calves (deep knee flexion) back to 95% lockout",
+      "setsReps": "3–4 × 8–12",
+      "rest": "150s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Placing feet LOWER on the sled maximizes knee bend (Quads) and keeps Glutes minimal (~15%).",
+        "Let knees travel smoothly forward over toes while keeping heels glued down.",
+        "Brace back flat against pad the whole rep."
+      ],
+      "avoid": "Putting feet high up on the platform shifts focus straight into glutes!",
+      "anim": {
+        "type": "hack_squat",
+        "angleLabel": "Feet Low • Quad Bias",
+        "romLabel": "Deep Knee Bend → Top"
+      },
+      "tags": [
+        "legs",
+        "quads",
+        "outer sweep",
+        "vmo",
+        "low glute",
+        "hack squat",
+        "machine"
+      ]
+    },
+    {
+      "id": "pendulum-sissy-squat",
+      "name": "Heels-Elevated Goblet / Smith Squat",
+      "group": "quads",
+      "groups": [
+        "quads"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 2,
+      "primaryHeads": [
+        "quad_outer",
+        "quad_inner"
+      ],
+      "secondaryHeads": [
+        "quad_rectus",
+        "glute_max"
+      ],
+      "gluteLoad": 18,
+      "angle": "Heels Elevated on Plates • Upright Torso",
+      "rom": "Straight-down upright knee travel to full depth without leaning forward",
+      "setsReps": "3 × 10–12",
+      "rest": "120s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Raise heels 1–2 inches on small plates and stay vertical to isolate quads over glutes.",
+        "Push knees forward rather than sitting hips far back.",
+        "Great quad-sweep builder if your gym lacks a Hack Squat."
+      ],
+      "avoid": "Folding torso forward turns it into a hip/glute squat.",
+      "anim": {
+        "type": "hack_squat",
+        "angleLabel": "Heels Up • Upright Torso",
+        "romLabel": "Upright Drop → Top"
+      },
+      "tags": [
+        "legs",
+        "quads",
+        "outer sweep",
+        "low glute",
+        "heels elevated"
+      ]
+    },
+    {
+      "id": "barbell-back-squat",
+      "name": "Barbell Back Squat",
+      "group": "quads",
+      "groups": [
+        "quads",
+        "glutes"
+      ],
+      "equipment": "Barbell",
+      "tier": 1,
+      "primaryHeads": [
+        "quad_outer",
+        "glute_max"
+      ],
+      "secondaryHeads": [
+        "quad_inner",
+        "lower_back"
+      ],
+      "gluteLoad": 42,
+      "angle": "High-Bar Position • Feet Shoulder-Width",
+      "rom": "Crease of hip below top of knee to strong upright standing lockout",
+      "setsReps": "3–4 × 5–8",
+      "rest": "180s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Note: High glute involvement (~42%). Use Low-Glute Mode if you want pure quad focus!",
+        "Big belly brace before descending; track knees directly over 2nd/3rd toe.",
+        "Drive evenly through mid-foot."
+      ],
+      "avoid": "Good-morning squat (hips shooting up faster than chest).",
+      "anim": {
+        "type": "hack_squat",
+        "angleLabel": "High-Bar • 42% Glutes",
+        "romLabel": "Below Parallel → Stand"
+      },
+      "tags": [
+        "legs",
+        "quads",
+        "glutes",
+        "squat",
+        "barbell",
+        "compound"
+      ]
+    },
+    {
+      "id": "seated-leg-curl",
+      "name": "Seated Leg Curl (Zero Glute)",
+      "group": "hamstrings",
+      "groups": [
+        "hamstrings"
+      ],
+      "equipment": "Machine",
+      "tier": 2,
+      "primaryHeads": [
+        "ham_stretch",
+        "ham_curl"
+      ],
+      "secondaryHeads": [
+        "gastroc"
+      ],
+      "gluteLoad": 0,
+      "angle": "Hips Flexed 90° • Lap Pad Locked Tight",
+      "rom": "Full straight-leg stretch at top down to ankle under seat",
+      "setsReps": "3–4 × 10–12",
+      "rest": "90s",
+      "tempo": "3-1-1-1",
+      "cues": [
+        "Outperforms lying leg curl because flexed hips put hamstrings on a deeper stretch!",
+        "Zero glute growth—100% isolated hamstring shape from behind.",
+        "Lean slightly forward over the lap pad for an even stronger stretch."
+      ],
+      "avoid": "Letting thighs lift off the seat during heavy curls.",
+      "anim": {
+        "type": "leg_curl",
+        "angleLabel": "90° Hip Flex • 0% Glute",
+        "romLabel": "Straight → Under Seat"
+      },
+      "tags": [
+        "legs",
+        "hamstrings",
+        "no glutes",
+        "zero glutes",
+        "seated curl",
+        "machine"
+      ]
+    },
+    {
+      "id": "lying-leg-curl",
+      "name": "Lying Leg Curl (Zero Glute)",
+      "group": "hamstrings",
+      "groups": [
+        "hamstrings"
+      ],
+      "equipment": "Machine",
+      "tier": 3,
+      "primaryHeads": [
+        "ham_curl"
+      ],
+      "secondaryHeads": [
+        "gastroc"
+      ],
+      "gluteLoad": 5,
+      "angle": "Hips Pressed Flat Into Bench",
+      "rom": "Near-straight legs curled smoothly until pad touches hamstrings",
+      "setsReps": "3 × 10–14",
+      "rest": "75s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Drive hips down into the pad—do NOT let your butt pop up as you curl!",
+        "Hits the lower/distal hamstring peak strongly.",
+        "Control the lowering phase for 2–3 seconds."
+      ],
+      "avoid": "Arching lower back and lifting hips up off the bench.",
+      "anim": {
+        "type": "leg_curl",
+        "angleLabel": "Hips Flat • Peak Curl",
+        "romLabel": "170° → 50°"
+      },
+      "tags": [
+        "legs",
+        "hamstrings",
+        "distal",
+        "low glute",
+        "machine"
+      ]
+    },
+    {
+      "id": "romanian-deadlift",
+      "name": "Dumbbell / Barbell Romanian Deadlift (RDL)",
+      "group": "hamstrings",
+      "groups": [
+        "hamstrings",
+        "glutes",
+        "back"
+      ],
+      "equipment": "Barbell",
+      "tier": 1,
+      "primaryHeads": [
+        "ham_stretch"
+      ],
+      "secondaryHeads": [
+        "glute_max",
+        "lower_back"
+      ],
+      "gluteLoad": 38,
+      "angle": "15° Fixed Soft Knee • Pure Hip Hinge",
+      "rom": "Push hips straight back until bar reaches mid-shin, stand to neutral",
+      "setsReps": "3 × 6–10",
+      "rest": "150s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "Note: Hits hamstrings AND ~38% glutes. Stop right at mid-shin to bias hamstrings; going lower brings in more glutes.",
+        "Keep bar/dumbbells shaving your thighs and shins.",
+        "Stand tall to neutral—don't thrust hips hard forward at the top unless training glutes."
+      ],
+      "avoid": "Bending knees more mid-rep turns it into a squat/glute lift.",
+      "anim": {
+        "type": "rdl",
+        "angleLabel": "15° Knee • Hip Hinge",
+        "romLabel": "Standing → Mid-Shin"
+      },
+      "tags": [
+        "legs",
+        "hamstrings",
+        "rdl",
+        "stretch",
+        "glutes",
+        "hinge"
+      ]
+    },
+    {
+      "id": "glute-hip-thrust",
+      "name": "Barbell / Machine Hip Thrust",
+      "group": "glutes",
+      "groups": [
+        "glutes"
+      ],
+      "equipment": "Barbell",
+      "tier": 1,
+      "primaryHeads": [
+        "glute_max"
+      ],
+      "secondaryHeads": [
+        "glute_med",
+        "ham_stretch"
+      ],
+      "gluteLoad": 90,
+      "angle": "Shoulder Blades on Bench • Shins Vertical at Top",
+      "rom": "Hips drop 45° down, drive up to horizontal tabletop with 1s lock",
+      "setsReps": "3 × 8–12",
+      "rest": "120s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Only select this if you WANT dedicated glute growth (~90% glute load).",
+        "Keep chin tucked forward and ribs down—avoid overarching lower back.",
+        "Shins should be perpendicular (90°) to the floor at peak lockout."
+      ],
+      "avoid": "Feet too close hits quads; feet too far shifts to hamstrings.",
+      "anim": {
+        "type": "hip_thrust",
+        "angleLabel": "90° Shins at Top",
+        "romLabel": "Drop → Tabletop"
+      },
+      "tags": [
+        "legs",
+        "glutes",
+        "hip thrust",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cable-hip-abduction",
+      "name": "Cable / Machine Hip Abduction",
+      "group": "glutes",
+      "groups": [
+        "glutes"
+      ],
+      "equipment": "Machine",
+      "tier": 3,
+      "primaryHeads": [
+        "glute_med"
+      ],
+      "secondaryHeads": [
+        "glute_max"
+      ],
+      "gluteLoad": 85,
+      "angle": "Upright Torso • Drive Knees Outward",
+      "rom": "Knees together to maximum lateral hip abduction pause",
+      "setsReps": "3 × 12–15",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Targets upper/side glute shelf (gluteus medius).",
+        "Keep pelvis steady and control the return.",
+        "Skip this if you're trying to minimize glute size."
+      ],
+      "avoid": "Using momentum or rocking torso back and forth.",
+      "anim": {
+        "type": "lateral_raise",
+        "angleLabel": "Lateral Hip Sweep",
+        "romLabel": "Closed → Wide"
+      },
+      "tags": [
+        "legs",
+        "glutes",
+        "glute medius",
+        "abduction"
+      ]
+    },
+    {
+      "id": "bulgarian-split-squat",
+      "name": "Bulgarian Split Squat",
+      "group": "quads",
+      "groups": [
+        "quads",
+        "glutes"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 2,
+      "primaryHeads": [
+        "quad_outer",
+        "glute_max"
+      ],
+      "secondaryHeads": [
+        "quad_inner",
+        "glute_med"
+      ],
+      "gluteLoad": 55,
+      "angle": "Upright = Quad Bias • 25° Lean = High Glute",
+      "rom": "Back knee hovers 1 inch off floor, drive through front foot",
+      "setsReps": "3 × 8–10 / leg",
+      "rest": "120s",
+      "tempo": "3-1-1-0",
+      "cues": [
+        "High Glute alert (~55% if leaning forward)! Keep torso upright and stance shorter to shift onto quads.",
+        "70–80% of body weight stays on the front leg.",
+        "Pause 1s near the floor for stability."
+      ],
+      "avoid": "Taking a very long step + leaning torso forward makes this mostly a glute builder.",
+      "anim": {
+        "type": "hack_squat",
+        "angleLabel": "Split Stance • 55% Glute",
+        "romLabel": "Hover → Stand"
+      },
+      "tags": [
+        "legs",
+        "quads",
+        "glutes",
+        "unilateral",
+        "split squat"
+      ]
+    },
+    {
+      "id": "standing-calf-raise",
+      "name": "Standing / Leg-Press Calf Raise",
+      "group": "calves",
+      "groups": [
+        "calves"
+      ],
+      "equipment": "Machine",
+      "tier": 3,
+      "primaryHeads": [
+        "gastroc"
+      ],
+      "secondaryHeads": [
+        "soleus"
+      ],
+      "gluteLoad": 0,
+      "angle": "Knees Straight (Locked Soft) • Balls of Feet on Edge",
+      "rom": "Full 2-second deep heel-drop stretch up onto big-toe peak",
+      "setsReps": "4 × 10–15",
+      "rest": "60s",
+      "tempo": "2-2-1-1",
+      "cues": [
+        "Straight knees are mandatory to load the gastrocnemius (diamond calf muscle).",
+        "ALWAYS pause 2 seconds at the bottom stretch—never bounce off your Achilles tendon!",
+        "Drive straight through the ball of your big toe."
+      ],
+      "avoid": "Bouncing fast at the bottom lets elastic tendon recoil do the work instead of muscle.",
+      "anim": {
+        "type": "calf_raise",
+        "angleLabel": "Straight Knee • 2s Stretch",
+        "romLabel": "Deep Drop → Tiptoe"
+      },
+      "tags": [
+        "legs",
+        "calves",
+        "gastroc",
+        "standing",
+        "no glutes"
+      ]
+    },
+    {
+      "id": "seated-calf-raise",
+      "name": "Seated Calf Raise",
+      "group": "calves",
+      "groups": [
+        "calves"
+      ],
+      "equipment": "Machine",
+      "tier": 4,
+      "primaryHeads": [
+        "soleus"
+      ],
+      "secondaryHeads": [
+        "gastroc"
+      ],
+      "gluteLoad": 0,
+      "angle": "Knees Bent 90° • Pad Above Knees",
+      "rom": "Deep ankle dorsiflexion stretch to full heel lift pause",
+      "setsReps": "3 × 12–18",
+      "rest": "60s",
+      "tempo": "2-2-1-1",
+      "cues": [
+        "Bending the knee 90° relaxes the gastrocnemius so the deeper soleus takes over for lower-leg thickness.",
+        "Hold the bottom stretch 2 seconds every single rep.",
+        "Smooth, strict ankle range—zero bouncing."
+      ],
+      "avoid": "Fast half-reps that never hit full stretch.",
+      "anim": {
+        "type": "calf_raise",
+        "angleLabel": "90° Bent Knee",
+        "romLabel": "Deep Stretch → Peak"
+      },
+      "tags": [
+        "legs",
+        "calves",
+        "soleus",
+        "seated",
+        "no glutes"
+      ]
+    },
+    {
+      "id": "cable-kneeling-crunch",
+      "name": "Kneeling Cable Rope Crunch",
+      "group": "core",
+      "groups": [
+        "core"
+      ],
+      "equipment": "Cable",
+      "tier": 3,
+      "primaryHeads": [
+        "upper_abs"
+      ],
+      "secondaryHeads": [
+        "lower_abs"
+      ],
+      "gluteLoad": 0,
+      "angle": "Hips Locked Stationary • Curl Ribs to Pelvis",
+      "rom": "Ribcage extended upright curling spine down into tight C-shape",
+      "setsReps": "3 × 12–15",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Freeze your hips—do NOT sit your butt back toward your heels!",
+        "Think about rolling your ribs toward your belly button like a spinal curl.",
+        "Exhale completely at the bottom squeeze."
+      ],
+      "avoid": "Hinging back and forth at the hips uses hip flexors, not abs.",
+      "anim": {
+        "type": "crunch",
+        "angleLabel": "Hips Locked • Spine Curl",
+        "romLabel": "Extended → Curled"
+      },
+      "tags": [
+        "abs",
+        "core",
+        "upper abs",
+        "cable",
+        "weighted abs"
+      ]
+    },
+    {
+      "id": "hanging-leg-raise",
+      "name": "Hanging / Captain's Chair Leg Raise",
+      "group": "core",
+      "groups": [
+        "core"
+      ],
+      "equipment": "Bodyweight",
+      "tier": 3,
+      "primaryHeads": [
+        "lower_abs"
+      ],
+      "secondaryHeads": [
+        "upper_abs",
+        "obliques"
+      ],
+      "gluteLoad": 0,
+      "angle": "Posterior Pelvic Tilt • Curl Tailbone Up",
+      "rom": "Dead hang legs raised past 90° by curling pelvis toward chest",
+      "setsReps": "3 × 10–15",
+      "rest": "75s",
+      "tempo": "2-1-1-0",
+      "cues": [
+        "Raising legs to 90° is mostly hip flexors—the magic for lower abs happens when you curl your pelvis upward past 90°!",
+        "Bend knees slightly if needed so you can curl your tailbone up cleanly.",
+        "Lower slowly without swinging."
+      ],
+      "avoid": "Swinging legs with momentum and stopping at 90°.",
+      "anim": {
+        "type": "crunch",
+        "angleLabel": "Pelvis Curl > 90°",
+        "romLabel": "Hang → Tailbone Up"
+      },
+      "tags": [
+        "abs",
+        "core",
+        "lower abs",
+        "hanging",
+        "bodyweight"
+      ]
+    },
+    {
+      "id": "cable-woodchopper",
+      "name": "Cable Pallof / Diagonal Woodchopper",
+      "group": "core",
+      "groups": [
+        "core"
+      ],
+      "equipment": "Cable",
+      "tier": 4,
+      "primaryHeads": [
+        "obliques"
+      ],
+      "secondaryHeads": [
+        "upper_abs"
+      ],
+      "gluteLoad": 0,
+      "angle": "Arms Extended • Rotate Through Ribcage",
+      "rom": "Controlled rotation from pulley side across chest to opposite hip",
+      "setsReps": "3 × 12 / side",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Keep arms relatively straight and pivot through your mid-torso/obliques.",
+        "Avoid twisting lower back aggressively—brace abs tight.",
+        "Control the return back to the cable stack."
+      ],
+      "avoid": "Pulling with arms/shoulders instead of rotating through the waist.",
+      "anim": {
+        "type": "face_pull",
+        "angleLabel": "Diagonal Rotation",
+        "romLabel": "Side → Opposite Hip"
+      },
+      "tags": [
+        "abs",
+        "core",
+        "obliques",
+        "waist",
+        "cable"
+      ]
+    },
+    {
+      "id": "spider-curl",
+      "name": "Chest-Supported Spider Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Dumbbell",
+      "tier": 3,
+      "primaryHeads": [
+        "bicep_short"
+      ],
+      "secondaryHeads": [
+        "bicep_long"
+      ],
+      "gluteLoad": 0,
+      "angle": "45° Bench Prone • Arms Hang Vertically",
+      "rom": "Full hang perpendicular to floor up to max peak squeeze",
+      "setsReps": "3 × 12–15",
+      "rest": "75s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Lie chest-down on a 45° incline bench so arms hang straight down.",
+        "Zero momentum possible—pure peak contraction on the short head.",
+        "Squeeze hard for 1s at the top of every rep."
+      ],
+      "avoid": "Pulling elbows backward toward hips during the curl.",
+      "anim": {
+        "type": "preacher_curl",
+        "angleLabel": "45° Prone • Vertical Arm",
+        "romLabel": "Hang → Peak Squeeze"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "short head",
+        "spider curl",
+        "peak"
+      ]
+    },
+    {
+      "id": "barbell-bent-over-row",
+      "name": "Pendlay / Barbell Bent-Over Row",
+      "group": "back",
+      "groups": [
+        "back",
+        "biceps"
+      ],
+      "equipment": "Barbell",
+      "tier": 1,
+      "primaryHeads": [
+        "mid_back",
+        "lats_width"
+      ],
+      "secondaryHeads": [
+        "lower_back",
+        "rear_delt",
+        "brachialis"
+      ],
+      "gluteLoad": 15,
+      "angle": "45° Torso Angle • Overhand Shoulder-Width Grip",
+      "rom": "Full arm hang near shins pulled explosively to lower ribs/belly",
+      "setsReps": "3–4 × 6–10",
+      "rest": "120s",
+      "tempo": "2-0-1-1",
+      "cues": [
+        "Lock torso at ~45°—don't stand upright with each rep.",
+        "Pull toward belly button for lats; higher toward chest for upper/mid back.",
+        "Keep lower back neutral and braced."
+      ],
+      "avoid": "Bouncing upright with legs and hips to heave the bar.",
+      "anim": {
+        "type": "barbell_row",
+        "angleLabel": "45° Torso Hinge",
+        "romLabel": "Hang → Lower Ribs"
+      },
+      "tags": [
+        "back",
+        "mid back",
+        "lats",
+        "barbell",
+        "row",
+        "thickness"
+      ]
+    },
+    {
+      "id": "tbar-row-cable-seated",
+      "name": "Seated Cable Row (Wide/Neutral Attachment)",
+      "group": "back",
+      "groups": [
+        "back",
+        "biceps"
+      ],
+      "equipment": "Cable",
+      "tier": 2,
+      "primaryHeads": [
+        "mid_back"
+      ],
+      "secondaryHeads": [
+        "lats_width",
+        "rear_delt",
+        "bicep_short"
+      ],
+      "gluteLoad": 0,
+      "angle": "Torso Upright 90° • Slight Knee Bend",
+      "rom": "Full forward shoulder stretch to handle touching lower sternum",
+      "setsReps": "3 × 10–12",
+      "rest": "90s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Zero glute fatigue; sit tall and let shoulder blades protract forward between reps.",
+        "Wide neutral-grip targets mid-back & rear delts; narrow close-grip biases lats.",
+        "Pause 1s with chest proud at the pull."
+      ],
+      "avoid": "Rocking torso wildly back and forth like a rowing machine.",
+      "anim": {
+        "type": "barbell_row",
+        "angleLabel": "Upright • Zero Glutes",
+        "romLabel": "Reach → Sternum"
+      },
+      "tags": [
+        "back",
+        "mid back",
+        "cable",
+        "row",
+        "no glutes"
+      ]
+    },
+    {
+      "id": "cable-overhead-curl",
+      "name": "Overhead Cable Double-Bicep Curl",
+      "group": "biceps",
+      "groups": [
+        "biceps"
+      ],
+      "equipment": "Cable",
+      "tier": 4,
+      "primaryHeads": [
+        "bicep_short"
+      ],
+      "secondaryHeads": [
+        "bicep_long"
+      ],
+      "gluteLoad": 0,
+      "angle": "Arms Raised 90° Sideways • High Pulleys",
+      "rom": "Arms straight out at shoulder level curled toward ears",
+      "setsReps": "3 × 12–15",
+      "rest": "60s",
+      "tempo": "2-1-1-1",
+      "cues": [
+        "Raises elbows in front/side plane to isolate the bicep short head peak.",
+        "Keep upper arms parallel to the floor—only bend at the elbow.",
+        "Great finisher for pump without joint stress."
+      ],
+      "avoid": "Dropping elbows downward as you fatigue.",
+      "anim": {
+        "type": "face_pull",
+        "angleLabel": "90° T-Pose Curl",
+        "romLabel": "Straight → Ears"
+      },
+      "tags": [
+        "bicep",
+        "arms",
+        "short head",
+        "cable",
+        "finisher"
+      ]
+    }
+  ]
+}
