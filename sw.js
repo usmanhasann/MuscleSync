@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ironsync-offline-v1';
+const CACHE_NAME = 'ironsync-offline-v2';
 const CORE_ASSETS = [
   './',
   './index.html',

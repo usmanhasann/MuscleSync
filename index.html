@@ -19,8 +19,8 @@
       --border: rgba(255, 255, 255, 0.08);
       --border-strong: rgba(255, 255, 255, 0.16);
       --text: #F3F5F7;
-      --text-muted: #8E98A8;
-      --text-dim: #5F6878;
+      --text-muted: #A8B3C5;
+      --text-dim: #737E91;
       --primary: #FF5C1A;
       --primary-glow: rgba(255, 92, 26, 0.25);
       --secondary: #2DD4BF;
@@ -281,9 +281,10 @@
     }
 
     .m-chip.selected {
-      background: rgba(255, 92, 26, 0.16);
+      background: var(--primary);
       border-color: var(--primary);
-      color: var(--text);
+      color: #0B0D10;
+      font-weight: 750;
     }
 
     .m-chip .dot {
@@ -292,15 +293,36 @@
       border-radius: 50%;
       background: var(--text-dim);
     }
-    .m-chip.selected .dot { background: var(--primary); }
+    .m-chip.selected .dot { background: #0B0D10; }
 
     /* Controls Strip */
     .controls-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+    }
+    @media (min-width: 680px) {
+      .controls-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+    }
+    .controls-bar .stepper,
+    .controls-bar .select-pill,
+    .controls-bar .toggle-pill,
+    .controls-bar .sync-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    @media (min-width: 680px) {
+      .controls-bar .stepper,
+      .controls-bar .select-pill,
+      .controls-bar .toggle-pill,
+      .controls-bar .sync-btn {
+        width: auto;
+      }
     }
 
     .stepper {
@@ -468,9 +490,12 @@
 
     .anatomy-svg {
       width: 100%;
-      max-width: 165px;
+      max-width: 118px;
       height: auto;
       display: block;
+    }
+    @media (min-width: 900px) {
+      .anatomy-svg { max-width: 165px; }
     }
 
     .anatomy-svg .silhouette {
@@ -3313,36 +3338,31 @@
 
         return `
           <article class="ex-card ${isPinned ? "pinned" : ""}" style="${matchesSearch ? "" : "opacity:0.45"}">
-            <div class="ex-top">
+            <div class="ex-top" data-open="${ex.id}" style="cursor:pointer;">
               <div class="ex-num">${String(i + 1).padStart(2, "0")}</div>
-              <div class="ex-main" data-open="${ex.id}">
+              <div class="ex-main">
                 <div class="ex-name">${escapeHtml(ex.name)}</div>
                 <div class="ex-meta">
                   <span class="tag primary">${escapeHtml(priNames || ex.group)}</span>
                   <span class="tag">${escapeHtml(ex.equipment)}</span>
                   <span class="tag">${escapeHtml(ex.setsReps)} • ${escapeHtml(ex.rest)}</span>
                   ${ex.gluteLoad > 0 ? `<span class="tag glute">${ex.gluteLoad}% Glute</span>` : ""}
-                  ${hasVid ? `<span class="tag video-on">Video Saved</span>` : ""}
+                  ${hasVid ? `<span class="tag video-on">Video</span>` : ""}
                 </div>
               </div>
+              <span class="sm-btn guide" style="min-height:28px;font-size:11px;flex-shrink:0;">Guide ›</span>
             </div>
 
             <div class="ex-angle-line" data-open="${ex.id}">
               <span><strong>Angle:</strong> ${escapeHtml(ex.angle)}</span>
-              ${secNames ? `<span><strong>Also hits:</strong> ${escapeHtml(secNames)}</span>` : ""}
             </div>
 
             <div class="ex-actions">
               <div class="ex-btn-group">
-                <button class="sm-btn guide" data-open="${ex.id}">Form & Angle</button>
                 <button class="sm-btn ${isPinned ? "active" : ""}" data-pin="${ex.id}">${isPinned ? "Pinned" : "Pin"}</button>
                 <button class="sm-btn" data-swap="${ex.id}">Swap</button>
               </div>
-              <div class="ex-btn-group">
-                <button class="sm-btn" data-move="-1" data-id="${ex.id}" aria-label="Move up">↑</button>
-                <button class="sm-btn" data-move="1" data-id="${ex.id}" aria-label="Move down">↓</button>
-                <button class="sm-btn" data-remove="${ex.id}" aria-label="Remove">✕</button>
-              </div>
+              <button class="sm-btn" data-remove="${ex.id}" aria-label="Remove">Remove</button>
             </div>
           </article>
         `;
