@@ -96,6 +96,14 @@
       @media (prefers-color-scheme: light) { .appbar { background: rgba(243,244,247,.82); } }
     }
     .appbar.scrolled { border-bottom-color: var(--line); }
+    .setup-tog { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 10px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--muted); font-weight: 700; font-size: 13.5px; flex-shrink: 0; }
+    .setup-tog .toggle { width: 34px; height: 20px; }
+    .setup-tog .toggle::after { width: 14px; height: 14px; }
+    .setup-tog .toggle.on::after { transform: translateX(14px); }
+    body:not(.on-today) .setup-tog { display: none; }
+    body.setup-off .setup-only { display: none !important; }
+    body.setup-off #coverageCard { padding-top: 10px; }
+    body.setup-off #mainBodyMap { margin-top: 0; }
     .appbar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 10px; min-height: 40px; }
     .appbar-title { flex: 1; min-width: 0; }
     .appbar-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -501,7 +509,15 @@
       gap: 6px; color: var(--muted); font-size: 12.5px; font-weight: 650; cursor: pointer; text-align: center; padding: 6px;
     }
     .ph-add .i { width: 26px; height: 26px; color: var(--accent); }
-    .vid { width: 100%; border-radius: 14px; background: #000; max-height: 60vh; display: none; margin-bottom: 10px; }
+    .vid { width: 100%; border-radius: 14px; background: #000; max-height: 60vh; display: block; }
+    .vid-list { display: grid; grid-template-columns: minmax(0,1fr); gap: 12px; margin-bottom: 10px; }
+    .vid-list .vid { max-height: 52vh; }
+    .vid-list:empty { display: none; }
+    .vid-item { background: var(--surface-2); border-radius: 16px; padding: 6px 6px 8px; }
+    .vid-meta { display: flex; align-items: center; gap: 8px; padding: 8px 6px 0 8px; }
+    .vid-meta b { font-size: 14px; font-weight: 750; }
+    .vid-meta small { flex: 1; min-width: 0; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .vid-meta .btn { min-height: 36px; padding: 0 12px; }
     .vid-status { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
     .yt-row { display: flex; gap: 8px; margin-bottom: 8px; }
     .yt-row .input { min-height: 44px; }
@@ -668,7 +684,7 @@
         <button data-view="library">Library</button>
         <button data-view="more">More</button>
       </nav>
-      <button class="icon-btn no-print" id="btnPrintPdf" aria-label="Print or save today's workout as PDF"><svg class="i"><use href="#i-print"/></svg></button>
+      <button class="setup-tog no-print" id="btnSetup" aria-pressed="true" aria-label="Show workout setup controls"><span class="toggle" id="setupSwitch"></span><span>Setup</span></button>
     </div>
   </header>
 
@@ -678,12 +694,12 @@
       <div class="print-only"><h1 id="printTitle">Workout</h1></div>
       <div class="today-grid">
         <div class="today-side stack">
-          <div>
+          <div class="setup-only">
             <div class="eyebrow" style="margin:6px 2px 8px;">Muscles to train</div>
             <div id="muscleStrip" class="chip-scroll" role="group" aria-label="Pick muscle groups"></div>
           </div>
 
-          <div class="settings">
+          <div class="settings setup-only">
             <div class="set-tile">
               <span class="k">Exercises</span>
               <div class="stepper">
@@ -712,14 +728,14 @@
           </div>
 
           <div class="card" id="coverageCard">
-            <div class="cov-top">
+            <div class="cov-top setup-only">
               <div class="ring" id="covRing"></div>
               <div style="flex:1;min-width:0;">
                 <h2 id="covTitle">Muscle coverage</h2>
                 <p id="covSub"></p>
               </div>
             </div>
-            <div id="gapAlert"></div>
+            <div id="gapAlert" class="setup-only"></div>
             <div id="mainBodyMap" class="bodymap"></div>
             <div class="legend">
               <span><i class="l-pri"></i>Main target</span>
@@ -727,8 +743,8 @@
               <span><i class="l-miss"></i>Not trained</span>
               <span class="muted">Tap body to add/remove muscles</span>
             </div>
-            <div id="headsList" class="cov-groups"></div>
-            <div id="gluteMeter"></div>
+            <div id="headsList" class="cov-groups setup-only"></div>
+            <div id="gluteMeter" class="setup-only"></div>
           </div>
         </div>
 
@@ -947,11 +963,10 @@
 
           <div class="d-sec">
             <h3>Video</h3>
-            <video id="modalVideo" class="vid" controls playsinline loop preload="metadata"></video>
+            <div id="videoList" class="vid-list"></div>
             <div class="vid-status" id="videoStatusLabel">No video attached</div>
             <div class="btn-row">
-              <label class="btn"><svg class="i"><use href="#i-video"/></svg>Attach video<input id="modalVideoInput" type="file" accept="video/*" hidden /></label>
-              <button id="modalVideoRemove" class="btn danger" style="display:none;"><svg class="i"><use href="#i-trash"/></svg>Remove</button>
+              <label class="btn"><svg class="i"><use href="#i-video"/></svg><span id="attachVideoLbl">Attach video</span><input id="modalVideoInput" type="file" accept="video/*" multiple hidden /></label>
             </div>
             <div id="ytChannels" class="yt-ch"></div>
             <div id="ytBox" style="margin-top:14px;">
@@ -2405,22 +2420,44 @@
     const ImageStore = makeStore("ironsync_images_v1", "images");
 
     let cachedVideoKeys = new Set();
-    let serverVideos = {};
+    let videoCounts = new Map(); // exercise id -> number of videos (phone + project)
+    let serverVideos = {};       // exercise id -> ["./videos/<id>.mp4", "./videos/<id>--2.mp4", ...]
+
+    // Several videos per exercise. Stored as [{key, blob, name, ts}]; older versions stored one Blob.
+    async function getDeviceVideos(id) {
+      const v = await VideoStore.get(id);
+      if (!v) return [];
+      if (v instanceof Blob) return [{ key: "legacy", blob: v, name: v.name || "Video", ts: 0 }];
+      return Array.isArray(v) ? v.filter((x) => x && x.blob) : [];
+    }
+    async function addDeviceVideos(id, files) {
+      const list = await getDeviceVideos(id);
+      for (const f of files) list.push({ key: `v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, blob: f, name: f.name || "Video", ts: Date.now() });
+      await VideoStore.set(id, list);
+      return list.length;
+    }
+    async function removeDeviceVideo(id, key) {
+      const list = (await getDeviceVideos(id)).filter((x) => x.key !== key);
+      if (list.length) await VideoStore.set(id, list); else await VideoStore.remove(id);
+    }
+    const serverVideoList = (id) => { const v = serverVideos[id]; return Array.isArray(v) ? v : v ? [v] : []; };
 
     async function refreshVideoKeys() {
-      const keys = await VideoStore.listKeys();
-      const merged = new Set(keys);
+      const counts = new Map();
+      for (const k of await VideoStore.listKeys()) counts.set(k, (await getDeviceVideos(k)).length);
       if (location.protocol.startsWith("http")) {
         try {
           const res = await fetch("./api/videos", { cache: "no-store" });
           if (res.ok) {
             const payload = await res.json();
             serverVideos = payload.videos || {};
-            Object.keys(serverVideos).forEach((k) => merged.add(k));
+            Object.keys(serverVideos).forEach((k) => counts.set(k, (counts.get(k) || 0) + serverVideoList(k).length));
           }
         } catch {}
       }
-      cachedVideoKeys = merged;
+      for (const [k, n] of counts) if (!n) counts.delete(k);
+      videoCounts = counts;
+      cachedVideoKeys = new Set(counts.keys());
     }
 
     const IS_PHONE = /Android|iPhone|iPod|iPad|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ""));
@@ -3009,7 +3046,7 @@
                 <span>${escapeHtml(ex.setsReps)}</span>
                 <span>${icon("clock", "sm")}${escapeHtml(ex.rest || "90s")}</span>
                 ${(ex.gluteLoad || 0) >= 25 ? `<span class="gl">${ex.gluteLoad}% glute</span>` : ""}
-                ${hasVid ? `<span>${icon("video", "sm")}</span>` : ""}
+                ${hasVid ? `<span>${icon("video", "sm")}${(videoCounts.get(ex.id) || 0) > 1 ? videoCounts.get(ex.id) : ""}</span>` : ""}
               </div>
             </div>
             <svg class="i xc-chev"><use href="#i-chev"/></svg>
@@ -3588,41 +3625,50 @@
       if (currentModalExId !== id) return;
       await renderSheetPhotos(ex, photos);
 
-      // Video (device IndexedDB first, then project ./videos via server.py)
-      const videoEl = document.getElementById("modalVideo");
-      const statusEl = document.getElementById("videoStatusLabel");
-      const rmBtn = document.getElementById("modalVideoRemove");
-      if (currentVideoUrl) { URL.revokeObjectURL(currentVideoUrl); currentVideoUrl = null; }
-      videoEl.pause();
-      videoEl.style.display = "none";
-      videoEl.removeAttribute("src");
-      videoEl.onloadeddata = null;
-      rmBtn.style.display = "none";
-      statusEl.textContent = "No video yet — the motion guide above shows the path.";
+      // Videos (saved on this phone + project ./videos via server.py) — as many as you like
       document.getElementById("modalYoutubeUrl").value = "";
       document.getElementById("ytBox").style.display = IS_PHONE ? "none" : "block";
       document.getElementById("ytHint").innerHTML = ON_LOCAL_SERVER
         ? "Saves the .mp4 into this project's <b>videos/</b> folder and links it to this exercise."
         : `Needs the local server. In Terminal run <code style="font-family:var(--mono);font-size:12px;">cd ~/Downloads/"gym go" &amp;&amp; python3 server.py</code> then <a href="http://localhost:8765/index.html" style="color:var(--accent);font-weight:700;">open localhost:8765</a>.`;
-      const blob = await VideoStore.get(id);
-      if (currentModalExId !== id) return;
-      const localPath = serverVideos[id] || ex.video;
-      if (blob) {
-        currentVideoUrl = URL.createObjectURL(blob);
-        videoEl.src = currentVideoUrl;
-        videoEl.style.display = "block";
-        rmBtn.style.display = "inline-flex";
-        statusEl.textContent = "Saved on this phone";
-      } else if (localPath) {
-        videoEl.src = `${localPath}?t=${Date.now()}`;
-        videoEl.onloadeddata = () => {
-          videoEl.style.display = "block";
-          rmBtn.style.display = "inline-flex";
-          statusEl.textContent = "Project video (" + localPath + ")";
-        };
-      }
+      await renderSheetVideos(ex);
     }
-    let currentVideoUrl = null;
+    let currentVideoUrls = [];
+    function clearSheetVideos() {
+      document.querySelectorAll("#videoList video").forEach((v) => { v.pause(); v.removeAttribute("src"); v.load(); });
+      currentVideoUrls.forEach((u) => URL.revokeObjectURL(u));
+      currentVideoUrls = [];
+    }
+    async function renderSheetVideos(ex) {
+      const id = ex.id;
+      const device = await getDeviceVideos(id);
+      if (currentModalExId !== id) return;
+      clearSheetVideos();
+      const project = serverVideoList(id).length ? serverVideoList(id) : (ex.videos || (ex.video ? [ex.video] : []));
+      const items = [
+        ...device.map((v) => { const u = URL.createObjectURL(v.blob); currentVideoUrls.push(u); return { src: u, where: "Saved on this phone", name: v.name, del: `device:${v.key}` }; }),
+        ...project.map((p) => ({ src: `${p}?t=${Date.now()}`, where: "Project video", name: p.replace("./videos/", ""), del: `project:${p.split("/").pop()}`, project: true }))
+      ];
+      const box = document.getElementById("videoList");
+      box.innerHTML = items.map((it, i) => `
+        <div class="vid-item" ${it.project ? 'data-project="1"' : ""}>
+          <video class="vid" controls playsinline preload="metadata" src="${escapeHtml(it.src)}"></video>
+          <div class="vid-meta"><b>Video ${i + 1}</b><small>${escapeHtml(it.where)} · ${escapeHtml(it.name)}</small>
+            <button class="btn sm danger" data-act="del-video" data-id="${escapeHtml(it.del)}" aria-label="Remove video ${i + 1}">${icon("trash", "sm")}</button></div>
+        </div>`).join("");
+      // Project files that don't exist (e.g. on GitHub Pages, where videos/ isn't uploaded) are hidden
+      box.querySelectorAll(".vid-item[data-project] video").forEach((v) => v.addEventListener("error", () => { v.closest(".vid-item").remove(); updateVideoStatus(); }, { once: true }));
+      // Only one video plays at a time
+      box.querySelectorAll("video").forEach((v) => v.addEventListener("play", () => box.querySelectorAll("video").forEach((o) => { if (o !== v) o.pause(); })));
+      updateVideoStatus();
+    }
+    function updateVideoStatus() {
+      const n = document.querySelectorAll("#videoList .vid-item").length;
+      document.getElementById("videoStatusLabel").textContent = n
+        ? `${n} video${n > 1 ? "s" : ""} · add as many as you like`
+        : "No video yet — the motion guide above shows the path.";
+      document.getElementById("attachVideoLbl").textContent = n ? "Add another video" : "Attach video";
+    }
 
     function renderSheetAlts(ex) {
       const sec = document.getElementById("dAltSec");
@@ -3656,9 +3702,7 @@
       wrap.setAttribute("aria-hidden", "true");
       document.body.classList.remove("lock", "sheet-open");
       stopSimAnimation();
-      const videoEl = document.getElementById("modalVideo");
-      videoEl.pause();
-      if (currentVideoUrl) { URL.revokeObjectURL(currentVideoUrl); currentVideoUrl = null; }
+      clearSheetVideos();
       setTimeout(() => {
         if (!wrap.classList.contains("open")) {
           sheetUrls.forEach((u) => URL.revokeObjectURL(u));
@@ -3993,7 +4037,10 @@
         pageStack.length = 0;
         for (let i = overlayStack.length - 1; i >= 0; i--) if (overlayStack[i] === "page") overlayStack.splice(i, 1);
       }
+      // Muscles tab always opens on the all-muscles grid
+      if (viewName === "muscles" && !fromPage && (changed || state.exploreGroup)) { state.exploreGroup = null; state.exploreHead = null; }
       state.view = viewName;
+      document.body.classList.toggle("on-today", viewName === "today");
       const tab = PAGE_VIEWS.has(viewName) ? (pageStack[0] ? pageStack[0].view : "today") : viewName;
       document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === `view-${viewName}`));
       document.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === tab));
@@ -4085,6 +4132,23 @@
             setTimeout(() => document.getElementById("chUrl").focus({ preventScroll: true }), 400);
           }, 150);
           break;
+        case "del-video": {
+          const exId = currentModalExId;
+          if (!exId || !confirm("Remove this video?")) break;
+          const [kind, ref] = [id.slice(0, id.indexOf(":")), id.slice(id.indexOf(":") + 1)];
+          if (kind === "device") await removeDeviceVideo(exId, ref);
+          else {
+            if (!ON_LOCAL_SERVER) { showToast("Project videos can only be removed on the Mac (localhost)"); break; }
+            try { await fetch("./api/delete-video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ exerciseId: exId, file: ref }) }); } catch {}
+          }
+          await refreshVideoKeys();
+          const ex = getExerciseById(exId);
+          if (ex && kind === "project") { ex.videos = serverVideoList(exId); ex.video = ex.videos[0]; if (!ex.video) { delete ex.video; delete ex.videos; } }
+          if (currentModalExId === exId) await renderSheetVideos(ex);
+          renderAll();
+          showToast("Video removed");
+          break;
+        }
         case "open-glossary": openPage("glossary"); break;
         case "open-part": state.partHead = id; openPage("part"); break;
         case "page-back": closeOverlay("page"); break;
@@ -4256,7 +4320,7 @@
         mergeExercisesIntoDb([newEx]);
 
         if (photoFiles.length) { showToast("Saving photos…"); await addImages(id, photoFiles); }
-        if (videoFile) { await VideoStore.set(id, videoFile); await refreshVideoKeys(); }
+        if (videoFile) { await addDeviceVideos(id, [videoFile]); await refreshVideoKeys(); }
         if (ytUrl) {
           showToast("Downloading YouTube video…");
           try { newEx.video = await downloadYoutubeForExercise(id, ytUrl); saveCustomExercises(customList); }
@@ -4482,7 +4546,7 @@
       const el = document.getElementById("storageInfo");
       const bar = document.getElementById("storageBar");
       const photoCount = [...thumbUrls.values()].reduce((s, t) => s + t.count, 0);
-      let txt = `<b>${photoCount}</b> photo${photoCount === 1 ? "" : "s"} on <b>${thumbUrls.size}</b> exercise${thumbUrls.size === 1 ? "" : "s"} · <b>${cachedVideoKeys.size}</b> video${cachedVideoKeys.size === 1 ? "" : "s"}`;
+      let txt = `<b>${photoCount}</b> photo${photoCount === 1 ? "" : "s"} on <b>${thumbUrls.size}</b> exercise${thumbUrls.size === 1 ? "" : "s"} · <b>${[...videoCounts.values()].reduce((a, b) => a + b, 0)}</b> video${[...videoCounts.values()].reduce((a, b) => a + b, 0) === 1 ? "" : "s"}`;
       try {
         if (navigator.storage && navigator.storage.estimate) {
           const { usage = 0, quota = 0 } = await navigator.storage.estimate();
@@ -4612,12 +4676,14 @@
         btn.textContent = "Downloading…";
         statusEl.textContent = "Downloading into ./videos/…";
         try {
-          const path = await downloadYoutubeForExercise(currentModalExId, url);
-          const ex = getExerciseById(currentModalExId);
-          if (ex) ex.video = path;
-          openExerciseModal(currentModalExId);
+          const id = currentModalExId;
+          await downloadYoutubeForExercise(id, url);
+          const ex = getExerciseById(id);
+          if (ex) { ex.videos = serverVideoList(id); ex.video = ex.videos[0]; }
+          document.getElementById("modalYoutubeUrl").value = "";
+          if (currentModalExId === id) await renderSheetVideos(ex);
           renderAll();
-          showToast("Video downloaded & linked");
+          showToast(`Video added · ${serverVideoList(id).length} project video${serverVideoList(id).length > 1 ? "s" : ""} for this exercise`);
         } catch (err) {
           statusEl.textContent = err.message;
           showToast(err.message);
@@ -4627,37 +4693,35 @@
         }
       });
       document.getElementById("modalVideoInput").addEventListener("change", async (e) => {
-        const file = e.target.files[0];
+        const files = [...e.target.files];
         e.target.value = "";
-        if (!file || !currentModalExId) return;
+        if (!files.length || !currentModalExId) return;
+        const id = currentModalExId;
         try {
-          await VideoStore.set(currentModalExId, file);
+          showToast(files.length > 1 ? `Saving ${files.length} videos…` : "Saving video…");
+          const total = await addDeviceVideos(id, files);
           requestPersistentStorage();
           await refreshVideoKeys();
-          openExerciseModal(currentModalExId);
+          if (currentModalExId === id) await renderSheetVideos(getExerciseById(id));
           renderAll();
-          showToast("Video saved on this phone");
+          showToast(`${files.length > 1 ? files.length + " videos" : "Video"} saved on this phone · ${total} on this phone for this exercise`);
         } catch { showToast("Couldn't save video — storage may be full"); }
       });
-      document.getElementById("modalVideoRemove").addEventListener("click", async () => {
-        if (!currentModalExId || !confirm("Remove this video?")) return;
-        await VideoStore.remove(currentModalExId);
-        if (location.protocol.startsWith("http") && serverVideos[currentModalExId]) {
-          try {
-            await fetch("./api/delete-video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ exerciseId: currentModalExId }) });
-          } catch {}
-        }
-        const ex = getExerciseById(currentModalExId);
-        if (ex) delete ex.video;
-        await refreshVideoKeys();
-        openExerciseModal(currentModalExId);
-        renderAll();
-        showToast("Video removed");
-      });
 
-      document.getElementById("btnPrintPdf").addEventListener("click", () => {
-        switchView("today");
-        setTimeout(() => window.print(), 120);
+      // Setup switch: off = hide muscle chips, settings and coverage details; start at the body map + exercises
+      const applySetup = () => {
+        const on = state.showSetup !== false;
+        document.body.classList.toggle("setup-off", !on);
+        document.getElementById("setupSwitch").classList.toggle("on", on);
+        const b = document.getElementById("btnSetup");
+        b.setAttribute("aria-pressed", String(on));
+        b.setAttribute("aria-label", on ? "Hide workout setup controls" : "Show workout setup controls");
+      };
+      applySetup();
+      document.getElementById("btnSetup").addEventListener("click", () => {
+        state.showSetup = state.showSetup === false; saveState(); applySetup();
+        window.scrollTo(0, 0);
+        showToast(state.showSetup ? "Setup controls shown" : "Setup hidden — tap the body to change muscles");
       });
 
       const shareSel = document.getElementById("shareExerciseSelect");

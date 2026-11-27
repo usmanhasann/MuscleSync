@@ -68,27 +68,57 @@ def find_yt_dlp() -> list[str]:
     return [sys.executable, "-m", "yt_dlp"]
 
 
-def list_local_videos() -> dict[str, str]:
+VIDEO_EXTS = {".mp4", ".mov", ".webm", ".m4v"}
+
+
+# Several videos per exercise: <id>.mp4, <id>--2.mp4, <id>--3.mp4 ...
+def _video_owner(p: Path) -> str | None:
+    if not p.is_file() or p.suffix.lower() not in VIDEO_EXTS or re.search(r"\.f\d+$", p.stem):
+        return None
+    return p.stem.split("--")[0]
+
+
+def videos_for(exercise_id: str) -> list[Path]:
     VIDEOS_DIR.mkdir(exist_ok=True)
-    result = {}
+    return sorted((p for p in VIDEOS_DIR.iterdir() if _video_owner(p) == exercise_id), key=lambda p: (p.stat().st_mtime, p.name))
+
+
+def list_local_videos() -> dict[str, list[str]]:
+    VIDEOS_DIR.mkdir(exist_ok=True)
+    result: dict[str, list[Path]] = {}
     for p in VIDEOS_DIR.iterdir():
-        if p.is_file() and p.suffix.lower() in {".mp4", ".mov", ".webm", ".m4v"}:
-            result[p.stem] = f"./videos/{p.name}"
-    return result
+        owner = _video_owner(p)
+        if owner:
+            result.setdefault(owner, []).append(p)
+    return {k: [f"./videos/{p.name}" for p in sorted(v, key=lambda p: (p.stat().st_mtime, p.name))] for k, v in result.items()}
 
 
-def update_exercises_json_video(exercise_id: str, rel_path: str | None) -> None:
+def _next_video_stem(ex_id: str) -> str:
+    taken = {p.stem for p in VIDEOS_DIR.iterdir() if p.is_file()}
+    if ex_id not in taken:
+        return ex_id
+    n = 2
+    while f"{ex_id}--{n}" in taken:
+        n += 1
+    return f"{ex_id}--{n}"
+
+
+def update_exercises_json_video(exercise_id: str, rel_path: str | None = None) -> None:
+    """Keep exercises.json in sync with what's in videos/ ("video" = first, "videos" = all)."""
     if not EXERCISES_JSON.exists():
         return
+    paths = [f"./videos/{p.name}" for p in videos_for(exercise_id)]
     try:
         data = json.loads(EXERCISES_JSON.read_text(encoding="utf-8"))
         changed = False
         for ex in data.get("exercises", []):
             if ex.get("id") == exercise_id:
-                if rel_path:
-                    ex["video"] = rel_path
+                if paths:
+                    ex["video"] = paths[0]
+                    ex["videos"] = paths
                 else:
                     ex.pop("video", None)
+                    ex.pop("videos", None)
                 changed = True
                 break
         if changed:
@@ -225,11 +255,9 @@ def download_youtube_video(url: str, exercise_id: str) -> dict:
     ex_id = sanitize_id(exercise_id)
     VIDEOS_DIR.mkdir(exist_ok=True)
 
-    # Remove any old video with the same stem first so fresh format replaces cleanly
-    for old in VIDEOS_DIR.glob(f"{ex_id}.*"):
-        old.unlink(missing_ok=True)
-
-    out_template = str(VIDEOS_DIR / f"{ex_id}.%(ext)s")
+    # Each download is added next to the existing videos (never replaces them)
+    stem = _next_video_stem(ex_id)
+    out_template = str(VIDEOS_DIR / f"{stem}.%(ext)s")
     env = os.environ.copy()
     env["PATH"] = f"/opt/homebrew/bin:/usr/local/bin:{env.get('PATH', '')}"
     # Apple's bundled Python 3.9 has no CA bundle -> CERTIFICATE_VERIFY_FAILED. Point it at one.
@@ -259,7 +287,7 @@ def download_youtube_video(url: str, exercise_id: str) -> dict:
     except subprocess.TimeoutExpired:
         raise RuntimeError("Download took longer than 5 minutes and was stopped.")
     # Clean up any intermediate stream files (name.f134.mp4, name.f140.m4a, .part)
-    for leftover in VIDEOS_DIR.glob(f"{ex_id}.*"):
+    for leftover in VIDEOS_DIR.glob(f"{stem}.*"):
         if re.search(r"\.f\d+\.|\.part$|\.ytdl$", leftover.name):
             leftover.unlink(missing_ok=True)
     if proc.returncode != 0:
@@ -268,7 +296,7 @@ def download_youtube_video(url: str, exercise_id: str) -> dict:
             raise RuntimeError("yt-dlp is not installed. Run: brew install yt-dlp")
         raise RuntimeError(err.splitlines()[-1] if err else "Download failed")
 
-    matches = sorted(p for p in VIDEOS_DIR.glob(f"{ex_id}.*") if p.suffix.lower() in {".mp4", ".mov", ".webm", ".m4v"})
+    matches = sorted(p for p in VIDEOS_DIR.glob(f"{stem}.*") if p.suffix.lower() in VIDEO_EXTS)
     if not matches:
         raise RuntimeError("Download finished but no output file was found.")
 
@@ -278,7 +306,7 @@ def download_youtube_video(url: str, exercise_id: str) -> dict:
         print(f"Warning: could not make {matches[0].name} iPhone-friendly: {exc}", file=sys.stderr)
 
     rel_path = f"./videos/{matches[0].name}"
-    update_exercises_json_video(ex_id, rel_path)
+    update_exercises_json_video(ex_id)
     note = "" if has_ffmpeg else "Saved without sound — run 'brew install ffmpeg' for audio."
     return {"ok": True, "exerciseId": ex_id, "path": rel_path, "note": note}
 
@@ -355,9 +383,11 @@ class IronSyncHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/api/delete-video":
             try:
                 ex_id = sanitize_id(data.get("exerciseId", ""))
-                for old in VIDEOS_DIR.glob(f"{ex_id}.*"):
-                    old.unlink(missing_ok=True)
-                update_exercises_json_video(ex_id, None)
+                name = Path(str(data.get("file", ""))).name  # delete just this one video
+                for old in videos_for(ex_id):
+                    if not name or old.name == name:
+                        old.unlink(missing_ok=True)
+                update_exercises_json_video(ex_id)
                 self.send_json(200, {"ok": True})
             except Exception as e:
                 self.send_json(400, {"ok": False, "error": str(e)})
