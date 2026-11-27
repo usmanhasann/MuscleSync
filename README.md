@@ -37,3 +37,9 @@ Photos live only on that phone, so use **More → Backup & restore → Full back
 - **Manual / Offline Phone Video:**
   Tap any exercise → **+ Attach Local Video (.mp4/.mov)** to save a video from your phone directly into offline browser storage (`IndexedDB`).
 - Use the **Update** tab to add new exercises on the fly or merge/export `exercises.json`.
+
+## Reference photos & pins
+- `images/ref/<exercise-id>-0.jpg` (start) and `-1.jpg` (end) are public-domain photos from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense). They're cached for offline use. Your own photos always appear first.
+- **Library → Your pins** lists every pinned exercise, grouped by body area (Chest, Back, Shoulders, Arms, Legs, Core) with highlighted muscle words. Pins stay until you unpin them, and pinned exercises are always included when that muscle is in today's workout.
+- **More → Muscle names in Roman Urdu** explains every muscle and part with a highlighted body illustration, and has a switch to show or hide the Urdu lines across the app. The same list opens as a full page from the **Urdu names** button next to Re-sync on Today.
+- **Tap any part** in that list (e.g. Upper Ham) to open a page with every exercise that trains it: *Main target* first, then *Also helps*.

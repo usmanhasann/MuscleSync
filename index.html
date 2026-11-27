@@ -526,6 +526,60 @@
     .ur { display: block; color: var(--ur); font-size: 13px; font-weight: 600; font-style: italic; line-height: 1.3; margin-top: 2px; white-space: normal; }
     .ur::before { content: "➜ "; font-style: normal; opacity: .8; }
     .mtile .ur { font-size: 12px; margin-top: 1px; }
+    .xc-thumb .mini-ov { position: absolute; left: 3px; bottom: 3px; width: 28px; height: 33px; border-radius: 6px; background: rgba(10,12,16,.82); overflow: hidden; display: grid; place-items: center; }
+    .xc-thumb .mini-ov .bm-svg { width: 100%; height: 100%; }
+    .xc-thumb .mini-ov .sil { fill: #2A3240; }
+    .xc-thumb .mini-ov .mp:not(.pri):not(.sec) { fill: #3A4454; }
+    .hero-photos .slide { flex: 0 0 100%; position: relative; scroll-snap-align: center; }
+    .hero-photos .slide img { width: 100%; height: min(62vw, 380px); object-fit: cover; background: var(--surface-2); cursor: zoom-in; }
+    .slide-tag { position: absolute; top: 10px; left: 26px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; }
+    .mchip.pins { color: var(--text); border-color: var(--accent); }
+    .mchip.pins b { margin-left: 2px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11.5px; display: grid; place-items: center; }
+    .mchip.pins.on { background: var(--accent); color: var(--accent-ink); }
+    .mchip.pins.on b { background: var(--accent-ink); color: var(--accent); }
+    .region-h { margin-top: 22px; }
+    .region-h .group-h { margin-top: 0; }
+    .hl-words { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 2px 12px; }
+    .hl-word { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: var(--gs); box-shadow: inset 0 0 0 1.5px var(--gc); font-weight: 750; font-size: 14px; }
+    .hl-word .gdot { width: 9px; height: 9px; border-radius: 50%; background: var(--gc); }
+    .hl-word small { font-family: var(--mono); color: var(--muted); font-weight: 700; }
+    .ur-inline { color: var(--ur); font-weight: 600; font-size: 12.5px; }
+    .group-h .ur-inline { font-size: 14px; }
+    body.no-urdu .ur, body.no-urdu .ur-inline { display: none; }
+    #glossaryCard .ur { display: block !important; }
+    .gl-group { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px; }
+    .gl-group:first-child { border-top: 0; margin-top: 0; padding-top: 0; }
+    .gl-head { display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; margin-bottom: 10px; }
+    .gl-head h3 { font-size: 20px; font-weight: 800; }
+    .gl-gmap { margin: 0 !important; }
+    .gl-gmap .bm-svg { max-height: 130px; }
+    .gl-parts { display: grid; gap: 8px; }
+    .gl-part { display: flex; gap: 12px; align-items: center; background: var(--surface-2); border-radius: 14px; padding: 8px; border-left: 4px solid var(--gc); }
+    .gl-map { width: 78px; height: 92px; flex-shrink: 0; border-radius: 10px; background: var(--bg); display: grid; place-items: center; overflow: hidden; }
+    .gl-map .bm-svg { width: 100%; height: 100%; max-height: none; }
+    .gl-map .mp.focus { stroke-width: 1.4; }
+    .gl-txt { min-width: 0; }
+    .gl-txt b { font-size: 15px; font-weight: 750; display: block; }
+    .gl-txt small { font-size: 12px; color: var(--muted); display: block; }
+    .gl-ur { font-size: 14px; margin-top: 3px; }
+    @media (min-width: 700px) { .gl-parts { grid-template-columns: 1fr 1fr; } }
+    button.gl-part { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; position: relative; padding-right: 30px; }
+    button.gl-part:active { transform: scale(.985); }
+    button.gl-part .gl-go { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .gl-cnt { display: block; font-size: 12px; color: var(--gc); font-weight: 750; margin-top: 3px; }
+    .title-btns { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    #workoutTitle { white-space: nowrap; }
+    .today-main .section-title { flex-wrap: wrap; align-items: center; }
+    .title-btns { margin-left: auto; }
+    @media (max-width: 400px) { .ur-ab { display: none; } .title-btns { gap: 6px; } .title-btns .btn { padding-left: 10px; padding-right: 10px; } }
+    .ur-cta { color: var(--ur); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ur) 55%, transparent); }
+    .ur-ab { font-weight: 800; font-size: 12px; line-height: 1; padding: 3px 5px; border-radius: 6px; background: color-mix(in srgb, var(--ur) 18%, transparent); }
+    #glossaryPage .ur { display: block !important; }
+    .part-hero { display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; }
+    .part-hero .gl-map { width: 120px; height: 150px; }
+    .part-hero h2 { font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+    .part-hero p { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+    .part-hero .ur { font-size: 16px; display: block !important; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -635,7 +689,10 @@
         <div class="today-main">
           <div class="section-title">
             <h2 id="workoutTitle">Workout</h2>
-            <button class="btn sm no-print" id="btnSyncNow"><svg class="i sm"><use href="#i-sync"/></svg>Re-sync</button>
+            <div class="title-btns no-print">
+              <button class="btn sm ur-cta" data-act="open-glossary"><span class="ur-ab">Aa</span>Urdu names</button>
+              <button class="btn sm" id="btnSyncNow"><svg class="i sm"><use href="#i-sync"/></svg>Re-sync</button>
+            </div>
           </div>
           <div class="parts-legend no-print">
             <span class="part pri"><span class="part-ico">●</span>Main</span>
@@ -668,6 +725,20 @@
         </div>
       </div>
       <div id="libraryGrid"></div>
+    </section>
+
+    <!-- ================= PAGES (no tab) ================= -->
+    <section id="view-glossary" class="view" aria-label="Muscle names in Roman Urdu">
+      <button class="back-link" data-act="page-back"><svg class="i"><use href="#i-back"/></svg>Back</button>
+      <button type="button" class="set-tile urdu-tog" style="width:100%;flex-direction:row;align-items:center;justify-content:space-between;min-height:52px;margin-bottom:12px;">
+        <span style="text-align:left;"><span class="k" style="display:block;">Show Roman Urdu</span><span style="font-size:13px;color:var(--muted);">Under every muscle name in the app</span></span>
+        <span class="toggle urdu-sw"></span>
+      </button>
+      <p class="muted" style="font-size:13.5px;margin:0 2px 12px;">Tap any part to see every exercise that trains it.</p>
+      <div id="glossaryPage" class="card"></div>
+    </section>
+    <section id="view-part" class="view" aria-label="Exercises for one muscle part">
+      <div id="partRoot"></div>
     </section>
 
     <!-- ================= MORE ================= -->
@@ -724,6 +795,16 @@
               <button type="button" id="btnSendGmailPdf" class="btn">Save PDF &amp; Gmail</button>
             </div>
           </div>
+        </details>
+
+        <details class="card" id="glossaryCard">
+          <summary>Muscle names in Roman Urdu</summary>
+          <button type="button" class="set-tile" id="btnUrduToggle" style="width:100%;flex-direction:row;align-items:center;justify-content:space-between;min-height:52px;margin-bottom:12px;">
+            <span style="text-align:left;"><span class="k" style="display:block;">Show Roman Urdu</span><span style="font-size:13px;color:var(--muted);">Under every muscle name in the app</span></span>
+            <span class="toggle urdu-sw" id="urduToggleSwitch"></span>
+          </button>
+          <p class="muted" style="font-size:13px;margin:0 2px 10px;">Tap any part to see every exercise that trains it.</p>
+          <div id="glossary"></div>
         </details>
 
         <details class="card">
@@ -2352,6 +2433,20 @@
     const groupUrdu = (id) => GROUP_URDU[id] || (getGroupObj(id) || {}).urdu || "";
     const urduHtml = (txt, tag = "span") => txt ? `<${tag} class="ur" lang="ur-Latn">${escapeHtml(txt)}</${tag}>` : "";
 
+    // Public-domain start/end photos (free-exercise-db, Unlicense) bundled in images/ref/
+    const REF_IDS = new Set(["back-extension", "barbell-back-squat", "barbell-bent-over-row", "bayesian-cable-curl", "bulgarian-split-squat", "cable-chest-fly", "cable-face-pull", "cable-hip-abduction", "cable-kneeling-crunch", "cable-lateral-raise", "cable-overhead-curl", "cable-rope-pushdown", "cable-woodchopper", "chest-supported-row", "close-grip-bench", "concentration-curl", "db-lateral-raise", "db-shrug", "ez-skull-crusher", "flat-bb-bench-press", "glute-hip-thrust", "hack-squat-narrow", "hammer-curl", "hanging-leg-raise", "incline-db-curl", "incline-db-press", "leg-extension", "low-to-high-cable-fly", "lying-leg-curl", "overhead-cable-tricep-ext", "pec-deck-fly", "pendulum-sissy-squat", "preacher-curl", "pull-up", "reverse-ez-curl", "reverse-pec-deck", "romanian-deadlift", "seated-calf-raise", "seated-db-shoulder-press", "seated-leg-curl", "single-arm-cable-lat-row", "single-arm-reverse-pushdown", "spider-curl", "standing-calf-raise", "straight-arm-lat-pulldown", "tbar-row-cable-seated", "weighted-chest-dip", "wide-lat-pulldown"]);
+    const refImages = (ex) => Array.isArray(ex.refImages) ? ex.refImages : REF_IDS.has(ex.id) ? [0, 1].map((i) => `images/ref/${ex.id}-${i}.jpg`) : [];
+
+    // Body regions used by "Your pins"
+    const REGIONS = [
+      { id: "chest", name: "Chest", urdu: "Seena", groups: ["chest"] },
+      { id: "back", name: "Back", urdu: "Kamar", groups: ["back"] },
+      { id: "shoulders", name: "Shoulders", urdu: "Kandhe", groups: ["shoulders"] },
+      { id: "arms", name: "Arms", urdu: "Bazu", groups: ["biceps", "triceps"] },
+      { id: "legs", name: "Legs", urdu: "Tangein", groups: ["quads", "hamstrings", "glutes", "calves"] },
+      { id: "core", name: "Core", urdu: "Pait", groups: ["core"] }
+    ];
+
     let HEAD_INDEX = new Map();
     function indexHeads() {
       HEAD_INDEX = new Map();
@@ -2697,9 +2792,13 @@
       const g = getGroupObj(ex.group);
       const thumb = thumbUrls.get(ex.id);
       const hasVid = cachedVideoKeys.has(ex.id);
+      const refs = refImages(ex);
+      const miniMap = miniMapHtml([...pri], { sec: new Set(ex.secondaryHeads || []) });
       const thumbHtml = thumb
-        ? `<img src="${thumb.url}" alt="" loading="lazy">${thumb.count > 1 ? `<span class="badge">${icon("image", "sm")}${thumb.count}</span>` : ""}`
-        : miniMapHtml([...pri], { sec: new Set(ex.secondaryHeads || []) });
+        ? `<img src="${thumb.url}" alt="" loading="lazy">${thumb.count > 1 ? `<span class="badge">${icon("image", "sm")}${thumb.count}</span>` : ""}<span class="mini-ov">${miniMap}</span>`
+        : refs.length
+          ? `<img src="${refs[0]}" alt="" loading="lazy" onerror="this.remove()"><span class="mini-ov">${miniMap}</span>`
+          : miniMap;
       const partsHtml = own.map((h) => h.status === "miss"
         ? `<span class="part miss" title="${escapeHtml(headUrdu(h.id))}"><span class="part-ico">○</span><s>${escapeHtml(h.name)}</s></span>`
         : `<span class="part ${h.status}" title="${escapeHtml(headUrdu(h.id))}"><span class="part-ico">${h.status === "pri" ? "●" : "◐"}</span>${escapeHtml(h.name)}</span>`).join("");
@@ -2716,7 +2815,7 @@
           </div>`;
       } else if (opts.mode === "lib") {
         actions = `<div class="xc-actions">
-            <button data-open="${ex.id}">${icon("body", "sm")}Details</button>
+            <button data-act="pin" data-id="${ex.id}" class="${opts.pinned ? "on" : ""}" aria-pressed="${!!opts.pinned}">${icon("pin", "sm")}${opts.pinned ? "Pinned" : "Pin"}</button>
             <button data-act="add" data-id="${ex.id}" class="${opts.inToday ? "added" : "add"}">${icon(opts.inToday ? "check" : "plus", "sm")}${opts.inToday ? "In today" : "Add to today"}</button>
           </div>`;
       }
@@ -2968,7 +3067,9 @@
 
     function renderLibrary() {
       const q = state.search.trim().toLowerCase();
+      const pinCount = state.pinnedIds.filter((x) => getExerciseById(x)).length;
       document.getElementById("libGroupChips").innerHTML =
+        `<button class="mchip pins ${state.libGroup === "pins" ? "on" : ""}" data-act="lib-group" data-id="pins">${icon("pin", "sm")}Your pins<b>${pinCount}</b></button>` +
         `<button class="mchip plain ${state.libGroup === "all" ? "on" : ""}" data-act="lib-group" data-id="all">All</button>` +
         db.muscleGroups.map((g) => `<button class="mchip ${state.libGroup === g.id ? "on" : ""}" data-act="lib-group" data-id="${g.id}" style="${gStyle(g.id)}"><span class="gdot"></span>${escapeHtml(g.name)}</button>`).join("");
       const eq = document.getElementById("libEquipFilter");
@@ -2979,8 +3080,10 @@
       ng.classList.toggle("on", state.libNoGlute);
       ng.querySelector(".toggle").classList.toggle("on", state.libNoGlute);
 
+      const pinsMode = state.libGroup === "pins";
       const filtered = db.exercises.filter((ex) => {
-        if (state.libGroup !== "all" && ex.group !== state.libGroup && !(ex.groups || []).includes(state.libGroup)) return false;
+        if (pinsMode && !state.pinnedIds.includes(ex.id)) return false;
+        if (!pinsMode && state.libGroup !== "all" && ex.group !== state.libGroup && !(ex.groups || []).includes(state.libGroup)) return false;
         if (state.libEquip !== "all" && ex.equipment !== state.libEquip) return false;
         if (state.libNoGlute && (ex.gluteLoad || 0) > 15) return false;
         return matchesExerciseQuery(ex, q);
@@ -2989,10 +3092,32 @@
 
       const grid = document.getElementById("libraryGrid");
       if (!filtered.length) {
-        grid.innerHTML = `<div class="empty" style="margin-top:16px;">No exercises match. Try clearing the search or filters.</div>`;
+        grid.innerHTML = pinsMode && !pinCount
+          ? `<div class="empty" style="margin-top:16px;">${icon("pin", "lg")}<br><strong>No pins yet.</strong><br>Tap <b>Pin</b> on any exercise and it will be saved here, grouped by body area.</div>`
+          : `<div class="empty" style="margin-top:16px;">No exercises match. Try clearing the search or filters.</div>`;
         return;
       }
-      const card = (ex) => exerciseCard(ex, { mode: "lib", inToday: state.workoutIds.includes(ex.id) });
+      const card = (ex) => exerciseCard(ex, { mode: "lib", inToday: state.workoutIds.includes(ex.id), pinned: state.pinnedIds.includes(ex.id) });
+      if (pinsMode) {
+        const known = new Set(REGIONS.flatMap((r) => r.groups));
+        const regions = [...REGIONS, ...db.muscleGroups.filter((g) => !known.has(g.id)).map((g) => ({ id: g.id, name: g.name, urdu: groupUrdu(g.id), groups: [g.id] }))];
+        grid.innerHTML = regions.map((r) => {
+          const items = filtered.filter((e) => r.groups.includes(e.group));
+          if (!items.length) return "";
+          const groupsHit = r.groups.filter((gid) => items.some((e) => e.group === gid));
+          const words = groupsHit.map((gid) => {
+            const g = getGroupObj(gid);
+            const n = items.filter((e) => e.group === gid).length;
+            return `<span class="hl-word" style="${gStyle(gid)}"><span class="gdot"></span>${escapeHtml(g ? g.name : gid)} <small>${n}</small>${groupUrdu(gid) ? `<em class="ur-inline">${escapeHtml(groupUrdu(gid))}</em>` : ""}</span>`;
+          }).join("");
+          return `<div class="region-h" style="${gStyle(groupsHit[0])}">
+              <div class="group-h" style="margin-bottom:6px;"><span class="bar"></span><h2>${escapeHtml(r.name)}</h2>${r.urdu ? `<em class="ur-inline">${escapeHtml(r.urdu)}</em>` : ""}<span>${items.length} pinned</span></div>
+              <div class="hl-words">${words}</div>
+            </div>
+            <div class="xlist grid2">${items.map(card).join("")}</div>`;
+        }).join("");
+        return;
+      }
       const order = db.muscleGroups.map((g) => g.id);
       const sections = order.map((gid) => ({ gid, items: filtered.filter((e) => e.group === gid).sort((a, b) => (a.tier || 3) - (b.tier || 3)) }))
         .filter((s) => s.items.length);
@@ -3112,14 +3237,33 @@
       } else {
         const i = overlayStack.lastIndexOf(name);
         if (i >= 0) overlayStack.splice(i, 1);
-        if (name === "sheet") closeModal(); else closeLightbox();
+        closeByName(name);
       }
+    }
+    function closeByName(name) {
+      if (name === "sheet") closeModal();
+      else if (name === "lightbox") closeLightbox();
+      else if (name === "page") restorePage();
     }
     window.addEventListener("popstate", () => {
       const top = overlayStack.pop();
-      if (top === "sheet") closeModal();
-      else if (top === "lightbox") closeLightbox();
+      if (top) closeByName(top);
     });
+
+    // Full-screen pages that have no tab (glossary, one muscle part). Back returns to where you came from.
+    const PAGE_VIEWS = new Set(["glossary", "part"]);
+    const pageStack = [];
+    function openPage(view) {
+      if (document.getElementById("detailModal").classList.contains("open")) closeOverlay("sheet");
+      pageStack.push({ view: state.view, y: window.scrollY });
+      pushOverlay("page");
+      switchView(view, true);
+    }
+    function restorePage() {
+      const p = pageStack.pop();
+      switchView(p ? p.view : "today", true);
+      if (p) requestAnimationFrame(() => window.scrollTo(0, p.y));
+    }
 
     function openLightbox(url) {
       document.getElementById("lightboxImg").src = url;
@@ -3157,9 +3301,15 @@
       const mapHtml = `<div class="bodymap">${bodyMapHtml({ pri: priSet, sec: secSet, gw })}</div>`;
 
       const hero = document.getElementById("dHero");
-      if (items.length) {
-        hero.innerHTML = `<div class="hero-photos" id="heroPhotos">${items.map((p) => `<img src="${p.full}" alt="${escapeHtml(ex.name)} photo" data-zoom="${p.full}">`).join("")}</div>
-          ${items.length > 1 ? `<div class="hero-dots">${items.map((_, i) => `<i class="${i === 0 ? "on" : ""}"></i>`).join("")}</div>` : ""}`;
+      const refs = refImages(ex);
+      const slides = [
+        ...items.map((p) => ({ src: p.full, label: "" })),
+        ...refs.map((src, i) => ({ src, label: refs.length > 1 ? (i === 0 ? "Start" : "End") : "Reference" }))
+      ];
+      if (slides.length) {
+        hero.innerHTML = `<div class="hero-photos" id="heroPhotos">${slides.map((p) => `<div class="slide"><img src="${p.src}" alt="${escapeHtml(ex.name)} photo" data-zoom="${p.src}">${p.label ? `<span class="slide-tag">${p.label}</span>` : ""}</div>`).join("")}</div>
+          ${slides.length > 1 ? `<div class="hero-dots">${slides.map((_, i) => `<i class="${i === 0 ? "on" : ""}"></i>`).join("")}</div>` : ""}
+          ${items.length ? "" : `<button class="hero-add" data-act="add-photo">${icon("camera", "sm")}Add your photo</button>`}`;
         const strip = document.getElementById("heroPhotos");
         strip.addEventListener("scroll", () => {
           const i = Math.round(strip.scrollLeft / strip.clientWidth);
@@ -3621,13 +3771,21 @@
       document.getElementById("barTitle").textContent = title;
       document.getElementById("barSub").textContent = sub || "";
     }
-    function switchView(viewName) {
+    function switchView(viewName, fromPage) {
       viewName = VIEW_ALIASES[viewName] || viewName;
       if (!document.getElementById(`view-${viewName}`)) viewName = "today";
       const changed = state.view !== viewName;
+      if (!fromPage && pageStack.length) {
+        // Jumped to a tab from inside a page: forget the page trail
+        pageStack.length = 0;
+        for (let i = overlayStack.length - 1; i >= 0; i--) if (overlayStack[i] === "page") overlayStack.splice(i, 1);
+      }
       state.view = viewName;
+      const tab = PAGE_VIEWS.has(viewName) ? (pageStack[0] ? pageStack[0].view : "today") : viewName;
       document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === `view-${viewName}`));
-      document.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === viewName));
+      document.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === tab));
+      if (viewName === "glossary") renderGlossaryPage();
+      if (viewName === "part") renderPart();
       saveState();
       if (viewName === "today") renderBuilder();
       if (viewName === "library") renderLibrary();
@@ -3642,12 +3800,12 @@
       renderBuilder();
       renderLibrary();
       renderMuscles();
+      if (state.view === "part") renderPart();
     }
 
     function addToToday(id) {
       if (state.workoutIds.includes(id)) return false;
       state.workoutIds.push(id);
-      if (!state.pinnedIds.includes(id)) state.pinnedIds.push(id);
       state.targetCount = state.workoutIds.length;
       const ex = getExerciseById(id);
       if (ex && !state.selectedGroups.includes(ex.group) && getGroupObj(ex.group)) state.selectedGroups.push(ex.group);
@@ -3670,7 +3828,11 @@
       const id = t.dataset.id;
       switch (t.dataset.act) {
         case "toggle-group": toggleMuscleGroup(id); break;
-        case "pin": togglePin(id); break;
+        case "pin":
+          togglePin(id); renderLibrary();
+          if (state.view === "part") renderPart();
+          showToast(state.pinnedIds.includes(id) ? "Pinned — find it in Library › Your pins" : "Unpinned");
+          break;
         case "swap": swapExercise(id, false); break;
         case "swap-low": swapExercise(id, true); break;
         case "remove": removeExercise(id); break;
@@ -3679,19 +3841,22 @@
           if (addToToday(id)) { renderAll(); showToast("Added to today"); }
           else switchView("today");
           break;
+        case "open-glossary": openPage("glossary"); break;
+        case "open-part": state.partHead = id; openPage("part"); break;
+        case "page-back": closeOverlay("page"); break;
         case "lib-group": state.libGroup = id; saveState(); renderLibrary(); break;
         case "jump-group":
-          state.selectedGroups = [id]; state.pinnedIds = [];
+          state.selectedGroups = [id];
           computeSyncedWorkout(); renderAll(); switchView("today"); break;
         case "jump-arms":
-          state.selectedGroups = ["biceps", "triceps"]; state.targetCount = Math.max(4, state.targetCount); state.pinnedIds = [];
+          state.selectedGroups = ["biceps", "triceps"]; state.targetCount = Math.max(4, state.targetCount);
           computeSyncedWorkout(); renderAll(); switchView("today"); break;
         case "explore":
           state.exploreGroup = id || null; state.exploreHead = null; saveState(); renderMuscles(); window.scrollTo(0, 0); break;
         case "explore-head":
           state.exploreHead = state.exploreHead === id ? null : id; renderMuscles(); break;
         case "train-group":
-          state.selectedGroups = [id]; state.pinnedIds = [];
+          state.selectedGroups = [id];
           state.targetCount = Math.max(state.targetCount, getGroupObj(id)?.heads.length || 3);
           computeSyncedWorkout(); renderAll(); switchView("today");
           showToast(`Built a ${getGroupObj(id)?.name} workout`); break;
@@ -3927,6 +4092,78 @@
       });
     }
 
+    function renderGlossary(boxId = "glossary") {
+      const box = document.getElementById(boxId);
+      if (!box) return;
+      box.innerHTML = db.muscleGroups.map((g) => {
+        const ids = g.heads.map((h) => h.id);
+        const sides = sidesFor(ids);
+        const groupMap = sides.map((sd) => `<div class="bm-side" style="padding:4px;">${bodySideSvg(sd, { pri: new Set(ids), viewBox: cropFor(sd, new Set(ids), 0.8) })}</div>`).join("");
+        const parts = g.heads.map((h) => {
+          const n = partExercises(h.id).mains.length;
+          return `<button type="button" class="gl-part" data-act="open-part" data-id="${h.id}">
+              <div class="gl-map">${partMapSvg(h.id, ids)}</div>
+              <div class="gl-txt"><b>${escapeHtml(h.name)}</b><small>${escapeHtml(h.role)}</small><span class="ur gl-ur">${escapeHtml(headUrdu(h.id) || "—")}</span><span class="gl-cnt">${n} exercise${n === 1 ? "" : "s"} →</span></div>
+            </button>`;
+        }).join("");
+        return `<section class="gl-group" style="${gStyle(g.id)}">
+            <div class="gl-head">
+              <div class="bodymap ${sides.length === 1 ? "single" : ""} gl-gmap">${groupMap}</div>
+              <div><div class="eyebrow" style="color:var(--gc)">${g.heads.length} parts</div><h3>${escapeHtml(g.name)}</h3><span class="ur gl-ur" style="font-size:15px;">${escapeHtml(groupUrdu(g.id) || "—")}</span></div>
+            </div>
+            <div class="gl-parts">${parts}</div>
+          </section>`;
+      }).join("");
+    }
+    function applyUrduSetting() {
+      const on = state.showUrdu !== false;
+      document.body.classList.toggle("no-urdu", !on);
+      document.querySelectorAll(".urdu-sw").forEach((sw) => sw.classList.toggle("on", on));
+    }
+    function partMapSvg(headId, groupIds) {
+      const sd = headSide(headId) || "front";
+      const groupOnSide = new Set(groupIds.filter((x) => BODY_PARTS[sd].some(([pid]) => pid === x)));
+      if (!groupOnSide.size) groupOnSide.add(headId);
+      return bodySideSvg(sd, { pri: new Set([headId]), focus: new Set([headId]), viewBox: cropFor(sd, groupOnSide, 0.85) });
+    }
+    function partExercises(headId) {
+      const mains = bestFor(headId);
+      const assists = db.exercises
+        .filter((e) => (e.secondaryHeads || []).includes(headId) && !(e.primaryHeads || []).includes(headId))
+        .sort((a, b) => (a.tier || 3) - (b.tier || 3));
+      return { mains, assists };
+    }
+    function renderGlossaryPage() {
+      setBar("Muscle names", "Roman Urdu · tap a part");
+      renderGlossary("glossaryPage");
+    }
+    function renderPart() {
+      const root = document.getElementById("partRoot");
+      const h = state.partHead && HEAD_INDEX.get(state.partHead);
+      const back = `<button class="back-link" data-act="page-back">${icon("back")}Back</button>`;
+      if (!h) { root.innerHTML = back + `<div class="empty">Part not found.</div>`; return; }
+      const g = getGroupObj(h.groupId);
+      const { mains, assists } = partExercises(h.id);
+      setBar(h.name, `${g ? g.name + " · " : ""}${mains.length} main exercises`);
+      const card = (ex) => exerciseCard(ex, { mode: "lib", inToday: state.workoutIds.includes(ex.id), pinned: state.pinnedIds.includes(ex.id) });
+      root.innerHTML = `${back}
+        <div class="card" style="${gStyle(h.groupId)}">
+          <div class="part-hero">
+            <div class="gl-map">${partMapSvg(h.id, g ? g.heads.map((x) => x.id) : [h.id])}</div>
+            <div>
+              <div class="eyebrow" style="color:var(--gc)">${escapeHtml(g ? g.name : "")}${g && groupUrdu(g.id) ? ` · ${escapeHtml(groupUrdu(g.id))}` : ""}</div>
+              <h2>${escapeHtml(h.name)}</h2>
+              <p>${escapeHtml(h.role || "")}</p>
+              <span class="ur">${escapeHtml(headUrdu(h.id) || "")}</span>
+            </div>
+          </div>
+        </div>
+        <div class="group-h" style="${gStyle(h.groupId)}"><span class="bar"></span><h2>Main target</h2><em class="ur-inline">Seedha isi hisse par kaam</em><span>${mains.length}</span></div>
+        ${mains.length ? `<div class="xlist grid2">${mains.map(card).join("")}</div>` : `<div class="empty">No exercise targets this part directly yet — add one in More.</div>`}
+        ${assists.length ? `<div class="group-h" style="${gStyle(h.groupId)}"><span class="bar"></span><h2>Also helps</h2><em class="ur-inline">Saath mein thora kaam</em><span>${assists.length}</span></div>
+        <div class="xlist grid2">${assists.map(card).join("")}</div>` : ""}`;
+    }
+
     function downloadText(filename, text) {
       const blob = new Blob([text], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -4022,11 +4259,10 @@
       document.getElementById("sheetPin").addEventListener("click", () => {
         const id = currentModalExId;
         if (!id) return;
-        if (!state.workoutIds.includes(id)) addToToday(id);
-        else togglePin(id);
+        togglePin(id);
         renderAll();
         sheetFooter(getExerciseById(id));
-        showToast(state.pinnedIds.includes(id) ? "Pinned — re-sync keeps it" : "Unpinned");
+        showToast(state.pinnedIds.includes(id) ? "Pinned — find it in Library › Your pins" : "Unpinned");
       });
       document.getElementById("photoInput").addEventListener("change", async (e) => {
         const files = [...e.target.files];
@@ -4159,10 +4395,16 @@
       });
 
       if (IS_PHONE) document.getElementById("fYoutubeField").style.display = "none";
+      applyUrduSetting();
+      document.querySelectorAll("#btnUrduToggle, .urdu-tog").forEach((b) => b.addEventListener("click", () => {
+        state.showUrdu = state.showUrdu === false; saveState(); applyUrduSetting();
+        showToast(state.showUrdu ? "Roman Urdu on" : "Roman Urdu off");
+      }));
+      document.getElementById("glossaryCard").addEventListener("toggle", (e) => { if (e.target.open) renderGlossary(); });
       setupManageView();
       renderSearchHints();
       renderAll();
-      switchView(state.view || "today");
+      switchView(PAGE_VIEWS.has(state.view) ? "today" : (state.view || "today"));
 
       // Load device media after first paint so a slow/blocked IndexedDB never blanks the app
       const withTimeout = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(r, ms))]);

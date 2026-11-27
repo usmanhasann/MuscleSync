@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ironsync-offline-v3';
+const CACHE_NAME = 'ironsync-offline-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -6,11 +6,16 @@ const CORE_ASSETS = [
   './manifest.json',
   './icon.svg'
 ];
+// Bundled public-domain exercise photos (images/ref/<id>-0.jpg start, -1.jpg end)
+const REF_IDS = ["back-extension", "barbell-back-squat", "barbell-bent-over-row", "bayesian-cable-curl", "bulgarian-split-squat", "cable-chest-fly", "cable-face-pull", "cable-hip-abduction", "cable-kneeling-crunch", "cable-lateral-raise", "cable-overhead-curl", "cable-rope-pushdown", "cable-woodchopper", "chest-supported-row", "close-grip-bench", "concentration-curl", "db-lateral-raise", "db-shrug", "ez-skull-crusher", "flat-bb-bench-press", "glute-hip-thrust", "hack-squat-narrow", "hammer-curl", "hanging-leg-raise", "incline-db-curl", "incline-db-press", "leg-extension", "low-to-high-cable-fly", "lying-leg-curl", "overhead-cable-tricep-ext", "pec-deck-fly", "pendulum-sissy-squat", "preacher-curl", "pull-up", "reverse-ez-curl", "reverse-pec-deck", "romanian-deadlift", "seated-calf-raise", "seated-db-shoulder-press", "seated-leg-curl", "single-arm-cable-lat-row", "single-arm-reverse-pushdown", "spider-curl", "standing-calf-raise", "straight-arm-lat-pulldown", "tbar-row-cable-seated", "weighted-chest-dip", "wide-lat-pulldown"];
+const REF_IMAGES = REF_IDS.flatMap((id) => [`./images/ref/${id}-0.jpg`, `./images/ref/${id}-1.jpg`]);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(CORE_ASSETS.map((u) => new Request(u, { cache: 'reload' }))))
+      .then((cache) => cache.addAll(CORE_ASSETS.map((u) => new Request(u, { cache: 'reload' })))
+        // Photos are cached best-effort so one failed image never blocks the offline install
+        .then(() => Promise.all(REF_IMAGES.map((u) => cache.add(u).catch(() => {})))))
       .then(() => self.skipWaiting())
   );
 });
