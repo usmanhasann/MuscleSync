@@ -1,0 +1,52 @@
+{
+  "description": "IronSync / MuscleSync anatomical muscle highlight photo catalog (38 images: 10 group + 28 close-ups, 1280x720 JPEG)",
+  "images": [
+    { "file": "upper_chest-1.jpg", "muscle": "Chest", "type": "group", "targets": ["upper_chest", "mid_chest", "lower_chest"], "labels": "Upper Chest (red), Mid Chest (blue), Lower Chest (green)" },
+    { "file": "upper_chest-2.jpg", "muscle": "Chest", "type": "close-up", "targets": ["upper_chest"], "labels": "Upper Chest (red)" },
+    { "file": "mid_chest-1.jpg", "muscle": "Chest", "type": "close-up", "targets": ["mid_chest"], "labels": "Mid Chest (blue)" },
+    { "file": "lower_chest-1.jpg", "muscle": "Chest", "type": "close-up", "targets": ["lower_chest"], "labels": "Lower Chest (green)" },
+
+    { "file": "lats_width-1.jpg", "muscle": "Back", "type": "group", "targets": ["lats_width", "mid_back", "traps_upper", "lower_back"], "labels": "Lats (red), Mid-Back (blue), Upper Traps (green), Lower Back (yellow)" },
+    { "file": "lats_width-2.jpg", "muscle": "Back", "type": "close-up", "targets": ["lats_width"], "labels": "Lats (red)" },
+    { "file": "mid_back-1.jpg", "muscle": "Back", "type": "close-up", "targets": ["mid_back"], "labels": "Mid-Back (blue)" },
+    { "file": "traps_upper-1.jpg", "muscle": "Back", "type": "close-up", "targets": ["traps_upper"], "labels": "Upper Traps (green)" },
+    { "file": "lower_back-1.jpg", "muscle": "Back", "type": "close-up", "targets": ["lower_back"], "labels": "Lower Back (yellow)" },
+
+    { "file": "front_delt-1.jpg", "muscle": "Shoulders", "type": "group", "targets": ["front_delt", "side_delt", "rear_delt"], "labels": "Front Delt (red), Side Delt (blue), Rear Delt (green)" },
+    { "file": "front_delt-2.jpg", "muscle": "Shoulders", "type": "close-up", "targets": ["front_delt"], "labels": "Front Delt (red)" },
+    { "file": "side_delt-1.jpg", "muscle": "Shoulders", "type": "close-up", "targets": ["side_delt"], "labels": "Side Delt (blue)" },
+    { "file": "rear_delt-1.jpg", "muscle": "Shoulders", "type": "close-up", "targets": ["rear_delt"], "labels": "Rear Delt (green)" },
+
+    { "file": "bicep_long-1.jpg", "muscle": "Biceps", "type": "group", "targets": ["bicep_long", "bicep_short", "brachialis"], "labels": "Long Head (red), Short Head (blue), Brachialis (green)" },
+    { "file": "bicep_long-2.jpg", "muscle": "Biceps", "type": "close-up", "targets": ["bicep_long"], "labels": "Long Head (red)" },
+    { "file": "bicep_short-1.jpg", "muscle": "Biceps", "type": "close-up", "targets": ["bicep_short"], "labels": "Short Head (blue)" },
+    { "file": "brachialis-1.jpg", "muscle": "Biceps", "type": "close-up", "targets": ["brachialis"], "labels": "Brachialis (green)" },
+
+    { "file": "tricep_long-1.jpg", "muscle": "Triceps", "type": "group", "targets": ["tricep_long", "tricep_lateral", "tricep_medial"], "labels": "Long Head (red), Lateral Head (blue), Medial Head (green)" },
+    { "file": "tricep_long-2.jpg", "muscle": "Triceps", "type": "close-up", "targets": ["tricep_long"], "labels": "Long Head (red)" },
+    { "file": "tricep_lateral-1.jpg", "muscle": "Triceps", "type": "close-up", "targets": ["tricep_lateral"], "labels": "Lateral Head (blue)" },
+    { "file": "tricep_medial-1.jpg", "muscle": "Triceps", "type": "close-up", "targets": ["tricep_medial"], "labels": "Medial Head (green)" },
+
+    { "file": "quad_rectus-1.jpg", "muscle": "Quads", "type": "group", "targets": ["quad_rectus", "quad_outer", "quad_inner"], "labels": "Rectus Femoris (red), Outer Sweep (blue), VMO Teardrop (green)" },
+    { "file": "quad_rectus-2.jpg", "muscle": "Quads", "type": "close-up", "targets": ["quad_rectus"], "labels": "Rectus Femoris (red)" },
+    { "file": "quad_outer-1.jpg", "muscle": "Quads", "type": "close-up", "targets": ["quad_outer"], "labels": "Outer Sweep (blue)" },
+    { "file": "quad_inner-1.jpg", "muscle": "Quads", "type": "close-up", "targets": ["quad_inner"], "labels": "VMO Teardrop (green)" },
+
+    { "file": "ham_stretch-1.jpg", "muscle": "Hamstrings", "type": "group", "targets": ["ham_stretch", "ham_curl"], "labels": "Upper Ham (red), Lower Ham (blue)" },
+    { "file": "ham_stretch-2.jpg", "muscle": "Hamstrings", "type": "close-up", "targets": ["ham_stretch"], "labels": "Upper Ham (red)" },
+    { "file": "ham_curl-1.jpg", "muscle": "Hamstrings", "type": "close-up", "targets": ["ham_curl"], "labels": "Lower Ham (blue)" },
+
+    { "file": "glute_max-1.jpg", "muscle": "Glutes", "type": "group", "targets": ["glute_max", "glute_med"], "labels": "Glute Max (red), Glute Med (blue)" },
+    { "file": "glute_max-2.jpg", "muscle": "Glutes", "type": "close-up", "targets": ["glute_max"], "labels": "Glute Max (red)" },
+    { "file": "glute_med-1.jpg", "muscle": "Glutes", "type": "close-up", "targets": ["glute_med"], "labels": "Glute Med (blue)" },
+
+    { "file": "gastroc-1.jpg", "muscle": "Calves", "type": "group", "targets": ["gastroc", "soleus"], "labels": "Gastrocnemius (red), Soleus (blue)" },
+    { "file": "gastroc-2.jpg", "muscle": "Calves", "type": "close-up", "targets": ["gastroc"], "labels": "Gastrocnemius (red)" },
+    { "file": "soleus-1.jpg", "muscle": "Calves", "type": "close-up", "targets": ["soleus"], "labels": "Soleus (blue)" },
+
+    { "file": "upper_abs-1.jpg", "muscle": "Core", "type": "group", "targets": ["upper_abs", "lower_abs", "obliques"], "labels": "Upper Abs (red), Lower Abs (blue), Obliques (green)" },
+    { "file": "upper_abs-2.jpg", "muscle": "Core", "type": "close-up", "targets": ["upper_abs"], "labels": "Upper Abs (red)" },
+    { "file": "lower_abs-1.jpg", "muscle": "Core", "type": "close-up", "targets": ["lower_abs"], "labels": "Lower Abs (blue)" },
+    { "file": "obliques-1.jpg", "muscle": "Core", "type": "close-up", "targets": ["obliques"], "labels": "Obliques (green)" }
+  ]
+}
