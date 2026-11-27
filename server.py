@@ -11,6 +11,9 @@ Usage:
 
   2) Or download a YouTube video directly from CLI:
        python3 server.py --download "https://www.youtube.com/watch?v=..." --id incline-db-curl
+
+  3) Repair videos that freeze on iPhone (picture stops, timer keeps running):
+       python3 server.py --fix-videos
 """
 
 import argparse
@@ -20,8 +23,10 @@ import os
 import re
 import shutil
 import socketserver
+import struct
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -92,6 +97,126 @@ def update_exercises_json_video(exercise_id: str, rel_path: str | None) -> None:
         pass
 
 
+# ---------- Favourite YouTube channels (channels.json is committed, so they show on every device) ----------
+CHANNELS_JSON = ROOT_DIR / "channels.json"
+_CHANNEL_URL = re.compile(r"^https://www\.youtube\.com/(@[^/\s\"<>]+|channel/[^/\s\"<>]+|c/[^/\s\"<>]+|user/[^/\s\"<>]+)$")
+
+
+def save_channels(channels: list) -> list:
+    if not isinstance(channels, list):
+        raise ValueError("channels must be a list")
+    clean, seen = [], set()
+    for c in channels[:200]:
+        if not isinstance(c, dict):
+            continue
+        url = str(c.get("url", "")).strip()
+        if not _CHANNEL_URL.match(url) or url.lower() in seen:
+            continue
+        seen.add(url.lower())
+        clean.append({"url": url, "label": str(c.get("label", ""))[:100], "name": str(c.get("name", ""))[:100]})
+    CHANNELS_JSON.write_text(json.dumps({"channels": clean}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return clean
+
+
+# ---------- iPhone-friendly MP4 ----------
+# Without ffmpeg, yt-dlp saves YouTube's DASH stream as a *fragmented* MP4 (moof/mdat chunks, empty
+# sample tables, bogus last-frame duration). Chrome plays it, but iOS (Safari and Photos) freezes the
+# picture part-way while the timer keeps counting. Rewriting it as a normal MP4 fixes that. No re-encode.
+
+def _boxes(data: bytes, start: int, end: int):
+    pos = start
+    while pos + 8 <= end:
+        size, typ = struct.unpack(">I4s", data[pos:pos + 8])
+        hdr = 8
+        if size == 1:
+            size = struct.unpack(">Q", data[pos + 8:pos + 16])[0]
+            hdr = 16
+        elif size == 0:
+            size = end - pos
+        if size < hdr:
+            return
+        yield typ, pos, pos + hdr, pos + size
+        pos += size
+
+
+def _is_fragmented(path: Path) -> bool:
+    data = path.read_bytes()
+    return any(t == b"moof" for t, *_ in _boxes(data, 0, len(data)))
+
+
+def _fix_last_frame_duration(path: Path) -> bool:
+    """YouTube's last video frame often claims to last ~the whole clip. Set it to a normal frame length."""
+    data = bytearray(path.read_bytes())
+    changed = False
+    for t, _, b, e in _boxes(data, 0, len(data)):
+        if t != b"moov":
+            continue
+        for t2, _, b2, e2 in _boxes(data, b, e):
+            if t2 != b"trak":
+                continue
+            for t3, _, b3, e3 in _boxes(data, b2, e2):
+                if t3 != b"mdia":
+                    continue
+                kids = {k: (bb, ee) for k, _, bb, ee in _boxes(data, b3, e3)}
+                if b"hdlr" not in kids or data[kids[b"hdlr"][0] + 8:kids[b"hdlr"][0] + 12] != b"vide":
+                    continue
+                mdhd = kids.get(b"mdhd")
+                stts = None
+                for t4, _, b4, e4 in _boxes(data, *kids.get(b"minf", (0, 0))):
+                    if t4 == b"stbl":
+                        for t5, _, b5, e5 in _boxes(data, b4, e4):
+                            if t5 == b"stts":
+                                stts = b5
+                if stts is None or mdhd is None:
+                    continue
+                n = struct.unpack(">I", data[stts + 4:stts + 8])[0]
+                ents = [list(struct.unpack(">II", data[stts + 8 + 8 * i:stts + 16 + 8 * i])) for i in range(n)]
+                if len(ents) < 2 or ents[-1][0] != 1:
+                    continue
+                normal = max(ents[:-1], key=lambda x: x[0])[1]
+                if normal and ents[-1][1] > normal * 4:
+                    ents[-1][1] = normal
+                    struct.pack_into(">II", data, stts + 8 + 8 * (n - 1), *ents[-1])
+                    total = sum(c * d for c, d in ents)
+                    v = data[mdhd[0]]
+                    if v == 1:
+                        struct.pack_into(">Q", data, mdhd[0] + 24, total)
+                    else:
+                        struct.pack_into(">I", data, mdhd[0] + 16, total)
+                    changed = True
+    if changed:
+        path.write_bytes(bytes(data))
+    return changed
+
+
+def make_phone_friendly(path: Path, env: dict | None = None) -> str:
+    """Rewrite a video as a standard, fast-start MP4. Returns a short status."""
+    env = env or os.environ.copy()
+    env["PATH"] = f"/opt/homebrew/bin:/usr/local/bin:{env.get('PATH', '')}"
+    if path.suffix.lower() not in {".mp4", ".m4v", ".mov"}:
+        return "skipped (not mp4)"
+    status = "ok"
+    if _is_fragmented(path):
+        tmp = Path(tempfile.mkstemp(suffix=".mp4", dir=str(path.parent))[1])
+        tmp.unlink(missing_ok=True)
+        ffmpeg = shutil.which("ffmpeg", path=env["PATH"])
+        if ffmpeg:
+            cmd = [ffmpeg, "-y", "-loglevel", "error", "-i", str(path), "-c", "copy", "-movflags", "+faststart", str(tmp)]
+        elif shutil.which("avconvert"):  # built into macOS
+            cmd = ["avconvert", "-s", str(path), "-p", "PresetPassthrough", "-o", str(tmp), "--replace"]
+        else:
+            return "fragmented, but no ffmpeg/avconvert to repair it"
+        proc = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=300)
+        if proc.returncode != 0 or not tmp.exists() or tmp.stat().st_size == 0:
+            tmp.unlink(missing_ok=True)
+            return "repair failed: " + (proc.stderr or proc.stdout or "").strip()[-200:]
+        tmp.replace(path)
+        status = "repaired"
+    if _fix_last_frame_duration(path):
+        status = "repaired"
+    return status
+
+
 def download_youtube_video(url: str, exercise_id: str) -> dict:
     parsed = urlparse(url.strip())
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
@@ -146,6 +271,11 @@ def download_youtube_video(url: str, exercise_id: str) -> dict:
     matches = sorted(p for p in VIDEOS_DIR.glob(f"{ex_id}.*") if p.suffix.lower() in {".mp4", ".mov", ".webm", ".m4v"})
     if not matches:
         raise RuntimeError("Download finished but no output file was found.")
+
+    try:
+        make_phone_friendly(matches[0], env)
+    except Exception as exc:  # never fail the download because of the repair step
+        print(f"Warning: could not make {matches[0].name} iPhone-friendly: {exc}", file=sys.stderr)
 
     rel_path = f"./videos/{matches[0].name}"
     update_exercises_json_video(ex_id, rel_path)
@@ -215,6 +345,13 @@ class IronSyncHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json(400, {"ok": False, "error": str(e)})
             return
 
+        if self.path == "/api/channels":
+            try:
+                self.send_json(200, {"ok": True, "channels": save_channels(data.get("channels", []))})
+            except Exception as e:
+                self.send_json(400, {"ok": False, "error": str(e)})
+            return
+
         if self.path == "/api/delete-video":
             try:
                 ex_id = sanitize_id(data.get("exerciseId", ""))
@@ -239,7 +376,14 @@ def main():
     parser.add_argument("--port", type=int, default=8765, help="Server port (default: 8765)")
     parser.add_argument("--download", help="YouTube URL to download directly via CLI")
     parser.add_argument("--id", help="Exercise ID for --download (e.g. incline-db-curl)")
+    parser.add_argument("--fix-videos", action="store_true", help="Repair videos in videos/ that freeze on iPhone")
     args = parser.parse_args()
+
+    if args.fix_videos:
+        for vid in sorted(VIDEOS_DIR.glob("*")):
+            if vid.suffix.lower() in {".mp4", ".m4v", ".mov"} and not re.search(r"\.f\d+\.", vid.name):
+                print(f"{vid.name}: {make_phone_friendly(vid)}")
+        return
 
     if args.download:
         if not args.id:

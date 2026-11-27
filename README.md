@@ -34,9 +34,19 @@ Photos live only on that phone, so use **More → Backup & restore → Full back
 - **Auto-Download from YouTube into Project (`videos/`):**
   Run `python3 server.py` inside this folder and open `http://localhost:8765`.
   Tap any exercise → paste a YouTube link → click **Download**. It saves the `.mp4` directly into `videos/<exercise-id>.mp4` and plays right inside that exercise (also works when adding custom exercises in the **Update** tab, or via CLI: `python3 server.py --download "<url>" --id <exercise-id>`).
+- **Video freezes on iPhone (picture stops, timer keeps running)?** That's YouTube's fragmented stream format, which iOS can't play properly. New downloads are repaired automatically. For older files run `python3 server.py --fix-videos` (no quality loss; uses ffmpeg if installed, otherwise macOS's built-in `avconvert`), then AirDrop the file again.
+- **Favourite channels:** More → **My YouTube channels**. Paste a channel link (youtube.com/@name) or just @name. Every exercise's Video section then has a button per channel that searches that exercise on it (plus "All of YouTube").
+  - **To make a channel show on every device:** add it on the Mac with `python3 server.py` running (localhost:8765). It's written to [channels.json](channels.json); then commit and push. You can also edit channels.json by hand.
+  - Channels added on the phone (GitHub Pages) stay on that phone only and are marked "This device only". Next time you open the app on the Mac's localhost, any channels saved only in that browser move into channels.json automatically.
 - **Manual / Offline Phone Video:**
   Tap any exercise → **+ Attach Local Video (.mp4/.mov)** to save a video from your phone directly into offline browser storage (`IndexedDB`).
 - Use the **Update** tab to add new exercises on the fly or merge/export `exercises.json`.
+
+## No machine? Free-weight alternatives
+- Every machine and cable exercise (plus a few that need special benches) lists **dumbbell, plate or bodyweight alternatives that hit the same muscle parts**, with start/end photos, steps and Roman Urdu. Example: Hack Squat → Plate Sissy Squat, Heels-Elevated Goblet Squat, Dumbbell Squat on plates.
+- Cards show **"No machine? …"**; tap it to jump to the alternatives in the exercise screen.
+- **Today → "Machines & cables in my gym" → No** swaps every machine/cable exercise on Today for its free-weight version (a different one per slot), and the exercise screen opens on the alternatives first.
+- Photos are in `images/alt/` (free-exercise-db, public domain) and are cached for offline use.
 
 ## Reference photos & pins
 - `images/ref/<exercise-id>-0.jpg` (start) and `-1.jpg` (end) are public-domain photos from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense). They're cached for offline use. Your own photos always appear first.

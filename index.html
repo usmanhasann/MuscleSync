@@ -268,6 +268,47 @@
     .xc-actions button.add { color: var(--accent); }
     .xc-actions button.added { color: var(--ok); }
     .xc-actions button:active { background: var(--surface-2); }
+    .xc-alt { display: flex; align-items: center; gap: 8px; width: calc(100% - 28px); margin: -4px 12px 12px 16px; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); color: var(--muted); font-size: 12.5px; text-align: left; line-height: 1.3; }
+    .xc-alt b { color: var(--text); font-weight: 700; }
+    .xc-alt .i { flex-shrink: 0; color: var(--gc); }
+    .xc-alt.swap { background: var(--gs); box-shadow: inset 0 0 0 1px var(--gc); }
+    .set-tile.wide { grid-column: 1 / -1; }
+    .alt-note { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+    .alt-note b { color: var(--text); }
+    .alt-list { display: grid; gap: 10px; }
+    .alt { background: var(--surface-2); border-radius: 14px; overflow: hidden; border-left: 4px solid var(--gc); }
+    .alt-ph { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--bg); }
+    .alt-ph span { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; }
+    .alt-ph img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
+    .alt-ph em { position: absolute; left: 6px; bottom: 6px; font-style: normal; font-size: 10.5px; font-weight: 750; letter-spacing: .05em; text-transform: uppercase; background: rgba(0,0,0,.65); color: #fff; padding: 2px 7px; border-radius: 6px; }
+    .alt-b { padding: 10px 12px 12px; }
+    .alt-eq { font-size: 11px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; color: var(--gc); }
+    .alt-n { display: block; font-size: 16px; font-weight: 750; margin-top: 2px; }
+    .alt-ur { display: block; font-size: 13.5px; margin-top: 4px; }
+    .alt-how { margin: 8px 0 0 18px; padding: 0; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+    .alt-how li + li { margin-top: 3px; }
+    .alt-why { font-size: 13px; color: var(--muted); margin: 6px 0 8px; }
+    .ch-list { display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; margin-top: 14px; }
+    @media (max-width: 400px) { .ch-row a.btn .lbl { display: none; } .ch-row a.btn { padding: 0 10px; } }
+    .ch-list:empty { display: none; }
+    .ch-row { display: flex; align-items: center; gap: 10px; background: var(--surface-2); border-radius: 14px; padding: 8px 8px 8px 10px; }
+    .ch-av { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-weight: 800; font-size: 16px; color: #fff; background: #E5372B; }
+    .ch-txt { flex: 1; min-width: 0; }
+    .ch-txt b { display: block; font-size: 15px; font-weight: 750; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ch-txt small { display: block; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ch-row .icon-btn { width: 38px; height: 38px; }
+    .ch-tag { display: inline-block; font-size: 10.5px; font-weight: 750; letter-spacing: .03em; padding: 1px 6px; border-radius: 5px; margin-right: 6px; background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+    .ch-tag.device { background: var(--surface-3, rgba(128,128,128,.18)); color: var(--muted); }
+    .ch-hint { font-size: 12.5px; color: var(--muted); margin: 0; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); line-height: 1.45; }
+    .ch-hint b { color: var(--text); }
+    .ch-hint code { font-family: var(--mono); font-size: 12px; }
+    .ch-row a.btn { text-decoration: none; }
+    .yt-ch { margin-top: 14px; }
+    .yt-ch .eyebrow { margin: 0 2px 8px; }
+    .yt-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .yt-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface-2); color: var(--text); font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: inset 0 0 0 1px var(--line-strong); }
+    .yt-chip .i { color: #E5372B; }
+    .yt-chip.all { color: var(--muted); }
     .parts-legend { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--muted); margin: -2px 0 12px; --gc: #8E99AB; --gs: rgba(142,153,171,.2); }
     .parts-legend .part { height: 22px; font-size: 11px; }
 
@@ -611,6 +652,7 @@
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+    <symbol id="i-yt" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></symbol>
     <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></symbol>
   </svg>
 
@@ -662,6 +704,10 @@
             <button class="set-tile" id="btnOrderToggle">
               <span class="k">Order</span>
               <span class="v"><span id="orderLabel">Compound first</span></span>
+            </button>
+            <button class="set-tile wide" id="btnNoMachines" aria-pressed="false">
+              <span class="k">Machines &amp; cables in my gym</span>
+              <span class="v"><span class="toggle"></span><span id="noMachState">Yes — show machine exercises</span></span>
             </button>
           </div>
 
@@ -807,6 +853,18 @@
           <div id="glossary"></div>
         </details>
 
+        <details class="card" id="channelsCard">
+          <summary>My YouTube channels</summary>
+          <form id="channelForm" class="form-grid" autocomplete="off">
+            <p class="muted" style="font-size:13px;margin:0;">Save your favourite gym channels. Every exercise then gets a button to search that exercise on them.</p>
+            <p id="channelHint" class="ch-hint"></p>
+            <div class="field"><label for="chUrl">Channel link or @handle</label><input id="chUrl" class="input" required inputmode="url" placeholder="youtube.com/@channel  or  @channel" /></div>
+            <div class="field"><label for="chName">Name (optional)</label><input id="chName" class="input" placeholder="e.g. Jeff Nippard" /></div>
+            <button type="submit" class="btn primary block"><svg class="i"><use href="#i-plus"/></svg>Save channel</button>
+          </form>
+          <div id="channelList" class="ch-list"></div>
+        </details>
+
         <details class="card">
           <summary>Backup &amp; restore</summary>
           <div class="form-grid">
@@ -858,6 +916,11 @@
             <div id="dTargets"></div>
           </div>
 
+          <div class="d-sec" id="dAltSec">
+            <h3>No machine? Do this instead</h3>
+            <div id="dAlts"></div>
+          </div>
+
           <div class="d-sec">
             <h3>Setup &amp; form</h3>
             <div id="dForm"></div>
@@ -890,6 +953,7 @@
               <label class="btn"><svg class="i"><use href="#i-video"/></svg>Attach video<input id="modalVideoInput" type="file" accept="video/*" hidden /></label>
               <button id="modalVideoRemove" class="btn danger" style="display:none;"><svg class="i"><use href="#i-trash"/></svg>Remove</button>
             </div>
+            <div id="ytChannels" class="yt-ch"></div>
             <div id="ytBox" style="margin-top:14px;">
               <div class="eyebrow" style="margin:0 2px 6px;">Download from YouTube (laptop / Mac)</div>
               <div class="yt-row" id="ytRow">
@@ -2169,6 +2233,77 @@
     // Storage Keys
     const STORAGE_STATE = "ironsync_state_v1";
     const STORAGE_CUSTOM_EX = "ironsync_custom_ex_v1";
+    const STORAGE_CHANNELS = "ironsync_channels_v1";
+
+    // ---------- Favourite YouTube channels (saved on this device + in full backups) ----------
+    // Two sources:
+    //  - project: channels.json in the repo -> pushed to GitHub Pages -> same on every device
+    //  - device:  saved only in this browser (used when there's no local server to write the file)
+    const STORAGE_CHANNELS_PROJECT = "ironsync_channels_project_cache";
+    let projectChannels = (() => { try { const v = JSON.parse(localStorage.getItem(STORAGE_CHANNELS_PROJECT) || "[]"); return Array.isArray(v) ? v : []; } catch { return []; } })();
+    const validChannel = (c) => c && typeof c.url === "string" && /^https:\/\/www\.youtube\.com\/[^\s"<>]+$/.test(c.url);
+    function getDeviceChannels() {
+      try { const v = JSON.parse(localStorage.getItem(STORAGE_CHANNELS) || "[]"); return Array.isArray(v) ? v.filter(validChannel) : []; } catch { return []; }
+    }
+    function saveDeviceChannels(list) {
+      try { localStorage.setItem(STORAGE_CHANNELS, JSON.stringify(list)); } catch {}
+    }
+    function getChannels() {
+      const seen = new Set();
+      const out = [];
+      projectChannels.forEach((c) => { const k = c.url.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push({ ...c, src: "project" }); } });
+      getDeviceChannels().forEach((c) => { const k = c.url.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push({ ...c, src: "device" }); } });
+      return out;
+    }
+    async function loadProjectChannels() {
+      try {
+        const res = await fetch("./channels.json", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        projectChannels = (Array.isArray(data) ? data : data.channels || []).filter(validChannel);
+        try { localStorage.setItem(STORAGE_CHANNELS_PROJECT, JSON.stringify(projectChannels)); } catch {}
+      } catch { /* offline or opened as a file: keep the last copy we saw */ }
+    }
+    async function writeProjectChannels(list) {
+      const clean = list.filter(validChannel).map(({ url, label, name }) => ({ url, label: label || "", name: name || "" }));
+      const res = await fetch("./api/channels", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ channels: clean }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error || "Server didn't save channels.json");
+      projectChannels = clean;
+      try { localStorage.setItem(STORAGE_CHANNELS_PROJECT, JSON.stringify(projectChannels)); } catch {}
+    }
+    // On the Mac (local server), move channels saved only in this browser into channels.json
+    async function syncChannelsToProject() {
+      if (!ON_LOCAL_SERVER) return;
+      await loadProjectChannels();
+      const dev = getDeviceChannels();
+      if (!dev.length) return;
+      const have = new Set(projectChannels.map((c) => c.url.toLowerCase()));
+      try {
+        await writeProjectChannels([...projectChannels, ...dev.filter((c) => !have.has(c.url.toLowerCase()))]);
+        saveDeviceChannels([]);
+        showToast(`Moved ${dev.length} channel${dev.length > 1 ? "s" : ""} into channels.json — push to share`);
+      } catch { /* old server without /api/channels: keep them on the device */ }
+    }
+    // Accepts youtube.com/@handle, /channel/UC…, /c/name, /user/name, or just @handle
+    function parseChannel(input) {
+      let raw = (input || "").trim();
+      if (!raw) return null;
+      if (/^@[\w.\-]+$/.test(raw)) return { url: `https://www.youtube.com/${raw}`, label: raw };
+      if (!/^https?:\/\//i.test(raw)) raw = "https://" + raw;
+      let u;
+      try { u = new URL(raw); } catch { return null; }
+      if (!/(^|\.)youtube\.com$/i.test(u.hostname)) return null;
+      const m = u.pathname.match(/^\/(@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)/);
+      if (!m) return null;
+      const seg = decodeURIComponent(m[1]);
+      return { url: `https://www.youtube.com/${m[1]}`, label: seg.startsWith("@") ? seg : seg.split("/")[1] };
+    }
+    // Short search phrase for an exercise: "Hack Squat (Feet Low — Quad Focus)" -> "Hack Squat"
+    function ytQuery(name) {
+      return name.replace(/\(.*?\)/g, " ").replace(/[—–].*$/, " ").replace(/\s*\/\s*/g, " ").replace(/\s+/g, " ").trim();
+    }
+    function channelSearchUrl(ch, q) { return `${ch.url}/search?query=${encodeURIComponent(q)}`; }
 
     // App State
     let db = clone(DEFAULT_DATA);
@@ -2186,7 +2321,8 @@
       libEquip: "all",
       libNoGlute: false,
       exploreGroup: null,
-      exploreHead: null
+      exploreHead: null,
+      noMachines: false
     };
 
     let currentModalExId = null;
@@ -2436,6 +2572,42 @@
     // Public-domain start/end photos (free-exercise-db, Unlicense) bundled in images/ref/
     const REF_IDS = new Set(["back-extension", "barbell-back-squat", "barbell-bent-over-row", "bayesian-cable-curl", "bulgarian-split-squat", "cable-chest-fly", "cable-face-pull", "cable-hip-abduction", "cable-kneeling-crunch", "cable-lateral-raise", "cable-overhead-curl", "cable-rope-pushdown", "cable-woodchopper", "chest-supported-row", "close-grip-bench", "concentration-curl", "db-lateral-raise", "db-shrug", "ez-skull-crusher", "flat-bb-bench-press", "glute-hip-thrust", "hack-squat-narrow", "hammer-curl", "hanging-leg-raise", "incline-db-curl", "incline-db-press", "leg-extension", "low-to-high-cable-fly", "lying-leg-curl", "overhead-cable-tricep-ext", "pec-deck-fly", "pendulum-sissy-squat", "preacher-curl", "pull-up", "reverse-ez-curl", "reverse-pec-deck", "romanian-deadlift", "seated-calf-raise", "seated-db-shoulder-press", "seated-leg-curl", "single-arm-cable-lat-row", "single-arm-reverse-pushdown", "spider-curl", "standing-calf-raise", "straight-arm-lat-pulldown", "tbar-row-cable-seated", "weighted-chest-dip", "wide-lat-pulldown"]);
     const refImages = (ex) => Array.isArray(ex.refImages) ? ex.refImages : REF_IDS.has(ex.id) ? [0, 1].map((i) => `images/ref/${ex.id}-${i}.jpg`) : [];
+
+    // No-machine alternatives: free-weight / plate / bodyweight moves that hit the SAME parts.
+    // {use: id} points at an exercise already in the app; {img: slug} uses images/alt/<slug>-0/1.jpg (free-exercise-db, public domain).
+    const FREE_ALTS = {"bayesian-cable-curl":[{"use":"incline-db-curl","why":"Same stretched long-head position, just with a dumbbell."},{"n":"Lying Dumbbell Curl (arm hanging off bench)","eq":"Dumbbell + bench","ur":"Bench par lait kar bazu neeche latka do — bicep ka lamba hissa poora khinchta hai","how":["Lie face-up on a high flat bench, one arm hanging straight down behind the body line.","Curl up without moving the elbow forward.","Lower slowly until the arm is fully straight."],"img":"dumbbell-prone-incline-curl"}],"cable-overhead-curl":[{"use":"concentration-curl","why":"Same short-head squeeze at the top."},{"use":"spider-curl","why":"Chest on an incline bench, peak contraction like the cable."}],"overhead-cable-tricep-ext":[{"n":"Seated Overhead Dumbbell Extension","eq":"Dumbbell","ur":"Ek dumbbell dono haath se sar ke peeche — tricep ka lamba (peeche wala) hissa","how":["Sit tall, hold one dumbbell with both hands overhead.","Lower it behind your head until elbows are fully bent.","Press up, keep elbows pointing forward."],"img":"seated-triceps-press"},{"use":"ez-skull-crusher","why":"Long head in a stretch — use dumbbells if no EZ bar."}],"cable-rope-pushdown":[{"n":"Dumbbell Kickback","eq":"Dumbbell","ur":"Jhuk kar kohni peeche lock, bazu seedha peeche — tricep ka bahar wala hissa","how":["Hinge forward, upper arm glued to your side, parallel to the floor.","Straighten the arm fully behind you and squeeze 1 sec.","Only the forearm moves."],"img":"tricep-dumbbell-kickback"},{"n":"Bench Dip","eq":"Bodyweight (+ plate on lap)","ur":"Bench par haath peeche rakh kar neeche upar — plate goad mein rakh kar mushkil karo","how":["Hands on a bench behind you, legs out in front.","Lower until elbows reach ~90°, keep the back close to the bench.","Press up to lockout. Put a plate on your lap when it gets easy."],"img":"bench-dips"}],"single-arm-reverse-pushdown":[{"n":"Close-Grip (Diamond) Push-Up","eq":"Bodyweight","ur":"Haath qareeb rakh kar push-up — tricep ka andar wala hissa (kohni ke paas)","how":["Hands under the chest, close together.","Elbows brush the ribs on the way down.","Lock out hard at the top."],"img":"push-ups-close-triceps-position"},{"n":"Tate Press","eq":"Dumbbells + bench","ur":"Lait kar dumbbells chest par, kohniyan bahar — tricep andar wala hissa","how":["Lie on a bench, dumbbells over the chest, palms facing your feet.","Bend elbows out to the sides so the dumbbells touch the chest.","Press back up using only the triceps."],"img":"tate-press"}],"flat-bb-bench-press":[{"n":"Flat Dumbbell Bench Press","eq":"Dumbbells + bench","ur":"Seedhe bench par dumbbell press — chest ka beech wala hissa","how":["Lie flat, shoulder blades pinched back and down.","Lower the dumbbells to mid-chest level, elbows ~45°.","Press up and slightly together."],"img":"dumbbell-bench-press"}],"cable-chest-fly":[{"n":"Flat Dumbbell Fly","eq":"Dumbbells + bench","ur":"Seedhe bench par bazu khol kar band — chest ka beech wala hissa","how":["Lie flat, dumbbells above chest, slight bend in the elbows.","Open wide until you feel a deep chest stretch.","Hug the weights back up, squeeze at the top."],"img":"dumbbell-flyes"},{"n":"Decline Dumbbell Fly","eq":"Dumbbells + decline bench","ur":"Ulte (decline) bench par fly — chest ka neeche wala hissa","how":["Feet locked, head lower than hips.","Open the arms wide with soft elbows.","Bring dumbbells together over the lower chest."],"img":"decline-dumbbell-flyes"}],"pec-deck-fly":[{"n":"Flat Dumbbell Fly","eq":"Dumbbells + bench","ur":"Seedhe bench par bazu khol kar band — chest ka beech wala hissa","how":["Lie flat, dumbbells above chest, slight bend in the elbows.","Open wide until you feel a deep chest stretch.","Hug the weights back up, squeeze at the top."],"img":"dumbbell-flyes"},{"n":"Plate Squeeze Press (Svend Press)","eq":"Plate","ur":"Do plates haathon mein daba kar aage push — chest ke beech ki line","how":["Press two plates together between your palms at chest height.","Squeeze hard and push them straight out.","Keep squeezing as you bring them back."],"img":"svend-press"}],"low-to-high-cable-fly":[{"n":"Incline Dumbbell Fly","eq":"Dumbbells + incline bench","ur":"30° bench par fly — chest ka upar wala hissa (collarbone ke neeche)","how":["Bench at about 30°.","Open the arms wide with soft elbows.","Bring the dumbbells up and together over the upper chest."],"img":"incline-dumbbell-flyes"},{"n":"Front Plate Raise (high)","eq":"Plate","ur":"Plate seedhe bazu se aankh tak uthao — upper chest aur front kandha","how":["Hold a plate at 3 and 9 o'clock, arms almost straight.","Raise it up to eye level, squeezing the plate.","Lower slowly."],"img":"front-plate-raise"}],"weighted-chest-dip":[{"n":"Decline Dumbbell Press","eq":"Dumbbells + decline bench","ur":"Ulte bench par dumbbell press — chest ka neeche wala hissa","how":["Lock your feet, head lower than hips.","Lower the dumbbells to the lower chest.","Press up and together."],"img":"decline-dumbbell-bench-press"}],"wide-lat-pulldown":[{"use":"pull-up","why":"The original lat-width move — use a band or a chair for help."},{"n":"One-Arm Dumbbell Row (elbow to hip)","eq":"Dumbbell + bench","ur":"Ek haath bench par, dumbbell kamar ki taraf kheencho — lats (V-shape)","how":["Knee and hand on a bench, back flat.","Pull the dumbbell toward your hip, not your chest.","Let it stretch fully at the bottom."],"img":"one-arm-dumbbell-row"}],"single-arm-cable-lat-row":[{"n":"One-Arm Dumbbell Row (elbow to hip)","eq":"Dumbbell + bench","ur":"Ek haath bench par, dumbbell kamar ki taraf kheencho — lats (V-shape)","how":["Knee and hand on a bench, back flat.","Pull the dumbbell toward your hip in an arc.","Let it stretch fully at the bottom."],"img":"one-arm-dumbbell-row"}],"straight-arm-lat-pulldown":[{"n":"Dumbbell Pullover","eq":"Dumbbell + bench","ur":"Lait kar ek dumbbell sar ke peeche se chest tak — lats","how":["Lie across or along a bench, one dumbbell held over the chest with both hands.","Lower it behind your head with nearly straight arms.","Pull it back over the chest using the lats."],"img":"straight-arm-dumbbell-pullover"}],"chest-supported-row":[{"n":"Incline-Bench Dumbbell Row","eq":"Dumbbells + incline bench","ur":"Chest bench par tika kar dono dumbbell kheencho — kamar ka beech (motai)","how":["Lie chest-down on a 30–45° bench.","Row both dumbbells, squeezing the shoulder blades together.","Lower with control."],"img":"dumbbell-incline-row"},{"use":"barbell-bent-over-row","why":"Free-weight mid-back builder."}],"tbar-row-cable-seated":[{"n":"Bent-Over Two-Dumbbell Row","eq":"Dumbbells","ur":"Jhuk kar dono dumbbell pait ki taraf — kamar ka beech","how":["Hinge to about 45°, back flat.","Row both dumbbells to your lower ribs.","Pause and squeeze, then lower."],"img":"bent-over-two-dumbbell-row"},{"n":"Incline-Bench Dumbbell Row","eq":"Dumbbells + incline bench","ur":"Chest bench par tika kar dono dumbbell kheencho — kamar ka beech","how":["Lie chest-down on a 30–45° bench.","Row both dumbbells, squeezing the shoulder blades together.","Lower with control."],"img":"dumbbell-incline-row"}],"back-extension":[{"n":"Floor Back Extension (no bench)","eq":"Bodyweight","ur":"Zameen par ulta lait kar chest upar — kamar ka neeche wala hissa","how":["Lie face-down, hands by your ears.","Lift the chest off the floor by arching the lower back.","Hold 1 sec, lower slowly. Hold a plate for more."],"img":"hyperextensions-with-no-hyperextension-bench"},{"n":"Superman Hold","eq":"Bodyweight","ur":"Ulta lait kar haath aur paon dono upar — lower back","how":["Lie face-down, arms overhead.","Lift arms, chest and legs together.","Hold 2–3 sec per rep."],"img":"superman"}],"cable-lateral-raise":[{"n":"Leaning One-Arm Lateral Raise","eq":"Dumbbell + rack to hold","ur":"Rack pakar kar side mein jhuko, ek dumbbell side se uthao — kandhe ki side","how":["Hold a rack with one hand and lean away from it.","Raise the dumbbell out to the side up to shoulder height.","Lower slowly — the lean keeps tension at the bottom like a cable."],"img":"one-arm-side-laterals"},{"use":"db-lateral-raise","why":"Plain dumbbell version of the same move."}],"reverse-pec-deck":[{"n":"Bent-Over Rear Delt Raise","eq":"Dumbbells","ur":"Jhuk kar dumbbells side mein kholo — kandhe ka peeche wala hissa","how":["Sit on the bench edge, chest on thighs.","Raise the dumbbells out wide, pinkies leading.","Don't squeeze the shoulder blades — keep it in the rear delts."],"img":"seated-bent-over-rear-delt-raise"},{"n":"Head-Supported Rear Delt Raise","eq":"Dumbbells + incline bench","ur":"Sar bench par tika kar rear delt raise — peeche wala kandha","how":["Stand bent over with your forehead on an incline bench.","Raise light dumbbells out to the sides.","Lower slowly."],"img":"bent-over-dumbbell-rear-delt-raise-with-head-on-bench"}],"cable-face-pull":[{"n":"Rear Delt Fly with External Rotation","eq":"Dumbbells","ur":"Jhuk kar dumbbells kholo aur upar ghumao — peeche wala kandha","how":["Hinge forward, light dumbbells hanging.","Raise out wide, then rotate the forearms up (like a face pull finish).","Reverse slowly."],"img":"reverse-flyes-with-external-rotation"}],"leg-extension":[{"n":"Plate Sissy Squat","eq":"Plate + rack to hold","ur":"Rack pakar kar, plate chest par, ghutne aage — thigh ki aage wali side (ek dum leg extension jaisa)","how":["Hold a rack with one hand and a plate on your chest with the other.","Rise on your toes and push the knees forward while leaning the body back in a straight line.","Go as low as you can, then drive the knees back to stand. Hips stay straight — no glutes."],"img":"weighted-sissy-squat"},{"use":"pendulum-sissy-squat","why":"Heels up, knees forward — quad-only squat."}],"hack-squat-narrow":[{"n":"Plate Sissy Squat","eq":"Plate + rack to hold","ur":"Rack pakar kar, plate chest par, ghutne aage — thigh ki aage wali side","how":["Hold a rack with one hand and a plate on your chest with the other.","Rise on your toes and push the knees forward while leaning back in a straight line.","Go as low as you can, then drive the knees back to stand."],"img":"weighted-sissy-squat"},{"use":"pendulum-sissy-squat","why":"Heels on a plate, upright torso — same quad focus as the hack squat."},{"n":"Dumbbell Squat (heels on plates)","eq":"Dumbbells + plates","ur":"Aediyan plate par rakh kar dumbbell squat — thigh ki side aur aage","how":["Stand with heels on small plates, feet narrow, dumbbells at your sides.","Sit straight down, knees travelling over the toes, torso upright.","Stand up without locking hips back."],"img":"dumbbell-squat"}],"barbell-back-squat":[{"n":"Goblet Squat","eq":"Dumbbell","ur":"Ek dumbbell chest ke saamne pakar kar squat — thigh aur hips","how":["Hold one dumbbell vertically against your chest.","Squat down between your knees, chest up.","Drive up through the whole foot."],"img":"goblet-squat"}],"seated-leg-curl":[{"n":"Stiff-Leg Dumbbell Deadlift","eq":"Dumbbells","ur":"Taangein seedhi, dumbbells neeche le jao — thigh ke peeche, upar wala hissa","how":["Knees almost straight, dumbbells in front of the thighs.","Push hips back and lower until you feel a big hamstring stretch.","Stand up by squeezing the hamstrings, back flat."],"img":"stiff-legged-dumbbell-deadlift"},{"n":"Floor Nordic / Glute-Ham Raise","eq":"Bodyweight (feet under a loaded bar)","ur":"Ghutno par baith kar aediyan phansao aur aage girte hue roko — thigh ke peeche, neeche wala hissa","how":["Kneel on a mat, heels hooked under a loaded barbell or held by a partner.","Lower your body forward as slowly as possible, hips straight.","Catch with your hands and pull back up with the hamstrings."],"img":"natural-glute-ham-raise"}],"lying-leg-curl":[{"n":"Floor Nordic / Glute-Ham Raise","eq":"Bodyweight (feet under a loaded bar)","ur":"Ghutno par baith kar aediyan phansao aur aage girte hue roko — thigh ke peeche, neeche wala hissa","how":["Kneel on a mat, heels hooked under a loaded barbell or held by a partner.","Lower your body forward as slowly as possible, hips straight.","Catch with your hands and pull back up with the hamstrings."],"img":"natural-glute-ham-raise"},{"n":"Lying Dumbbell Leg Curl","eq":"Dumbbell + bench","ur":"Ulta lait kar dumbbell paon ke beech daba kar ghutna morho — thigh ke peeche, ghutne ke paas","how":["Lie face-down on a bench, knees just off the end.","Have someone place a dumbbell between your feet.","Curl your heels toward your glutes, lower slowly."]}],"romanian-deadlift":[{"n":"Stiff-Leg Dumbbell Deadlift","eq":"Dumbbells","ur":"Taangein seedhi, dumbbells neeche — thigh ke peeche, upar wala hissa","how":["Knees almost straight, dumbbells in front of the thighs.","Push hips back and lower to a big stretch.","Stand up, back flat."],"img":"stiff-legged-dumbbell-deadlift"}],"glute-hip-thrust":[{"n":"Single-Leg Glute Bridge","eq":"Bodyweight (+ dumbbell on hip)","ur":"Kamar ke bal lait kar ek taang se hips upar — hips ka bara muscle","how":["Lie on your back, one foot planted, other leg up.","Drive the hips up and squeeze at the top.","Rest a dumbbell on the hip to add weight."],"img":"single-leg-glute-bridge"}],"cable-hip-abduction":[{"n":"Side-Lying Leg Raise","eq":"Bodyweight (+ plate/dumbbell on thigh)","ur":"Karwat le kar upar wali taang side mein uthao — hips ki side","how":["Lie on your side, bottom knee bent for balance.","Lift the top leg up and slightly back, toes pointing forward.","Lower slowly. Rest a light plate on the thigh for more."],"img":"side-leg-raises"}],"standing-calf-raise":[{"n":"One-Leg Dumbbell Calf Raise (on a plate)","eq":"Dumbbell + plate","ur":"Plate par panja rakh kar ek dumbbell ke saath aediyan upar neeche — pindli","how":["Ball of one foot on a plate or step, hold a dumbbell and a rack.","Drop the heel low for a full stretch.","Rise as high as possible, pause 1 sec."],"img":"standing-dumbbell-calf-raise"}],"seated-calf-raise":[{"n":"Seated Dumbbell Calf Raise","eq":"Dumbbell + bench","ur":"Baith kar dumbbell ghutne par rakho, aediyan uthao — pindli ka neeche wala (soleus)","how":["Sit on a bench, toes on a plate, dumbbell resting on the knee.","Lower the heel fully.","Push up high and pause."],"img":"dumbbell-seated-one-leg-calf-raise"}],"cable-kneeling-crunch":[{"n":"Plate Crunch","eq":"Plate","ur":"Plate chest par rakh kar crunch — pait ka upar wala hissa","how":["Lie on your back, knees bent, plate on your chest.","Curl your ribs toward your hips.","Lower slowly, don't pull on the neck."],"img":"weighted-crunches"}],"hanging-leg-raise":[{"n":"Bench Lying Leg Raise","eq":"Bench","ur":"Bench par lait kar taangein upar — pait ka neeche wala hissa","how":["Lie on a bench, hold the edge behind your head.","Raise straight legs up, lift the hips slightly at the top.","Lower slowly without touching the floor."],"img":"flat-bench-lying-leg-raise"},{"n":"Reverse Crunch","eq":"Bodyweight","ur":"Ghutne chest ki taraf, hips zameen se uthao — neeche wala pait","how":["Lie on your back, knees bent at 90°.","Roll the hips off the floor toward your chest.","Lower slowly."],"img":"reverse-crunch"}],"cable-woodchopper":[{"n":"Plate Russian Twist","eq":"Plate","ur":"Baith kar plate ko daayen baayen ghumao — pait ki sides","how":["Sit, lean back slightly, feet up or down.","Rotate the plate side to side from your ribs.","Move slowly, not with the arms."],"img":"russian-twist"},{"n":"Dumbbell Side Bend","eq":"Dumbbell","ur":"Ek haath mein dumbbell, side mein jhuko — pait ki sides","how":["Stand tall, dumbbell in one hand.","Bend sideways toward the dumbbell, then pull up with the other side.","Do both sides."],"img":"dumbbell-side-bend"}]};
+    const NEEDS_MACHINE = (ex) => /^(machine|cable)$/i.test(ex.equipment || "");
+    // Name shown in Today when the gym has no machines (free-weight version of machine/cable moves)
+    const swapChoice = new Map();
+    function chosenAlt(ex) {
+      if (!state.noMachines || !NEEDS_MACHINE(ex)) return null;
+      return swapChoice.get(ex.id) || altsFor(ex)[0] || null;
+    }
+    // Pick a different free-weight move for each machine slot, skipping ones already in today's list
+    function planSwaps(workoutExs) {
+      swapChoice.clear();
+      if (!state.noMachines) return;
+      const used = new Set(workoutExs.filter((e) => !NEEDS_MACHINE(e)).flatMap((e) => [e.id, e.name]));
+      const free = (ex) => altsFor(ex).filter((a) => !used.has(a.n) && !(a.use && used.has(a.use))).length;
+      // Slots with the fewest options choose first, so every slot gets a different move when possible
+      workoutExs.filter(NEEDS_MACHINE).sort((x, y) => free(x) - free(y)).forEach((ex) => {
+        const alts = altsFor(ex);
+        if (!alts.length) return;
+        const pick = alts.find((a) => !used.has(a.n) && !(a.use && used.has(a.use))) || alts[0];
+        used.add(pick.n); if (pick.use) used.add(pick.use);
+        swapChoice.set(ex.id, pick);
+      });
+    }
+    function shownName(ex) { const a = chosenAlt(ex); return a ? a.n : ex.name; }
+    function altsFor(ex) {
+      return (FREE_ALTS[ex.id] || ex.alts || []).map((a) => {
+        if (a.use) {
+          const u = getExerciseById(a.use);
+          return u ? { use: u.id, n: u.name, eq: u.equipment, why: a.why, imgs: refImages(u), ur: headUrdu((u.primaryHeads || [])[0]) } : null;
+        }
+        return { ...a, imgs: a.img ? [0, 1].map((i) => `images/alt/${a.img}-${i}.jpg`) : [] };
+      }).filter(Boolean);
+    }
 
     // Body regions used by "Your pins"
     const REGIONS = [
@@ -2790,9 +2962,16 @@
     function exerciseCard(ex, opts = {}) {
       const { own, other, pri } = exerciseBreakdown(ex);
       const g = getGroupObj(ex.group);
-      const thumb = thumbUrls.get(ex.id);
+      const alts = altsFor(ex);
+      // Gym without machines: show the free-weight version in place of a machine/cable move
+      const swapAlt = opts.mode === "today" ? chosenAlt(ex) : null;
+      const thumb = swapAlt ? null : thumbUrls.get(ex.id);
       const hasVid = cachedVideoKeys.has(ex.id);
-      const refs = refImages(ex);
+      const refs = swapAlt ? swapAlt.imgs : refImages(ex);
+      const altLine = !alts.length || opts.mode === "plain" ? ""
+        : swapAlt
+          ? `<button class="xc-alt swap" data-act="open-alt" data-id="${ex.id}">${icon("swap", "sm")}<span>Instead of <b>${escapeHtml(ex.name)}</b> (${escapeHtml(ex.equipment.toLowerCase())})${alts.length > 1 ? ` · see ${alts.length - 1} more option${alts.length > 2 ? "s" : ""}` : ""}</span></button>`
+          : `<button class="xc-alt" data-act="open-alt" data-id="${ex.id}">${icon("swap", "sm")}<span>${NEEDS_MACHINE(ex) ? "No machine?" : "Alternative:"} <b>${escapeHtml(alts[0].n)}</b>${alts.length > 1 ? ` +${alts.length - 1}` : ""}</span></button>`;
       const miniMap = miniMapHtml([...pri], { sec: new Set(ex.secondaryHeads || []) });
       const thumbHtml = thumb
         ? `<img src="${thumb.url}" alt="" loading="lazy">${thumb.count > 1 ? `<span class="badge">${icon("image", "sm")}${thumb.count}</span>` : ""}<span class="mini-ov">${miniMap}</span>`
@@ -2824,8 +3003,8 @@
           <div class="xc-main" data-open="${ex.id}" role="button" tabindex="0" aria-label="Open ${escapeHtml(ex.name)}">
             <div class="xc-thumb">${thumbHtml}</div>
             <div class="xc-body">
-              <div class="xc-eyebrow">${opts.index != null ? `<span class="num">${String(opts.index + 1).padStart(2, "0")}</span>` : ""}<span class="gdot"></span><span>${escapeHtml(g ? g.name : ex.group)}</span><span class="eq">· ${escapeHtml(ex.equipment)}</span></div>
-              <h3 class="xc-name">${escapeHtml(ex.name)}</h3>
+              <div class="xc-eyebrow">${opts.index != null ? `<span class="num">${String(opts.index + 1).padStart(2, "0")}</span>` : ""}<span class="gdot"></span><span>${escapeHtml(g ? g.name : ex.group)}</span><span class="eq">· ${escapeHtml(swapAlt ? swapAlt.eq : ex.equipment)}</span></div>
+              <h3 class="xc-name">${escapeHtml(swapAlt ? swapAlt.n : ex.name)}</h3>
               <div class="xc-specs">
                 <span>${escapeHtml(ex.setsReps)}</span>
                 <span>${icon("clock", "sm")}${escapeHtml(ex.rest || "90s")}</span>
@@ -2836,6 +3015,7 @@
             <svg class="i xc-chev"><use href="#i-chev"/></svg>
           </div>
           <div class="xc-parts">${partsHtml}${otherHtml}</div>
+          ${altLine}
           ${actions}
         </article>`;
     }
@@ -2884,8 +3064,13 @@
       lg.setAttribute("aria-pressed", String(state.lowGluteGuard));
       document.getElementById("lowGluteState").textContent = state.lowGluteGuard ? "On" : "Off";
       document.getElementById("orderLabel").textContent = state.orderMode === "smart" ? "Compound first" : "By muscle";
+      const nm = document.getElementById("btnNoMachines");
+      nm.classList.toggle("on", !state.noMachines);
+      nm.setAttribute("aria-pressed", String(!state.noMachines));
+      document.getElementById("noMachState").textContent = state.noMachines ? "No — show free-weight versions" : "Yes — show machine exercises";
 
       const workoutExs = state.workoutIds.map(getExerciseById).filter(Boolean);
+      planSwaps(workoutExs);
       const primarySet = new Set();
       const secondarySet = new Set();
       const via = new Map();
@@ -2894,11 +3079,11 @@
         (ex.primaryHeads || []).forEach((h) => {
           primarySet.add(h);
           if (!via.has(h)) via.set(h, { pri: [], sec: [] });
-          via.get(h).pri.push(ex.name);
+          via.get(h).pri.push(shownName(ex));
         });
         (ex.secondaryHeads || []).forEach((h) => {
           if (!via.has(h)) via.set(h, { pri: [], sec: [] });
-          via.get(h).sec.push(ex.name);
+          via.get(h).sec.push(shownName(ex));
         });
         const gl = ex.gluteLoad || 0;
         if (gl > maxGlute) maxGlute = gl;
@@ -3384,6 +3569,8 @@
         ${(ex.cues || []).length ? `<ol class="cues" style="margin-top:8px;">${ex.cues.map((c) => `<li><span>${escapeHtml(c)}</span></li>`).join("")}</ol>` : ""}
         <div class="avoid">${icon("alert")}<div><strong>Avoid:</strong> ${escapeHtml(ex.avoid || "Using momentum instead of a strict joint path.")}</div></div>`;
 
+      renderSheetAlts(ex);
+      renderSheetChannels(ex);
       document.getElementById("simAngleLabel").textContent = ex.anim?.angleLabel || ex.angle;
       sheetFooter(ex);
 
@@ -3436,6 +3623,32 @@
       }
     }
     let currentVideoUrl = null;
+
+    function renderSheetAlts(ex) {
+      const sec = document.getElementById("dAltSec");
+      const alts = altsFor(ex);
+      sec.style.display = alts.length ? "" : "none";
+      // In "no machines" mode, show the alternatives first for machine/cable moves
+      const inner = sec.parentNode;
+      const anchor = inner.querySelector(".d-intro").nextElementSibling;
+      if (state.noMachines && NEEDS_MACHINE(ex)) { if (anchor !== sec) inner.insertBefore(sec, anchor); }
+      else if (anchor === sec) inner.insertBefore(sec, document.getElementById("dForm").closest(".d-sec"));
+      if (!alts.length) return;
+      const pri = (ex.primaryHeads || []).map((h) => (HEAD_INDEX.get(h) || getHeadInfo(h)).name);
+      document.getElementById("dAlts").innerHTML = `
+        <p class="alt-note">Same muscles: ${pri.map((n) => `<b>${escapeHtml(n)}</b>`).join(" · ")}. Use these when ${NEEDS_MACHINE(ex) ? "the machine isn't there or is busy" : "you want a variation"}.</p>
+        <div class="alt-list">${alts.map((a) => `
+          <div class="alt">
+            ${a.imgs.length ? `<div class="alt-ph">${a.imgs.map((src, i) => `<span><img src="${src}" alt="" loading="lazy" data-zoom="${src}" onerror="this.parentNode.remove()"><em>${i ? "End" : "Start"}</em></span>`).join("")}</div>` : ""}
+            <div class="alt-b">
+              <div class="alt-eq">${escapeHtml(a.eq || "")}</div>
+              <b class="alt-n">${escapeHtml(a.n)}</b>
+              ${a.ur ? `<span class="ur alt-ur">${escapeHtml(a.ur)}</span>` : ""}
+              ${a.how ? `<ol class="alt-how">${a.how.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ol>` : ""}
+              ${a.use ? `<p class="alt-why">${escapeHtml(a.why || "")}</p><button class="btn sm" data-open="${a.use}">Open this exercise ${icon("chev", "sm")}</button>` : ""}
+            </div>
+          </div>`).join("")}</div>`;
+    }
 
     function closeModal() {
       const wrap = document.getElementById("detailModal");
@@ -3841,6 +4054,37 @@
           if (addToToday(id)) { renderAll(); showToast("Added to today"); }
           else switchView("today");
           break;
+        case "open-alt":
+          openExerciseModal(id);
+          setTimeout(() => {
+            const sec = document.getElementById("dAltSec"), body = document.getElementById("sheetBody");
+            if (sec && body) body.scrollTo({ top: sec.offsetTop - 60, behavior: "smooth" });
+          }, 120);
+          break;
+        case "del-channel": {
+          const c = getChannels()[+id];
+          if (!c || !confirm(`Remove ${c.name || c.label}?`)) break;
+          if (c.src === "device") {
+            saveDeviceChannels(getDeviceChannels().filter((x) => x.url.toLowerCase() !== c.url.toLowerCase()));
+            renderChannelList(); break;
+          }
+          if (!ON_LOCAL_SERVER) { showToast("This channel is saved in the project — remove it on your Mac (localhost), then push"); break; }
+          try {
+            await writeProjectChannels(projectChannels.filter((x) => x.url.toLowerCase() !== c.url.toLowerCase()));
+            renderChannelList(); showToast("Removed from channels.json — push to update every device");
+          } catch (err) { showToast("Couldn't update channels.json: " + err.message); }
+          break;
+        }
+        case "goto-channels":
+          closeOverlay("sheet");
+          setTimeout(() => {
+            switchView("more");
+            const card = document.getElementById("channelsCard");
+            card.open = true;
+            card.scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => document.getElementById("chUrl").focus({ preventScroll: true }), 400);
+          }, 150);
+          break;
         case "open-glossary": openPage("glossary"); break;
         case "open-part": state.partHead = id; openPage("part"); break;
         case "page-back": closeOverlay("page"); break;
@@ -3887,7 +4131,57 @@
     });
 
     // ---------- More: add exercise, backup, share ----------
+    function renderChannelList() {
+      const box = document.getElementById("channelList");
+      const list = getChannels();
+      document.getElementById("channelHint").innerHTML = ON_LOCAL_SERVER
+        ? `<b>On your Mac:</b> channels are saved into <code>channels.json</code> in the project. Commit &amp; push and they appear on every device.`
+        : `Channels marked <b>In project</b> come from GitHub and show on every device. To add one for everywhere, add it on your Mac (localhost:8765) and push. Channels added here stay on this device only.`;
+      box.innerHTML = list.map((c, i) => `
+        <div class="ch-row">
+          <span class="ch-av">${escapeHtml((c.name || c.label || "?").replace(/^@/, "").charAt(0).toUpperCase())}</span>
+          <div class="ch-txt"><b>${escapeHtml(c.name || c.label)}</b><small><span class="ch-tag ${c.src}">${c.src === "project" ? "In project" : "This device only"}</span>${escapeHtml(c.url.replace("https://www.youtube.com/", ""))}</small></div>
+          <a class="btn sm" href="${escapeHtml(c.url)}" target="_blank" rel="noopener" aria-label="Open channel">${icon("yt", "sm")}<span class="lbl">Open</span></a>
+          <button class="icon-btn" data-act="del-channel" data-id="${i}" aria-label="Remove ${escapeHtml(c.name || c.label)}">${icon("x", "sm")}</button>
+        </div>`).join("");
+    }
+    function renderSheetChannels(ex) {
+      const box = document.getElementById("ytChannels");
+      const q = ytQuery(ex.name);
+      const list = getChannels();
+      const all = `<a class="yt-chip all" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q + " form")}" target="_blank" rel="noopener">${icon("search", "sm")}All of YouTube</a>`;
+      box.innerHTML = list.length
+        ? `<div class="eyebrow">Find “${escapeHtml(q)}” on your channels</div>
+           <div class="yt-chips">${list.map((c) => `<a class="yt-chip" href="${escapeHtml(channelSearchUrl(c, q))}" target="_blank" rel="noopener">${icon("yt", "sm")}${escapeHtml(c.name || c.label)}</a>`).join("")}${all}</div>`
+        : `<div class="eyebrow">Find a video</div>
+           <div class="yt-chips">${all}<button class="yt-chip" data-act="goto-channels">${icon("plus", "sm")}Save favourite channels</button></div>`;
+    }
+
     function setupManageView() {
+      renderChannelList();
+      document.getElementById("channelForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const urlEl = document.getElementById("chUrl"), nameEl = document.getElementById("chName");
+        const ch = parseChannel(urlEl.value);
+        if (!ch) {
+          showToast(/watch\?|youtu\.be|shorts\//i.test(urlEl.value) ? "That's a video link — open the channel page and copy its link" : "Paste a channel link like youtube.com/@name");
+          return;
+        }
+        if (getChannels().some((c) => c.url.toLowerCase() === ch.url.toLowerCase())) { showToast("Already saved"); return; }
+        const entry = { url: ch.url, label: ch.label, name: nameEl.value.trim() };
+        const done = (msg) => { urlEl.value = ""; nameEl.value = ""; renderChannelList(); showToast(msg); };
+        if (ON_LOCAL_SERVER) {
+          try {
+            await writeProjectChannels([...projectChannels, entry]);
+            done(`Saved to channels.json — push to GitHub to see it on every device`);
+            return;
+          } catch (err) {
+            showToast("Couldn't write channels.json (restart python3 server.py) — saved on this device for now");
+          }
+        }
+        saveDeviceChannels([...getDeviceChannels(), entry]);
+        done(ON_LOCAL_SERVER ? `Saved ${entry.name || ch.label} on this device` : `Saved on this phone only — add it on your Mac to share it everywhere`);
+      });
       const fGroup = document.getElementById("fGroup");
       const fHead = document.getElementById("fHead");
       const fSec = document.getElementById("fSecondary");
@@ -4044,7 +4338,7 @@
             images[k] = [];
             for (const p of list) images[k].push({ key: p.key, ts: p.ts, full: await blobToDataURL(p.full), thumb: p.thumb === p.full ? null : await blobToDataURL(p.thumb) });
           }
-          const payload = { type: "ironsync-backup", version: 1, createdAt: new Date().toISOString(), customExercises: getCustomExercises(), state, images };
+          const payload = { type: "ironsync-backup", version: 1, createdAt: new Date().toISOString(), customExercises: getCustomExercises(), channels: getDeviceChannels(), state, images };
           downloadText(`ironsync-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(payload));
           showToast(`Backup saved · ${Object.keys(images).length} exercises with photos`);
         } catch (err) {
@@ -4071,6 +4365,14 @@
             }
             await ImageStore.set(id, existing);
             setThumb(id, existing);
+          }
+          if (Array.isArray(data.channels)) {
+            const dev = getDeviceChannels();
+            const have = new Set(getChannels().map((c) => c.url.toLowerCase()));
+            data.channels.forEach((c) => { if (validChannel(c) && !have.has(c.url.toLowerCase())) { dev.push({ url: c.url, label: c.label || "", name: c.name || "" }); have.add(c.url.toLowerCase()); } });
+            saveDeviceChannels(dev);
+            if (ON_LOCAL_SERVER) await syncChannelsToProject();
+            renderChannelList();
           }
           if (data.state && Array.isArray(data.state.selectedGroups)) {
             state = { ...state, ...data.state, view: state.view };
@@ -4225,6 +4527,10 @@
       });
       document.getElementById("btnLowGlute").addEventListener("click", () => {
         state.lowGluteGuard = !state.lowGluteGuard; computeSyncedWorkout(); renderBuilder();
+      });
+      document.getElementById("btnNoMachines").addEventListener("click", () => {
+        state.noMachines = !state.noMachines; saveState(); renderAll();
+        showToast(state.noMachines ? "Machine & cable moves now show a dumbbell / plate version" : "Showing machine exercises");
       });
       document.getElementById("btnSyncNow").addEventListener("click", () => {
         computeSyncedWorkout(); renderBuilder(); showToast("Re-synced for full coverage");
@@ -4410,6 +4716,11 @@
       const withTimeout = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(r, ms))]);
       withTimeout(Promise.all([refreshVideoKeys(), loadAllThumbs()]), 6000).then(() => renderAll());
       requestPersistentStorage();
+      // Channels from the repo's channels.json (same on every device once pushed)
+      (ON_LOCAL_SERVER ? syncChannelsToProject() : loadProjectChannels()).then(() => {
+        renderChannelList();
+        if (currentModalExId) renderSheetChannels(getExerciseById(currentModalExId));
+      });
 
       window.addEventListener("scroll", () => {
         document.getElementById("appbar").classList.toggle("scrolled", window.scrollY > 4);
