@@ -460,6 +460,59 @@ class IronSyncHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json(400, {"ok": False, "error": str(e)})
             return
 
+        if self.path == "/api/reveal-video":
+            try:
+                VIDEOS_DIR.mkdir(exist_ok=True)
+                if data.get("all"):
+                    if sys.platform == "darwin":
+                        subprocess.Popen(["open", str(VIDEOS_DIR)])
+                    elif sys.platform.startswith("win"):
+                        os.startfile(str(VIDEOS_DIR))
+                    else:
+                        subprocess.Popen(["xdg-open", str(VIDEOS_DIR)])
+                    self.send_json(200, {"ok": True, "path": str(VIDEOS_DIR)})
+                    return
+                name = Path(str(data.get("file", ""))).name
+                if not name:
+                    raise ValueError("Missing file name")
+                target = (VIDEOS_DIR / name).resolve()
+                if target.parent != VIDEOS_DIR.resolve() or not target.exists():
+                    raise FileNotFoundError(f"Video not found: {name}")
+                if sys.platform == "darwin":
+                    subprocess.Popen(["open", "-R", str(target)])
+                elif sys.platform.startswith("win"):
+                    subprocess.Popen(["explorer", "/select,", str(target)])
+                else:
+                    subprocess.Popen(["xdg-open", str(VIDEOS_DIR)])
+                self.send_json(200, {"ok": True, "path": str(target)})
+            except Exception as e:
+                self.send_json(400, {"ok": False, "error": str(e)})
+            return
+
+        if self.path == "/api/airdrop-video":
+            try:
+                if sys.platform != "darwin":
+                    raise RuntimeError("AirDrop is only available on macOS")
+                VIDEOS_DIR.mkdir(exist_ok=True)
+                airdrop_app = "/System/Library/CoreServices/Finder.app/Contents/Applications/AirDrop.app"
+                if data.get("all"):
+                    subprocess.Popen(["open", airdrop_app])
+                    subprocess.Popen(["open", str(VIDEOS_DIR)])
+                    self.send_json(200, {"ok": True, "path": str(VIDEOS_DIR)})
+                    return
+                name = Path(str(data.get("file", ""))).name
+                if not name:
+                    raise ValueError("Missing file name")
+                target = (VIDEOS_DIR / name).resolve()
+                if target.parent != VIDEOS_DIR.resolve() or not target.exists():
+                    raise FileNotFoundError(f"Video not found: {name}")
+                subprocess.Popen(["open", airdrop_app])
+                subprocess.Popen(["open", "-R", str(target)])
+                self.send_json(200, {"ok": True, "path": str(target)})
+            except Exception as e:
+                self.send_json(400, {"ok": False, "error": str(e)})
+            return
+
         self.send_json(404, {"ok": False, "error": "Unknown endpoint"})
 
 

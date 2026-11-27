@@ -990,6 +990,7 @@
             <div class="vid-status" id="videoStatusLabel">No video attached</div>
             <div class="btn-row">
               <label class="btn"><svg class="i"><use href="#i-video"/></svg><span id="attachVideoLbl">Attach video</span><input id="modalVideoInput" type="file" accept="video/*" multiple hidden /></label>
+              <button type="button" class="btn" id="openVideosFolderBtn" style="display:none;">All videos in Finder</button>
             </div>
             <div id="ytChannels" class="yt-ch"></div>
             <div id="ytBox" style="margin-top:14px;">
@@ -2446,28 +2447,74 @@
     let videoCounts = new Map(); // exercise id -> number of videos (phone + project)
     let serverVideos = {};       // exercise id -> ["./videos/<id>.mp4", "./videos/<id>--2.mp4", ...]
 
-    // Several videos per exercise. Stored as [{key, blob, name, ts}]; older versions stored one Blob.
+    // Several videos per exercise. New videos are stored individually under `vid:<exId>:<key>`
+    // so adding a new video never re-reads or overwrites previous blobs on iOS Safari.
+    // Older records stored directly under `<exId>` (single Blob or array) are still read seamlessly.
+    const vidKeyPrefix = (id) => `vid:${id}:`;
+    const vidMime = (f) => f.type || (/\.mov$/i.test(f.name || "") ? "video/quicktime" : /\.webm$/i.test(f.name || "") ? "video/webm" : "video/mp4");
+
     async function getDeviceVideos(id) {
-      const v = await VideoStore.get(id);
-      if (!v) return [];
-      if (v instanceof Blob) return [{ key: "legacy", blob: v, name: v.name || "Video", ts: 0 }];
-      return Array.isArray(v) ? v.filter((x) => x && x.blob) : [];
+      const out = [];
+      const prefix = vidKeyPrefix(id);
+      for (const k of await VideoStore.listKeys()) {
+        if (typeof k === "string" && k.startsWith(prefix)) {
+          const item = await VideoStore.get(k);
+          if (item && item.blob) out.push({ ...item, key: k });
+        }
+      }
+      const legacy = await VideoStore.get(id);
+      if (legacy instanceof Blob) {
+        out.push({ key: "legacy", blob: legacy, name: legacy.name || "Video", ts: 0 });
+      } else if (Array.isArray(legacy)) {
+        for (const x of legacy) {
+          if (x && x.blob) out.push(x);
+        }
+      }
+      return out.sort((a, b) => (a.ts || 0) - (b.ts || 0));
     }
+
     async function addDeviceVideos(id, files) {
-      const list = await getDeviceVideos(id);
-      for (const f of files) list.push({ key: `v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, blob: f, name: f.name || "Video", ts: Date.now() });
-      await VideoStore.set(id, list);
-      return list.length;
+      for (const f of files) {
+        const buf = await f.arrayBuffer();
+        const blob = new Blob([buf], { type: vidMime(f) });
+        const key = `${vidKeyPrefix(id)}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+        await VideoStore.set(key, { key, blob, name: f.name || "Video", ts: Date.now() });
+      }
+      return (await getDeviceVideos(id)).length;
     }
+
     async function removeDeviceVideo(id, key) {
-      const list = (await getDeviceVideos(id)).filter((x) => x.key !== key);
-      if (list.length) await VideoStore.set(id, list); else await VideoStore.remove(id);
+      if (typeof key === "string" && key.startsWith("vid:")) {
+        await VideoStore.remove(key);
+        return;
+      }
+      if (key === "legacy") {
+        await VideoStore.remove(id);
+        return;
+      }
+      const legacy = await VideoStore.get(id);
+      if (Array.isArray(legacy)) {
+        const next = legacy.filter((x) => x && x.key !== key);
+        if (next.length) await VideoStore.set(id, next);
+        else await VideoStore.remove(id);
+      }
     }
+
     const serverVideoList = (id) => { const v = serverVideos[id]; return Array.isArray(v) ? v : v ? [v] : []; };
 
     async function refreshVideoKeys() {
       const counts = new Map();
-      for (const k of await VideoStore.listKeys()) counts.set(k, (await getDeviceVideos(k)).length);
+      for (const k of await VideoStore.listKeys()) {
+        if (typeof k === "string" && k.startsWith("vid:")) {
+          const parts = k.split(":");
+          const exId = parts[1];
+          if (exId) counts.set(exId, (counts.get(exId) || 0) + 1);
+        } else {
+          const v = await VideoStore.get(k);
+          const n = v instanceof Blob ? 1 : Array.isArray(v) ? v.filter((x) => x && x.blob).length : 0;
+          if (n) counts.set(k, (counts.get(k) || 0) + n);
+        }
+      }
       if (location.protocol.startsWith("http")) {
         try {
           const res = await fetch("./api/videos", { cache: "no-store" });
@@ -3756,6 +3803,7 @@
       // Videos (saved on this phone + project ./videos via server.py) — as many as you like
       document.getElementById("modalYoutubeUrl").value = "";
       document.getElementById("ytBox").style.display = IS_PHONE ? "none" : "block";
+      document.getElementById("openVideosFolderBtn").style.display = (!IS_PHONE && ON_LOCAL_SERVER) ? "" : "none";
       document.getElementById("ytHint").innerHTML = ON_LOCAL_SERVER
         ? "Saves the .mp4 into this project's <b>videos/</b> folder and links it to this exercise."
         : `Needs the local server. In Terminal run <code style="font-family:var(--mono);font-size:12px;">cd ~/Downloads/"gym go" &amp;&amp; python3 server.py</code> then <a href="http://localhost:8765/index.html" style="color:var(--accent);font-weight:700;">open localhost:8765</a>.`;
@@ -3775,13 +3823,14 @@
       const project = serverVideoList(id).length ? serverVideoList(id) : (ex.videos || (ex.video ? [ex.video] : []));
       const items = [
         ...device.map((v) => { const u = URL.createObjectURL(v.blob); currentVideoUrls.push(u); return { src: u, where: "Saved on this phone", name: v.name, del: `device:${v.key}` }; }),
-        ...project.map((p) => ({ src: `${p}?t=${Date.now()}`, where: "Project video", name: p.replace("./videos/", ""), del: `project:${p.split("/").pop()}`, project: true }))
+        ...project.map((p) => ({ src: `${p}?t=${Date.now()}`, where: "Project video", name: p.replace("./videos/", ""), fileName: p.split("/").pop(), del: `project:${p.split("/").pop()}`, project: true }))
       ];
       const box = document.getElementById("videoList");
       box.innerHTML = items.map((it, i) => `
         <div class="vid-item" ${it.project ? 'data-project="1"' : ""}>
           <video class="vid" controls playsinline preload="metadata" src="${escapeHtml(it.src)}"></video>
           <div class="vid-meta"><b>Video ${i + 1}</b><small>${escapeHtml(it.where)} · ${escapeHtml(it.name)}</small>
+            ${it.project && !IS_PHONE && ON_LOCAL_SERVER ? `<button class="btn sm" data-act="airdrop-video" data-id="${escapeHtml(it.fileName)}" title="Send directly via AirDrop">AirDrop</button><button class="btn sm" data-act="reveal-video" data-id="${escapeHtml(it.fileName)}" title="Show this video in Finder">Finder</button>` : ""}
             <button class="btn sm danger" data-act="del-video" data-id="${escapeHtml(it.del)}" aria-label="Remove video ${i + 1}">${icon("trash", "sm")}</button></div>
         </div>`).join("");
       // Project files that don't exist (e.g. on GitHub Pages, where videos/ isn't uploaded) are hidden
@@ -4260,6 +4309,26 @@
             setTimeout(() => document.getElementById("chUrl").focus({ preventScroll: true }), 400);
           }, 150);
           break;
+        case "airdrop-video": {
+          if (!ON_LOCAL_SERVER) { showToast("Only available on your Mac (localhost)"); break; }
+          try {
+            const res = await fetch("./api/airdrop-video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: id }) });
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok || !d.ok) throw new Error(d.error || "Could not open AirDrop");
+            showToast("Opening AirDrop…");
+          } catch (err) { showToast(err.message); }
+          break;
+        }
+        case "reveal-video": {
+          if (!ON_LOCAL_SERVER) { showToast("Only available on your Mac (localhost)"); break; }
+          try {
+            const res = await fetch("./api/reveal-video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: id }) });
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok || !d.ok) throw new Error(d.error || "Could not open Finder");
+            showToast("Opened in Finder");
+          } catch (err) { showToast(err.message); }
+          break;
+        }
         case "del-video": {
           const exId = currentModalExId;
           if (!exId || !confirm("Remove this video?")) break;
@@ -4826,6 +4895,15 @@
         simProgress = Number(e.target.value) / 100;
         const ex = getExerciseById(currentModalExId);
         if (ex) renderSimFrame(ex, simProgress);
+      });
+
+      document.getElementById("openVideosFolderBtn").addEventListener("click", async () => {
+        try {
+          const res = await fetch("./api/reveal-video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ all: true }) });
+          const d = await res.json().catch(() => ({}));
+          if (!res.ok || !d.ok) throw new Error(d.error || "Could not open Finder");
+          showToast("Opened videos/ folder in Finder");
+        } catch (err) { showToast(err.message); }
       });
 
       document.getElementById("modalYoutubeDownload").addEventListener("click", async () => {

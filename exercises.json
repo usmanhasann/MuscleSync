@@ -1592,6 +1592,11 @@
         "squat",
         "barbell",
         "compound"
+      ],
+      "video": "./videos/barbell-back-squat.mp4",
+      "videos": [
+        "./videos/barbell-back-squat.mp4",
+        "./videos/barbell-back-squat--2.mp4"
       ]
     },
     {
