@@ -48,6 +48,13 @@ Photos live only on that phone, so use **More → Backup & restore → Full back
 - **Today → "Machines & cables in my gym" → No** swaps every machine/cable exercise on Today for its free-weight version (a different one per slot), and the exercise screen opens on the alternatives first.
 - Photos are in `images/alt/` (free-exercise-db, public domain) and are cached for offline use.
 
+## Real muscle photos (per part)
+- **Muscles → any muscle** shows a **Real photos** slider (whole muscle) and one per part (e.g. Triceps → Long / Lateral / Medial Head). Empty slots have an **Add photo** button.
+- Photos added from the muscle's main slider count for **all its parts**; photos added on a part are for that part only.
+- Every exercise opens on the real photos of the parts it mainly hits (before the Start/End pictures). Missing ones show **Add real photo of …** under "What it trains".
+- **To make photos show on every device:** add them on the Mac with `python3 server.py` running (localhost:8765). They're saved into `images/parts/` and listed in [parts.json](parts.json); then commit and push. Photos added on a phone stay on that phone.
+- Only add images you're allowed to share: the repo is public on GitHub Pages.
+
 ## Reference photos & pins
 - `images/ref/<exercise-id>-0.jpg` (start) and `-1.jpg` (end) are public-domain photos from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense). They're cached for offline use. Your own photos always appear first.
 - **Library → Your pins** lists every pinned exercise, grouped by body area (Chest, Back, Shoulders, Arms, Legs, Core) with highlighted muscle words. Pins stay until you unpin them, and pinned exercises are always included when that muscle is in today's workout.

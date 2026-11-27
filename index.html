@@ -589,6 +589,28 @@
     .xc-thumb .mini-ov .mp:not(.pri):not(.sec) { fill: #3A4454; }
     .hero-photos .slide { flex: 0 0 100%; position: relative; scroll-snap-align: center; }
     .hero-photos .slide img { width: 100%; height: min(62vw, 380px); object-fit: cover; background: var(--surface-2); cursor: zoom-in; }
+    .rc { position: relative; border-radius: 16px; overflow: hidden; background: #000; }
+    .rc-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .rc-track::-webkit-scrollbar { display: none; }
+    .rc-slide { flex: 0 0 100%; position: relative; scroll-snap-align: center; }
+    .rc-slide img { display: block; width: 100%; height: min(62vw, 340px); object-fit: contain; background: #000; cursor: zoom-in; }
+    .rc-tag { position: absolute; left: 10px; top: 10px; max-width: calc(100% - 64px); background: rgba(0,0,0,.7); color: #fff; font-size: 12px; font-weight: 750; padding: 4px 9px; border-radius: 7px; }
+    .rc-del { position: absolute; right: 8px; top: 8px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: rgba(0,0,0,.6); color: #fff; }
+    .rc-dots { position: absolute; bottom: 12px; left: 12px; display: flex; gap: 6px; }
+    .rc-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.45); }
+    .rc-dots i.on { background: #fff; }
+    .rc-add { position: absolute; right: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: 999px; background: rgba(0,0,0,.65); color: #fff; font-size: 12.5px; font-weight: 700; }
+    .rc-empty { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; padding: 14px; border-radius: 16px; border: 1.5px dashed var(--line-strong); color: var(--muted); }
+    .rc-empty > .i { width: 26px; height: 26px; color: var(--gc, var(--muted)); }
+    .rc-empty b { display: block; color: var(--text); font-size: 14px; }
+    .rc-empty span { display: block; font-size: 12.5px; margin-top: 2px; }
+    .rc-empty .btn { grid-column: 1 / -1; justify-self: start; }
+    .real-sec { margin-top: 14px; }
+    .real-sec .eyebrow { margin: 0 2px 8px; }
+    .head-card .rc, .head-card .rc-empty { margin-top: 10px; }
+    .head-card .rc-slide img { height: min(52vw, 260px); }
+    .hit-row .addreal { margin-top: 6px; display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; color: var(--accent); }
+    .slide-tag.real { background: var(--accent); color: var(--accent-ink); }
     .slide-tag { position: absolute; top: 10px; left: 26px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; }
     .mchip.pins { color: var(--text); border-color: var(--accent); }
     .mchip.pins b { margin-left: 2px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11.5px; display: grid; place-items: center; }
@@ -959,6 +981,7 @@
             <h3><span>Photos</span><span id="photoCount" style="letter-spacing:0;text-transform:none;font-weight:600;"></span></h3>
             <div class="photo-grid" id="photoGrid"></div>
             <input id="photoInput" type="file" accept="image/*" multiple hidden />
+            <input id="partPhotoInput" type="file" accept="image/*" multiple hidden />
           </div>
 
           <div class="d-sec">
@@ -2846,6 +2869,103 @@
       try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch {}
     }
 
+    // ---------- Real muscle photos ----------
+    // Each photo lists the muscle parts it shows ("targets" = head ids). Two sources:
+    //  - project: parts.json + images/parts/ (added on the Mac via server.py, pushed to GitHub -> every device)
+    //  - device:  IndexedDB on this phone only (added when there's no local server)
+    const PartImgStore = makeStore("ironsync_partimgs_v1", "imgs");
+    const STORAGE_PARTS_CACHE = "ironsync_parts_cache";
+    let projectPartImgs = (() => { try { const v = JSON.parse(localStorage.getItem(STORAGE_PARTS_CACHE) || "[]"); return Array.isArray(v) ? v : []; } catch { return []; } })();
+    let devicePartImgs = []; // [{key, url, targets}]
+    async function loadPartPhotos() {
+      try {
+        const res = await fetch("./parts.json", { cache: "no-store" });
+        if (res.ok) {
+          const d = await res.json();
+          projectPartImgs = (d.images || []).filter((e) => e && typeof e.file === "string" && /^images\/parts\/[\w.\-]+$/.test(e.file) && Array.isArray(e.targets));
+          try { localStorage.setItem(STORAGE_PARTS_CACHE, JSON.stringify(projectPartImgs)); } catch {}
+          // Warm the offline cache so every project photo works in the gym without signal
+          if (navigator.onLine && location.protocol.startsWith("http")) projectPartImgs.forEach((e) => fetch(e.file).catch(() => {}));
+        }
+      } catch {}
+      devicePartImgs.forEach((x) => URL.revokeObjectURL(x.url));
+      devicePartImgs = [];
+      try {
+        for (const k of await PartImgStore.listKeys()) {
+          const v = await PartImgStore.get(k);
+          if (v && v.blob) devicePartImgs.push({ key: k, url: URL.createObjectURL(v.blob), targets: v.targets || [] });
+        }
+      } catch {}
+    }
+    // Photos showing any of these parts. Exact single-part photos first, whole-muscle photos after.
+    function partPhotosFor(headIds) {
+      const want = new Set(headIds);
+      const all = [
+        ...projectPartImgs.map((e) => ({ src: e.file, targets: e.targets, del: `project:${e.file}`, where: "project" })),
+        ...devicePartImgs.map((e) => ({ src: e.url, targets: e.targets, del: `device:${e.key}`, where: "device" }))
+      ].filter((p) => p.targets.some((t) => want.has(t)));
+      return all.sort((a, b) => a.targets.length - b.targets.length);
+    }
+    function partPhotoLabel(p) {
+      const g = db.muscleGroups.find((g) => g.heads.length > 1 && g.heads.every((h) => p.targets.includes(h.id)) && p.targets.length === g.heads.length);
+      if (g) return `${g.name} · all parts`;
+      return p.targets.map((t) => (HEAD_INDEX.get(t) || getHeadInfo(t)).name).join(" · ");
+    }
+    // Slider of real photos. addId = head id, or "g:<groupId>" for the whole muscle.
+    function realCarousel(photos, { addId, addLabel, emptyText, manage = true }) {
+      if (!photos.length) {
+        return `<div class="rc-empty">${icon("image")}<div><b>${escapeHtml(emptyText)}</b><span>Add a real photo with the part highlighted, so you can see exactly what you're hitting.</span></div>
+          <button class="btn sm" data-act="add-part-photo" data-id="${escapeHtml(addId)}">${icon("camera", "sm")}${escapeHtml(addLabel)}</button></div>`;
+      }
+      return `<div class="rc">
+          <div class="rc-track">${photos.map((p) => `<div class="rc-slide"><img src="${escapeHtml(p.src)}" alt="" loading="lazy" data-zoom="${escapeHtml(p.src)}">
+            <span class="rc-tag">${escapeHtml(partPhotoLabel(p))}</span>
+            ${manage ? `<button class="rc-del" data-act="del-part-photo" data-id="${escapeHtml(p.del)}" aria-label="Remove photo">${icon("x", "sm")}</button>` : ""}</div>`).join("")}</div>
+          ${photos.length > 1 ? `<div class="rc-dots">${photos.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>` : ""}
+          <button class="rc-add" data-act="add-part-photo" data-id="${escapeHtml(addId)}">${icon("camera", "sm")}${escapeHtml(addLabel)}</button>
+        </div>`;
+    }
+    document.addEventListener("scroll", (e) => {
+      const t = e.target;
+      if (!(t instanceof Element) || !t.classList.contains("rc-track")) return;
+      const i = Math.round(t.scrollLeft / Math.max(1, t.clientWidth));
+      t.parentNode.querySelectorAll(".rc-dots i").forEach((d, j) => d.classList.toggle("on", i === j));
+    }, true);
+    const fileToDataURL = (b) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(b); });
+    function partTargets(addId) {
+      if (addId.startsWith("g:")) { const g = getGroupObj(addId.slice(2)); return g ? g.heads.map((h) => h.id) : []; }
+      return [addId];
+    }
+    async function addPartPhotos(addId, files) {
+      const targets = partTargets(addId);
+      if (!targets.length) return;
+      let toProject = ON_LOCAL_SERVER, n = 0;
+      for (const f of files) {
+        if (!/^image\//.test(f.type || "image/")) continue;
+        const { full } = await processImage(f);
+        if (toProject) {
+          try {
+            const res = await fetch("./api/part-photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targets, dataUrl: await fileToDataURL(full) }) });
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok || !d.ok) throw new Error(d.error || "server error");
+            n++; continue;
+          } catch (err) {
+            toProject = false;
+            showToast("Couldn't save into the project (restart python3 server.py) — saving on this device");
+          }
+        }
+        await PartImgStore.set(`p${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, { blob: full, targets, ts: Date.now() });
+        n++;
+      }
+      await loadPartPhotos();
+      return { n, project: toProject };
+    }
+    function refreshPartViews() {
+      if (state.view === "muscles") renderMuscles();
+      if (state.view === "part") renderPart();
+      if (currentModalExId) { const ex = getExerciseById(currentModalExId); ImageStore.get(ex.id).then((l) => { if (currentModalExId === ex.id) renderSheetPhotos(ex, l || []); }); }
+    }
+
     // Smart Sync Algorithm: selects `targetCount` exercises in sync to hit ALL sub-heads
     function computeSyncedWorkout() {
       const groups = state.selectedGroups;
@@ -3419,6 +3539,8 @@
               <div class="txt"><b>${escapeHtml(h.name)}</b><small>${escapeHtml(h.role)}</small>${urduHtml(headUrdu(h.id))}</div>
               ${st ? `<span class="tstat ${st}">${stLabel}</span>` : ""}
             </div>
+            ${(() => { const own = partPhotosFor([h.id]).filter((p) => p.targets.length === 1); const inGroup = partPhotosFor([h.id]).length > own.length;
+              return realCarousel(own, { addId: h.id, addLabel: inGroup ? `Add ${h.name} close-up` : `Add ${h.name} photo`, emptyText: inGroup ? `${h.name} is in the ${g.name} photo above` : `No real photo of ${h.name} yet` }); })()}
             <div class="ex-links">
               <div class="lbl">Main target in (${mains.length})</div>
               ${mains.length ? mains.map((e) => link(e, "pri")).join("") : `<span class="muted" style="font-size:13px;">No exercise targets this directly yet — add one in More.</span>`}
@@ -3443,6 +3565,10 @@
             <button class="btn primary" data-act="train-group" data-id="${g.id}">${icon("today", "sm")}Train only ${escapeHtml(g.name)}</button>
             <button class="btn" data-act="toggle-group" data-id="${g.id}">${icon(selected ? "check" : "plus", "sm")}${selected ? "In today's plan" : "Add to today"}</button>
           </div>
+        </div>
+        <div class="real-sec" style="${gStyle(g.id)}">
+          <div class="eyebrow">Real photos · ${escapeHtml(g.name)}</div>
+          ${realCarousel(partPhotosFor(ids), { addId: `g:${g.id}`, addLabel: `Add ${g.name} photo`, emptyText: `No real photo of ${g.name} yet` })}
         </div>
         <div class="stack" style="margin-top:14px;">${headCards}</div>`;
     }
@@ -3524,12 +3650,14 @@
 
       const hero = document.getElementById("dHero");
       const refs = refImages(ex);
+      const real = partPhotosFor(ex.primaryHeads || []);
       const slides = [
+        ...real.map((p) => ({ src: p.src, label: partPhotoLabel(p), real: true })),
         ...items.map((p) => ({ src: p.full, label: "" })),
         ...refs.map((src, i) => ({ src, label: refs.length > 1 ? (i === 0 ? "Start" : "End") : "Reference" }))
       ];
       if (slides.length) {
-        hero.innerHTML = `<div class="hero-photos" id="heroPhotos">${slides.map((p) => `<div class="slide"><img src="${p.src}" alt="${escapeHtml(ex.name)} photo" data-zoom="${p.src}">${p.label ? `<span class="slide-tag">${p.label}</span>` : ""}</div>`).join("")}</div>
+        hero.innerHTML = `<div class="hero-photos" id="heroPhotos">${slides.map((p) => `<div class="slide"><img src="${p.src}" alt="${escapeHtml(ex.name)} photo" data-zoom="${p.src}" ${p.real ? 'style="object-fit:contain;background:#000"' : ""}>${p.label ? `<span class="slide-tag ${p.real ? "real" : ""}">${escapeHtml(p.label)}</span>` : ""}</div>`).join("")}</div>
           ${slides.length > 1 ? `<div class="hero-dots">${slides.map((_, i) => `<i class="${i === 0 ? "on" : ""}"></i>`).join("")}</div>` : ""}
           ${items.length ? "" : `<button class="hero-add" data-act="add-photo">${icon("camera", "sm")}Add your photo</button>`}`;
         const strip = document.getElementById("heroPhotos");
@@ -3589,7 +3717,7 @@
         const note = h.status === "miss" ? `Pair with one of these to train it:` : h.status === "sec" ? `Gets some work here. For full growth, also do:` : h.role;
         return `<div class="hit-row ${h.status}">
             <span class="st ${h.status}">${h.status === "pri" ? "●" : h.status === "sec" ? "◐" : "○"}</span>
-            <div class="txt"><span class="lvl">${lvl[h.status]}</span><br><b>${escapeHtml(h.name)}</b>${urduHtml(headUrdu(h.id))}<small>${escapeHtml(note)}</small>${pair}</div>
+            <div class="txt"><span class="lvl">${lvl[h.status]}</span><br><b>${escapeHtml(h.name)}</b>${urduHtml(headUrdu(h.id))}<small>${escapeHtml(note)}</small>${pair}${h.status === "pri" && !partPhotosFor([h.id]).length ? `<button class="addreal" data-act="add-part-photo" data-id="${h.id}">${icon("camera", "sm")}Add real photo of ${escapeHtml(h.name)}</button>` : ""}</div>
           </div>`;
       }).join("");
       const otherHtml = other.length
@@ -4149,6 +4277,25 @@
           showToast("Video removed");
           break;
         }
+        case "add-part-photo": {
+          const inp = document.getElementById("partPhotoInput");
+          inp.dataset.target = id;
+          inp.click();
+          break;
+        }
+        case "del-part-photo": {
+          if (!confirm("Remove this photo?")) break;
+          const kind = id.slice(0, id.indexOf(":")), ref = id.slice(id.indexOf(":") + 1);
+          if (kind === "device") await PartImgStore.remove(ref);
+          else {
+            if (!ON_LOCAL_SERVER) { showToast("This photo is saved in the project — remove it on your Mac (localhost), then push"); break; }
+            try { await fetch("./api/part-photo-delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: ref }) }); } catch {}
+          }
+          await loadPartPhotos();
+          refreshPartViews();
+          showToast("Photo removed");
+          break;
+        }
         case "open-glossary": openPage("glossary"); break;
         case "open-part": state.partHead = id; openPage("part"); break;
         case "page-back": closeOverlay("page"); break;
@@ -4222,6 +4369,16 @@
     }
 
     function setupManageView() {
+      document.getElementById("partPhotoInput").addEventListener("change", async (e) => {
+        const files = [...e.target.files];
+        const target = e.target.dataset.target || "";
+        e.target.value = "";
+        if (!files.length || !target) return;
+        showToast("Saving photo…");
+        const r = await addPartPhotos(target, files);
+        refreshPartViews();
+        if (r) showToast(r.project ? `Saved into the project — push to GitHub to see it on every device` : `Saved on this device`);
+      });
       renderChannelList();
       document.getElementById("channelForm").addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -4524,6 +4681,10 @@
             </div>
           </div>
         </div>
+        <div class="real-sec" style="${gStyle(h.groupId)}">
+          <div class="eyebrow">Real photos · ${escapeHtml(h.name)}</div>
+          ${realCarousel(partPhotosFor([h.id]), { addId: h.id, addLabel: `Add ${h.name} photo`, emptyText: `No real photo of ${h.name} yet` })}
+        </div>
         <div class="group-h" style="${gStyle(h.groupId)}"><span class="bar"></span><h2>Main target</h2><em class="ur-inline">Seedha isi hisse par kaam</em><span>${mains.length}</span></div>
         ${mains.length ? `<div class="xlist grid2">${mains.map(card).join("")}</div>` : `<div class="empty">No exercise targets this part directly yet — add one in More.</div>`}
         ${assists.length ? `<div class="group-h" style="${gStyle(h.groupId)}"><span class="bar"></span><h2>Also helps</h2><em class="ur-inline">Saath mein thora kaam</em><span>${assists.length}</span></div>
@@ -4780,6 +4941,8 @@
       const withTimeout = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(r, ms))]);
       withTimeout(Promise.all([refreshVideoKeys(), loadAllThumbs()]), 6000).then(() => renderAll());
       requestPersistentStorage();
+      // Real muscle photos (parts.json + this device)
+      withTimeout(loadPartPhotos(), 6000).then(refreshPartViews);
       // Channels from the repo's channels.json (same on every device once pushed)
       (ON_LOCAL_SERVER ? syncChannelsToProject() : loadProjectChannels()).then(() => {
         renderChannelList();

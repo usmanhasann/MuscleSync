@@ -17,6 +17,8 @@ Usage:
 """
 
 import argparse
+import base64
+import time
 import http.server
 import json
 import os
@@ -146,6 +148,56 @@ def save_channels(channels: list) -> list:
         clean.append({"url": url, "label": str(c.get("label", ""))[:100], "name": str(c.get("name", ""))[:100]})
     CHANNELS_JSON.write_text(json.dumps({"channels": clean}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return clean
+
+
+# ---------- Real muscle photos (parts.json + images/parts/, committed so every device gets them) ----------
+PARTS_JSON = ROOT_DIR / "parts.json"
+PARTS_DIR = ROOT_DIR / "images" / "parts"
+_TARGET = re.compile(r"^[a-z0-9_]{1,40}$")
+
+
+def _load_parts() -> dict:
+    try:
+        data = json.loads(PARTS_JSON.read_text(encoding="utf-8"))
+        if isinstance(data, dict) and isinstance(data.get("images"), list):
+            return data
+    except Exception:
+        pass
+    return {"images": []}
+
+
+def _save_parts(data: dict) -> None:
+    PARTS_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def add_part_photo(targets: list, data_url: str) -> dict:
+    targets = [t for t in (targets or []) if isinstance(t, str) and _TARGET.match(t)][:40]
+    if not targets:
+        raise ValueError("No muscle part given")
+    m = re.match(r"^data:image/(jpeg|jpg|png|webp);base64,(.+)$", data_url or "", re.S)
+    if not m:
+        raise ValueError("Expected a JPEG/PNG/WebP image")
+    raw = base64.b64decode(m.group(2))
+    if len(raw) > 15 * 1024 * 1024:
+        raise ValueError("Image is larger than 15 MB")
+    ext = "jpg" if m.group(1) in ("jpeg", "jpg") else m.group(1)
+    PARTS_DIR.mkdir(parents=True, exist_ok=True)
+    name = f"{targets[0]}-{int(time.time() * 1000)}.{ext}"
+    (PARTS_DIR / name).write_bytes(raw)
+    data = _load_parts()
+    entry = {"file": f"images/parts/{name}", "targets": targets, "ts": int(time.time())}
+    data["images"].append(entry)
+    _save_parts(data)
+    return entry
+
+
+def delete_part_photo(file: str) -> None:
+    name = Path(str(file or "")).name
+    data = _load_parts()
+    data["images"] = [e for e in data["images"] if Path(e.get("file", "")).name != name]
+    _save_parts(data)
+    if name:
+        (PARTS_DIR / name).unlink(missing_ok=True)
 
 
 # ---------- iPhone-friendly MP4 ----------
@@ -369,6 +421,21 @@ class IronSyncHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 res = download_youtube_video(data.get("url", ""), data.get("exerciseId", ""))
                 self.send_json(200, res)
+            except Exception as e:
+                self.send_json(400, {"ok": False, "error": str(e)})
+            return
+
+        if self.path == "/api/part-photo":
+            try:
+                self.send_json(200, {"ok": True, "image": add_part_photo(data.get("targets"), data.get("dataUrl", ""))})
+            except Exception as e:
+                self.send_json(400, {"ok": False, "error": str(e)})
+            return
+
+        if self.path == "/api/part-photo-delete":
+            try:
+                delete_part_photo(data.get("file", ""))
+                self.send_json(200, {"ok": True})
             except Exception as e:
                 self.send_json(400, {"ok": False, "error": str(e)})
             return

@@ -1,9 +1,10 @@
-const CACHE_NAME = 'ironsync-offline-v6';
+const CACHE_NAME = 'ironsync-offline-v7';
 const CORE_ASSETS = [
   './',
   './index.html',
   './exercises.json',
   './channels.json',
+  './parts.json',
   './manifest.json',
   './icon.svg'
 ];
@@ -18,7 +19,9 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(CORE_ASSETS.map((u) => new Request(u, { cache: 'reload' })))
         // Photos are cached best-effort so one failed image never blocks the offline install
-        .then(() => Promise.all(REF_IMAGES.map((u) => cache.add(u).catch(() => {})))))
+        .then(() => Promise.all(REF_IMAGES.map((u) => cache.add(u).catch(() => {}))))
+        // Real muscle photos listed in parts.json (added on the Mac and pushed)
+        .then(() => fetch('./parts.json', { cache: 'reload' }).then((r) => r.json()).then((d) => Promise.all((d.images || []).map((e) => cache.add('./' + e.file).catch(() => {}))))).catch(() => {}))
       .then(() => self.skipWaiting())
   );
 });
@@ -47,14 +50,14 @@ self.addEventListener('fetch', (event) => {
 
   // The app page: try the network first (so GitHub Pages updates arrive), fall back to cache offline.
   // channels.json is treated like the page so newly pushed channels show up right away.
-  const isPage = req.mode === 'navigate' || /\/(index\.html|channels\.json)?$/.test(new URL(req.url).pathname);
+  const isPage = req.mode === 'navigate' || /\/(index\.html|channels\.json|parts\.json)?$/.test(new URL(req.url).pathname);
   if (isPage) {
     event.respondWith(
       Promise.race([
         fetch(req).then((res) => putInCache(req, res)),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3500))
       ]).catch(() =>
-        caches.match(req).then((c) => c || (req.url.endsWith('channels.json') ? new Response('{"channels":[]}', { headers: { 'Content-Type': 'application/json' } }) : caches.match('./index.html')))
+        caches.match(req).then((c) => c || (/(channels|parts)\.json$/.test(req.url) ? new Response(req.url.endsWith('parts.json') ? '{"images":[]}' : '{"channels":[]}', { headers: { 'Content-Type': 'application/json' } }) : caches.match('./index.html')))
       )
     );
     return;
