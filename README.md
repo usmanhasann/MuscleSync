@@ -19,6 +19,17 @@ A minimal, zero-landing-page, offline-first gym planner built for iPhone 14, And
 3. **Option C — Export PDF Handout:**
    - Tap **PDF** in the top bar anytime to save/print Today's Synced Session as a clean PDF.
 
+## Reading the app
+- **Every muscle has its own colour.** Each exercise card shows a mini body map plus a strip of that muscle's parts:
+  **● main target**, **◐ assists**, **○ not trained** (crossed out). For example, Incline DB Press shows ● Upper Chest · ◐ Mid Chest · ○ Lower Chest.
+- **Today** tab: the ring counts only parts that are a *main* target. Untrained parts pulse orange on the body map, and assist-only parts are flagged. Tap **+ Add** to fix either.
+- **Muscles** tab: tap a muscle, then a part (e.g. Upper Chest) to see every exercise that trains it.
+- **Exercise detail**: "Not trained by this" lists the parts it misses, plus exercises to pair with it.
+
+## Photos per exercise
+Open any exercise → **Add photo** (camera or gallery, several allowed). Photos are resized on the phone and stored offline in IndexedDB. The first photo becomes the card thumbnail; ★ changes the cover.
+Photos live only on that phone, so use **More → Backup & restore → Full backup (with photos)** before clearing browser data or switching phones. Install to the Home Screen so iOS/Android don't clean the storage.
+
 ## Adding Offline Videos (YouTube Auto-Download or Manual)
 - **Auto-Download from YouTube into Project (`videos/`):**
   Run `python3 server.py` inside this folder and open `http://localhost:8765`.

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 """
 IronSync Local Server & Offline YouTube Video Downloader.
 
@@ -47,6 +49,17 @@ def find_yt_dlp() -> list[str]:
     for c in candidates:
         if c.exists():
             return [str(c)]
+    # No yt-dlp binary: use whichever Python on this Mac has the yt_dlp module
+    # (the server may be running on Apple's Python 3.9, which usually doesn't).
+    pythons = [sys.executable, "/usr/local/bin/python3", "/opt/homebrew/bin/python3",
+               *sorted(map(str, Path("/Library/Frameworks/Python.framework/Versions").glob("*/bin/python3")), reverse=True)]
+    for py in dict.fromkeys(pythons):
+        if Path(py).exists():
+            try:
+                if subprocess.run([py, "-c", "import yt_dlp"], capture_output=True, timeout=20).returncode == 0:
+                    return [py, "-m", "yt_dlp"]
+            except Exception:
+                pass
     return [sys.executable, "-m", "yt_dlp"]
 
 
@@ -92,35 +105,52 @@ def download_youtube_video(url: str, exercise_id: str) -> dict:
         old.unlink(missing_ok=True)
 
     out_template = str(VIDEOS_DIR / f"{ex_id}.%(ext)s")
-    cmd = find_yt_dlp() + [
-        "--no-playlist",
-        "--no-warnings",
-        "-f",
-        "bv*[ext=mp4][vcodec^=avc1][height<=720]+ba[ext=m4a]/b[ext=mp4][height<=720]/b[ext=mp4]/best",
-        "--merge-output-format",
-        "mp4",
-        "-o",
-        out_template,
-        url.strip(),
-    ]
-
     env = os.environ.copy()
     env["PATH"] = f"/opt/homebrew/bin:/usr/local/bin:{env.get('PATH', '')}"
+    # Apple's bundled Python 3.9 has no CA bundle -> CERTIFICATE_VERIFY_FAILED. Point it at one.
+    if not env.get("SSL_CERT_FILE"):
+        try:
+            import certifi  # type: ignore
+            env["SSL_CERT_FILE"] = certifi.where()
+        except Exception:
+            if Path("/etc/ssl/cert.pem").exists():
+                env["SSL_CERT_FILE"] = "/etc/ssl/cert.pem"
 
-    proc = subprocess.run(cmd, cwd=str(ROOT_DIR), env=env, capture_output=True, text=True, timeout=300)
+    # Separate video+audio streams need ffmpeg to merge. Without it, grab a single ready-made mp4
+    # (otherwise yt-dlp leaves half files like name.f134.mp4 + name.f140.m4a behind).
+    has_ffmpeg = shutil.which("ffmpeg", path=env["PATH"]) is not None
+    if has_ffmpeg:
+        fmt_args = ["-f", "bv*[ext=mp4][vcodec^=avc1][height<=720]+ba[ext=m4a]/b[ext=mp4][height<=720]/b[ext=mp4]/best",
+                    "--merge-output-format", "mp4"]
+    else:
+        # Single file with sound if YouTube offers one, else a silent H.264 mp4 (plays on every phone).
+        # Install ffmpeg (brew install ffmpeg) to get sound on videos like Shorts.
+        fmt_args = ["-f", "b[ext=mp4][height<=720]/bv*[ext=mp4][vcodec^=avc1][height<=720]/bv*[ext=mp4][vcodec^=avc1]/b"]
+
+    cmd = find_yt_dlp() + ["--no-playlist", "--no-warnings", *fmt_args, "-o", out_template, url.strip()]
+
+    try:
+        proc = subprocess.run(cmd, cwd=str(ROOT_DIR), env=env, capture_output=True, text=True, timeout=300)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError("Download took longer than 5 minutes and was stopped.")
+    # Clean up any intermediate stream files (name.f134.mp4, name.f140.m4a, .part)
+    for leftover in VIDEOS_DIR.glob(f"{ex_id}.*"):
+        if re.search(r"\.f\d+\.|\.part$|\.ytdl$", leftover.name):
+            leftover.unlink(missing_ok=True)
     if proc.returncode != 0:
         err = (proc.stderr or proc.stdout or "yt-dlp failed").strip()
         if "No module named yt_dlp" in err or "No such file" in err:
             raise RuntimeError("yt-dlp is not installed. Run: brew install yt-dlp")
         raise RuntimeError(err.splitlines()[-1] if err else "Download failed")
 
-    matches = sorted(VIDEOS_DIR.glob(f"{ex_id}.*"))
+    matches = sorted(p for p in VIDEOS_DIR.glob(f"{ex_id}.*") if p.suffix.lower() in {".mp4", ".mov", ".webm", ".m4v"})
     if not matches:
         raise RuntimeError("Download finished but no output file was found.")
 
     rel_path = f"./videos/{matches[0].name}"
     update_exercises_json_video(ex_id, rel_path)
-    return {"ok": True, "exerciseId": ex_id, "path": rel_path}
+    note = "" if has_ffmpeg else "Saved without sound — run 'brew install ffmpeg' for audio."
+    return {"ok": True, "exerciseId": ex_id, "path": rel_path, "note": note}
 
 
 class IronSyncHandler(http.server.SimpleHTTPRequestHandler):
